@@ -8,7 +8,8 @@
 #include <stdbool.h>
 #include "main.h"
 
-static JanetStruct slot_info_to_struct(CK_SLOT_INFO_PTR info)
+/* `:slot-id` will be added to original CK_SLOT_INFO */
+static JanetStruct slot_info_to_struct(CK_SLOT_INFO_PTR info, CK_SLOT_ID slot_id)
 {
     JanetTable *ret = janet_table(5);
     JanetTable *hw_ver = janet_table(2);
@@ -19,6 +20,7 @@ static JanetStruct slot_info_to_struct(CK_SLOT_INFO_PTR info)
     janet_table_put(fw_ver, janet_ckeywordv("major"), janet_wrap_number(info->firmwareVersion.major));
     janet_table_put(fw_ver, janet_ckeywordv("minor"), janet_wrap_number(info->firmwareVersion.minor));
 
+    janet_table_put(ret, janet_ckeywordv("slot-id"), janet_wrap_number(slot_id));
     janet_table_put(ret, janet_ckeywordv("slot-description"), janet_wrap_string(janet_string(info->slotDescription, 64)));
     janet_table_put(ret, janet_ckeywordv("manufacturer-id"), janet_wrap_string(janet_string(info->manufacturerID, 32)));
     janet_table_put(ret, janet_ckeywordv("flags"), janet_wrap_number(info->flags));
@@ -84,7 +86,6 @@ JANET_FN(get_slot_info,
     }
 
     p_slot_list = janet_smalloc(count * sizeof(CK_SLOT_ID));
-
     rv = obj->func_list->C_GetSlotList(token_present, p_slot_list, &count);
     PKCS11_ASSERT(rv, "C_GetSlotList");
 
@@ -108,7 +109,7 @@ JANET_FN(get_slot_info,
         rv = obj->func_list->C_GetSlotInfo(slot_id, &info);
         PKCS11_ASSERT(rv, "C_GetSlotInfo");
 
-        JanetStruct slot_info = slot_info_to_struct(&info);
+        JanetStruct slot_info = slot_info_to_struct(&info, slot_id);
         return janet_wrap_struct(slot_info);
     }
 
@@ -117,11 +118,10 @@ JANET_FN(get_slot_info,
     for (int i=0; i<count; i++) {
         CK_SLOT_INFO info;
         memset(&info, 0, sizeof(info));
-        rv = obj->func_list->C_GetSlotInfo((CK_SLOT_ID)p_slot_list[i], &info);
+        rv = obj->func_list->C_GetSlotInfo(p_slot_list[i], &info);
         PKCS11_ASSERT(rv, "C_GetSlotInfo");
 
-        JanetStruct slot_info = slot_info_to_struct(&info);
-
+        JanetStruct slot_info = slot_info_to_struct(&info, p_slot_list[i]);
         tup[i] = janet_wrap_struct(slot_info);
     }
 
