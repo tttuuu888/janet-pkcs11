@@ -25,7 +25,7 @@ Janet get_info(int32_t argc, Janet *argv);
 Janet get_slot_list(int32_t argc, Janet *argv);
 Janet get_slot_info(int32_t argc, Janet *argv);
 Janet get_token_info(int32_t argc, Janet *argv);
-
+Janet wait_for_slot_event(int32_t argc, Janet *argv);
 
 void submod_slot_and_token(JanetTable *env);
 

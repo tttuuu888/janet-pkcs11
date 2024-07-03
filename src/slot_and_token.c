@@ -130,7 +130,7 @@ JANET_FN(get_slot_info,
 
 JANET_FN(get_token_info,
          "(get-token-info p11-obj slot-id)",
-         "Obtains information about a particular token in the system.  "
+         "Obtains information about a particular token in the system. "
          "`slot-id` is the ID of the token’s slot.")
 {
     janet_fixarity(argc, 2);
@@ -173,11 +173,47 @@ JANET_FN(get_token_info,
     return janet_wrap_struct(janet_table_to_struct(ret));
 }
 
+JANET_FN(wait_for_slot_event,
+         "(wait-for-slot-event p11-obj)",
+         "Return a list of slot-id of slots where events occurred. "
+         "Return `nil` if there are no event in any slots.")
+{
+    janet_fixarity(argc, 1);
+
+    pkcs11_obj_t *obj = janet_getabstract(argv, 0, get_obj_type());
+    int event_slots = 0;
+    CK_SLOT_ID slot_ids[32] = {0,};
+    CK_SLOT_ID slot_id;
+    CK_RV rv;
+    for (int i=0; i<32; i++) {
+        rv = obj->func_list->C_WaitForSlotEvent(CKF_DONT_BLOCK, &slot_id, NULL_PTR);
+        if (rv == CKR_NO_EVENT) {
+            break;
+        }
+
+        PKCS11_ASSERT(rv, "C_WaitForSlotEvent");
+        slot_ids[i] = slot_id;
+        event_slots += 1;
+    }
+
+    if (event_slots == 0) {
+        return janet_wrap_nil();
+    }
+
+    Janet *tup = janet_tuple_begin(event_slots);
+    for (int i=0; i<event_slots; i++) {
+        tup[i] = janet_wrap_number(slot_ids[i]);
+    }
+
+    return janet_wrap_tuple(janet_tuple_end(tup));
+}
+
 void submod_slot_and_token(JanetTable *env) {
     JanetRegExt cfuns[] = {
         JANET_REG("get-slot-list", get_slot_list),
         JANET_REG("get-slot-info", get_slot_info),
         JANET_REG("get-token-info", get_token_info),
+        JANET_REG("wait-for-slot-event", wait_for_slot_event),
         JANET_REG_END
     };
     janet_cfuns_ext(env, "", cfuns);
