@@ -32,7 +32,7 @@ static JanetStruct slot_info_to_struct(CK_SLOT_INFO_PTR info, CK_SLOT_ID slot_id
 
 JANET_FN(get_slot_list,
          "(get-slot-list p11-obj)",
-         "Obtains a list of slots in the system")
+         "Returns a list of slots in the system")
 {
     janet_fixarity(argc, 1);
 
@@ -64,7 +64,7 @@ JANET_FN(get_slot_list,
 
 JANET_FN(get_slot_info,
          "(get-slot-info p11-obj &opt slot-id)",
-         "Obtains information about a particular slot in the system. If "
+         "Returns information about a particular slot in the system. If "
          "`slot-id` is not provided, information about all slots is returned "
          "as a list. If there is no slot corresponding to `slot-id` or no "
          "slot exists in system, `nil` is returned."
@@ -130,7 +130,7 @@ JANET_FN(get_slot_info,
 
 JANET_FN(get_token_info,
          "(get-token-info p11-obj slot-id)",
-         "Obtains information about a particular token in the system. "
+         "Returns information about a particular token in the system. "
          "`slot-id` is the ID of the token’s slot.")
 {
     janet_fixarity(argc, 2);
@@ -175,8 +175,8 @@ JANET_FN(get_token_info,
 
 JANET_FN(wait_for_slot_event,
          "(wait-for-slot-event p11-obj)",
-         "Return a list of slot-id of slots where events occurred. "
-         "Return `nil` if there are no event in any slots.")
+         "Returns a list of slot-id of slots where events occurred. "
+         "Returns `nil` if there are no event in any slots.")
 {
     janet_fixarity(argc, 1);
 
