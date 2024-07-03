@@ -23,6 +23,7 @@ Janet get_info(int32_t argc, Janet *argv);
 
 /* Slot and token management functions */
 Janet get_slot_list(int32_t argc, Janet *argv);
+Janet get_slot_info(int32_t argc, Janet *argv);
 
 
 void submod_slot_and_token(JanetTable *env);
