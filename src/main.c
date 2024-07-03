@@ -6,23 +6,11 @@
 
 #include <janet.h>
 #include <dlfcn.h>
-
-#include "cryptoki_compat/pkcs11.h"
-#include "pkcs11_errors.h"
-
-
-typedef struct pkcs11_obj {
-    void *lib_handle;
-    CK_FUNCTION_LIST_PTR func_list;
-} pkcs11_obj_t;
+#include "main.h"
 
 /* Abstract Object functions */
 static int pkcs11_gc_fn(void *data, size_t len);
 static int pkcs11_get_fn(void *data, Janet key, Janet *out);
-
-/* Janet functions */
-Janet cfun_new(int32_t argc, Janet *argv);
-Janet cfun_get_info(int32_t argc, Janet *argv);
 
 static JanetAbstractType pkcs11_obj_type = {
     "pkcs11",
@@ -33,13 +21,10 @@ static JanetAbstractType pkcs11_obj_type = {
 };
 
 static JanetMethod pkcs11_methods[] = {
-    {"get-info", cfun_get_info},
+    {"get-info", get_info},
+    {"get-slot-list", get_slot_list},
     {NULL, NULL},
 };
-
-static JanetAbstractType *get_obj_type() {
-    return &pkcs11_obj_type;
-}
 
 /* Abstract Object functions */
 static int pkcs11_gc_fn(void *data, size_t len) {
@@ -65,8 +50,11 @@ static int pkcs11_get_fn(void *data, Janet key, Janet *out) {
     return janet_getmethod(janet_unwrap_keyword(key), pkcs11_methods, out);
 }
 
-/* Janet functions */
-JANET_FN(cfun_new,
+JanetAbstractType *get_obj_type(void) {
+    return &pkcs11_obj_type;
+}
+
+JANET_FN(new,
          "(new &opt lib-path)",
          "Get the `p11-obj`(an instance holding a handle to the opened PKCS#11 "
          "library). If `lib-path` is not provided, try to open a libirary in "
@@ -74,7 +62,7 @@ JANET_FN(cfun_new,
 {
     janet_arity(argc, 0, 1);
 
-    pkcs11_obj_t *obj = janet_abstract(&pkcs11_obj_type, sizeof(pkcs11_obj_t));
+    pkcs11_obj_t *obj = janet_abstract(get_obj_type(), sizeof(pkcs11_obj_t));
     memset(obj, 0, sizeof(pkcs11_obj_t));
 
     const char *lib_path = janet_getcstring(argv, 0);
@@ -99,7 +87,7 @@ JANET_FN(cfun_new,
     return janet_wrap_abstract(obj);
 }
 
-JANET_FN(cfun_get_info,
+JANET_FN(get_info,
          "(get-info p11-obj)",
          "Returns general information about Cryptoki.")
 {
@@ -133,11 +121,18 @@ JANET_FN(cfun_get_info,
     return janet_wrap_struct(janet_table_to_struct(ret));
 }
 
-JANET_MODULE_ENTRY(JanetTable *env) {
+static void submod_general_purpose(JanetTable *env)
+{
     JanetRegExt cfuns[] = {
-        JANET_REG("new", cfun_new),
-        JANET_REG("get-info", cfun_get_info),
+        JANET_REG("new", new),
+        JANET_REG("get-info", get_info),
         JANET_REG_END
     };
     janet_cfuns_ext(env, "", cfuns);
+}
+
+JANET_MODULE_ENTRY(JanetTable *env) {
+    janet_register_abstract_type(get_obj_type());
+    submod_general_purpose(env);
+    submod_slot_and_token(env);
 }

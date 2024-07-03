@@ -11,4 +11,5 @@
 (declare-native
  :name "pkcs11"
  :cflags ["-Isrc" "-Wall" ;default-cflags]
- :source ["src/main.c"])
+ :source ["src/main.c"
+          "src/slot_and_token.c"])
