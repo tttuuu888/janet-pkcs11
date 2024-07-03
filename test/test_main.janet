@@ -8,6 +8,7 @@
   (pp (:get-slot-list p11))
   (pp (:get-slot-info p11 0))
   (pp (:get-slot-info p11))
+  (pp (:get-token-info p11 0))
   )
 
 (end-suite)

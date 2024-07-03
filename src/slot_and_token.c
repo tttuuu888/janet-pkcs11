@@ -128,10 +128,56 @@ JANET_FN(get_slot_info,
     return janet_wrap_tuple(janet_tuple_end(tup));
 }
 
+JANET_FN(get_token_info,
+         "(get-token-info p11-obj slot-id)",
+         "Obtains information about a particular token in the system.  "
+         "`slot-id` is the ID of the token’s slot.")
+{
+    janet_fixarity(argc, 2);
+
+    pkcs11_obj_t *obj = janet_getabstract(argv, 0, get_obj_type());
+    CK_SLOT_ID slot_id = janet_getinteger64(argv, 1);
+    CK_TOKEN_INFO info;
+    CK_RV rv;
+    memset(&info, 0, sizeof(info));
+    rv = obj->func_list->C_GetTokenInfo(slot_id, &info);
+    PKCS11_ASSERT(rv, "C_GetTokenInfo");
+
+    JanetTable *ret = janet_table(18);
+    JanetTable *hw_ver = janet_table(2);
+    JanetTable *fw_ver = janet_table(2);
+
+    janet_table_put(hw_ver, janet_ckeywordv("major"), janet_wrap_number(info.hardwareVersion.major));
+    janet_table_put(hw_ver, janet_ckeywordv("minor"), janet_wrap_number(info.hardwareVersion.minor));
+    janet_table_put(fw_ver, janet_ckeywordv("major"), janet_wrap_number(info.firmwareVersion.major));
+    janet_table_put(fw_ver, janet_ckeywordv("minor"), janet_wrap_number(info.firmwareVersion.minor));
+
+    janet_table_put(ret, janet_ckeywordv("label"), janet_wrap_string(janet_string(info.label, 32)));
+    janet_table_put(ret, janet_ckeywordv("manufacturer-id"), janet_wrap_string(janet_string(info.manufacturerID, 32)));
+    janet_table_put(ret, janet_ckeywordv("model"), janet_wrap_string(janet_string(info.model, 16)));
+    janet_table_put(ret, janet_ckeywordv("serial-number"), janet_wrap_string(janet_string(info.serialNumber, 16)));
+    janet_table_put(ret, janet_ckeywordv("flags"), janet_wrap_number(info.flags));
+    janet_table_put(ret, janet_ckeywordv("max-session-count"), janet_wrap_number(info.ulMaxSessionCount));
+    janet_table_put(ret, janet_ckeywordv("session-count"), janet_wrap_number(info.ulSessionCount));
+    janet_table_put(ret, janet_ckeywordv("max-rw-session-count"), janet_wrap_number(info.ulMaxRwSessionCount));
+    janet_table_put(ret, janet_ckeywordv("rw-session-count"), janet_wrap_number(info.ulRwSessionCount));
+    janet_table_put(ret, janet_ckeywordv("max-pin-len"), janet_wrap_number(info.ulMaxPinLen));
+    janet_table_put(ret, janet_ckeywordv("min-pin-len"), janet_wrap_number(info.ulMinPinLen));
+    janet_table_put(ret, janet_ckeywordv("total-public-memory"), janet_wrap_number(info.ulTotalPublicMemory));
+    janet_table_put(ret, janet_ckeywordv("free-public-memory"), janet_wrap_number(info.ulFreePublicMemory));
+    janet_table_put(ret, janet_ckeywordv("total-private-memory"), janet_wrap_number(info.ulTotalPrivateMemory));
+    janet_table_put(ret, janet_ckeywordv("hardware-version"), janet_wrap_struct(janet_table_to_struct(hw_ver)));
+    janet_table_put(ret, janet_ckeywordv("firmware-version"), janet_wrap_struct(janet_table_to_struct(fw_ver)));
+    janet_table_put(ret, janet_ckeywordv("utc-time"), janet_wrap_string(janet_string(info.utcTime, 16)));
+
+    return janet_wrap_struct(janet_table_to_struct(ret));
+}
+
 void submod_slot_and_token(JanetTable *env) {
     JanetRegExt cfuns[] = {
         JANET_REG("get-slot-list", get_slot_list),
         JANET_REG("get-slot-info", get_slot_info),
+        JANET_REG("get-token-info", get_token_info),
         JANET_REG_END
     };
     janet_cfuns_ext(env, "", cfuns);
