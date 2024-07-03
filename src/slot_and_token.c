@@ -208,12 +208,45 @@ JANET_FN(wait_for_slot_event,
     return janet_wrap_tuple(janet_tuple_end(tup));
 }
 
+JANET_FN(get_mechanism_list,
+         "(get-mechanism-list p11-obj slot-id)",
+         "Returns a list of mechanisms supported by a token."
+         "`slot-id` is the ID of the token’s slot.")
+{
+    janet_fixarity(argc, 2);
+
+    pkcs11_obj_t *obj = janet_getabstract(argv, 0, get_obj_type());
+    CK_SLOT_ID slot_id = janet_getinteger64(argv, 1);
+    CK_MECHANISM_TYPE_PTR p_mechanism_list = NULL_PTR;
+    CK_ULONG count = 0;
+    CK_RV rv;
+    rv = obj->func_list->C_GetMechanismList(slot_id, p_mechanism_list, &count);
+    PKCS11_ASSERT(rv, "C_GetMechanismList");
+
+    if (count == 0) {
+        return janet_wrap_nil();
+    }
+
+    p_mechanism_list = janet_smalloc(count * sizeof(CK_MECHANISM_TYPE));
+    rv = obj->func_list->C_GetMechanismList(slot_id, p_mechanism_list, &count);
+    PKCS11_ASSERT(rv, "C_GetMechanismList");
+
+    Janet *tup = janet_tuple_begin(count);
+    for (int i=0; i<count; i++) {
+        tup[i] = janet_wrap_number(p_mechanism_list[i]);
+    }
+
+    return janet_wrap_tuple(janet_tuple_end(tup));
+}
+
+
 void submod_slot_and_token(JanetTable *env) {
     JanetRegExt cfuns[] = {
         JANET_REG("get-slot-list", get_slot_list),
         JANET_REG("get-slot-info", get_slot_info),
         JANET_REG("get-token-info", get_token_info),
         JANET_REG("wait-for-slot-event", wait_for_slot_event),
+        JANET_REG("get-mechanism-list", get_mechanism_list),
         JANET_REG_END
     };
     janet_cfuns_ext(env, "", cfuns);

@@ -10,6 +10,7 @@
   (pp (:get-slot-info p11))
   (pp (:get-token-info p11 0))
   (pp (:wait-for-slot-event p11))
+  (pp (:get-mechanism-list p11 0))
   )
 
 (end-suite)

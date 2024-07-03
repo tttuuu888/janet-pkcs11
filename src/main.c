@@ -26,6 +26,7 @@ static JanetMethod pkcs11_methods[] = {
     {"get-slot-info", get_slot_info},
     {"get-token-info", get_token_info},
     {"wait-for-slot-event", wait_for_slot_event},
+    {"get-mechanism-list", get_mechanism_list},
     {NULL, NULL},
 };
 
