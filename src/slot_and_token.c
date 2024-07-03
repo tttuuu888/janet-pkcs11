@@ -152,10 +152,10 @@ JANET_FN(get_token_info,
     janet_table_put(fw_ver, janet_ckeywordv("major"), janet_wrap_number(info.firmwareVersion.major));
     janet_table_put(fw_ver, janet_ckeywordv("minor"), janet_wrap_number(info.firmwareVersion.minor));
 
-    janet_table_put(ret, janet_ckeywordv("label"), janet_wrap_string(janet_string(info.label, 32)));
-    janet_table_put(ret, janet_ckeywordv("manufacturer-id"), janet_wrap_string(janet_string(info.manufacturerID, 32)));
-    janet_table_put(ret, janet_ckeywordv("model"), janet_wrap_string(janet_string(info.model, 16)));
-    janet_table_put(ret, janet_ckeywordv("serial-number"), janet_wrap_string(janet_string(info.serialNumber, 16)));
+    janet_table_put(ret, janet_ckeywordv("label"), janet_stringv(info.label, 32));
+    janet_table_put(ret, janet_ckeywordv("manufacturer-id"), janet_stringv(info.manufacturerID, 32));
+    janet_table_put(ret, janet_ckeywordv("model"), janet_stringv(info.model, 16));
+    janet_table_put(ret, janet_ckeywordv("serial-number"), janet_stringv(info.serialNumber, 16));
     janet_table_put(ret, janet_ckeywordv("flags"), janet_wrap_number(info.flags));
     janet_table_put(ret, janet_ckeywordv("max-session-count"), janet_wrap_number(info.ulMaxSessionCount));
     janet_table_put(ret, janet_ckeywordv("session-count"), janet_wrap_number(info.ulSessionCount));
@@ -168,7 +168,7 @@ JANET_FN(get_token_info,
     janet_table_put(ret, janet_ckeywordv("total-private-memory"), janet_wrap_number(info.ulTotalPrivateMemory));
     janet_table_put(ret, janet_ckeywordv("hardware-version"), janet_wrap_struct(janet_table_to_struct(hw_ver)));
     janet_table_put(ret, janet_ckeywordv("firmware-version"), janet_wrap_struct(janet_table_to_struct(fw_ver)));
-    janet_table_put(ret, janet_ckeywordv("utc-time"), janet_wrap_string(janet_string(info.utcTime, 16)));
+    janet_table_put(ret, janet_ckeywordv("utc-time"), janet_stringv(info.utcTime, 16));
 
     return janet_wrap_struct(janet_table_to_struct(ret));
 }

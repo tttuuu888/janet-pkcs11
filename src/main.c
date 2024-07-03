@@ -115,9 +115,9 @@ JANET_FN(get_info,
     janet_table_put(lib_ver, janet_ckeywordv("minor"), janet_wrap_number(info.libraryVersion.minor));
 
     janet_table_put(ret, janet_ckeywordv("cryptoki-version"), janet_wrap_struct(janet_table_to_struct(ck_ver)));
-    janet_table_put(ret, janet_ckeywordv("manufacturer-id"), janet_wrap_string(janet_string(info.manufacturerID, 32)));
+    janet_table_put(ret, janet_ckeywordv("manufacturer-id"), janet_stringv(info.manufacturerID, 32));
     janet_table_put(ret, janet_ckeywordv("flags"), janet_wrap_number(info.flags));
-    janet_table_put(ret, janet_ckeywordv("library-description"), janet_wrap_string(janet_string(info.libraryDescription, 32)));
+    janet_table_put(ret, janet_ckeywordv("library-description"), janet_stringv(info.libraryDescription, 32));
     janet_table_put(ret, janet_ckeywordv("library-version"), janet_wrap_struct(janet_table_to_struct(lib_ver)));
 
     return janet_wrap_struct(janet_table_to_struct(ret));
