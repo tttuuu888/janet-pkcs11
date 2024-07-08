@@ -4,8 +4,8 @@
  * Janet-pkcs11 is released under the MIT License, see the LICENSE file.
  */
 
-#ifndef PKCS11_ERRORS_H
-#define PKCS11_ERRORS_H
+#ifndef PKCS11_UTILS_H
+#define PKCS11_UTILS_H
 
 #define PKCS11_ASSERT(rval, desc)                   \
     if (rval != 0) {                                \
@@ -192,4 +192,4 @@ static const char* getPkcs11Error(int error) {
     }
 }
 
-#endif /* PKCS11_ERRORS_H */
+#endif /* PKCS11_UTILS_H */

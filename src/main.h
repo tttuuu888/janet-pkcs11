@@ -8,7 +8,7 @@
 #define MAIN_H
 
 #include "cryptoki_compat/pkcs11.h"
-#include "pkcs11_errors.h"
+#include "pkcs11_utils.h"
 
 typedef struct pkcs11_obj {
     void *lib_handle;
@@ -27,6 +27,8 @@ Janet get_slot_info(int32_t argc, Janet *argv);
 Janet get_token_info(int32_t argc, Janet *argv);
 Janet wait_for_slot_event(int32_t argc, Janet *argv);
 Janet get_mechanism_list(int32_t argc, Janet *argv);
+Janet get_mechanism_info(int32_t argc, Janet *argv);
+Janet init_token(int32_t argc, Janet *argv);
 
 void submod_slot_and_token(JanetTable *env);
 
