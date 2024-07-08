@@ -307,7 +307,7 @@ JANET_FN(init_token,
     memset(label, ' ', sizeof(label));
     memcpy(label, jlabel, strlen(jlabel));
 
-    rv = obj->func_list->C_InitToken(slot_id, pin, strlen(pin), label);
+    rv = obj->func_list->C_InitToken(slot_id, pin, strlen((const char *)pin), label);
     PKCS11_ASSERT(rv, "C_InitToken");
 
     return janet_wrap_abstract(obj);
