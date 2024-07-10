@@ -10,12 +10,17 @@
 #include "cryptoki_compat/pkcs11.h"
 #include "pkcs11_utils.h"
 
-typedef struct pkcs11_obj {
+typedef struct p11_obj {
     void *lib_handle;
     CK_FUNCTION_LIST_PTR func_list;
-} pkcs11_obj_t;
+} p11_obj_t;
 
-JanetAbstractType *get_obj_type(void);
+typedef struct session_obj {
+    CK_SESSION_HANDLE_PTR session;
+} session_obj_t;
+
+JanetAbstractType *get_p11_obj_type(void);
+JanetAbstractType *get_session_obj_type(void);
 
 /* General purpose functions */
 Janet new(int32_t argc, Janet *argv);
@@ -30,6 +35,11 @@ Janet get_mechanism_list(int32_t argc, Janet *argv);
 Janet get_mechanism_info(int32_t argc, Janet *argv);
 Janet init_token(int32_t argc, Janet *argv);
 
+/* Session management functions */
+Janet open_session(int32_t argc, Janet *argv);
+
+/* Sub modules */
 void submod_slot_and_token(JanetTable *env);
+void submod_session(JanetTable *env);
 
 #endif /* MAIN_H */

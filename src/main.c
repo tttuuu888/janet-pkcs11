@@ -12,7 +12,7 @@
 static int pkcs11_gc_fn(void *data, size_t len);
 static int pkcs11_get_fn(void *data, Janet key, Janet *out);
 
-static JanetAbstractType pkcs11_obj_type = {
+static JanetAbstractType p11_obj_type = {
     "pkcs11",
     pkcs11_gc_fn,
     NULL,
@@ -29,12 +29,13 @@ static JanetMethod pkcs11_methods[] = {
     {"get-mechanism-list", get_mechanism_list},
     {"get-mechanism-info", get_mechanism_info},
     {"init-token", init_token},
+    {"open-session", open_session},
     {NULL, NULL},
 };
 
 /* Abstract Object functions */
 static int pkcs11_gc_fn(void *data, size_t len) {
-    pkcs11_obj_t *obj = (pkcs11_obj_t *)data;
+    p11_obj_t *obj = (p11_obj_t *)data;
 
     if (obj->func_list) {
         obj->func_list->C_Finalize(NULL_PTR);
@@ -56,8 +57,8 @@ static int pkcs11_get_fn(void *data, Janet key, Janet *out) {
     return janet_getmethod(janet_unwrap_keyword(key), pkcs11_methods, out);
 }
 
-JanetAbstractType *get_obj_type(void) {
-    return &pkcs11_obj_type;
+JanetAbstractType *get_p11_obj_type(void) {
+    return &p11_obj_type;
 }
 
 JANET_FN(new,
@@ -68,8 +69,8 @@ JANET_FN(new,
 {
     janet_arity(argc, 0, 1);
 
-    pkcs11_obj_t *obj = janet_abstract(get_obj_type(), sizeof(pkcs11_obj_t));
-    memset(obj, 0, sizeof(pkcs11_obj_t));
+    p11_obj_t *obj = janet_abstract(get_p11_obj_type(), sizeof(p11_obj_t));
+    memset(obj, 0, sizeof(p11_obj_t));
 
     const char *lib_path = janet_getcstring(argv, 0);
 	obj->lib_handle = dlopen(lib_path, RTLD_NOW | RTLD_LOCAL);
@@ -99,7 +100,7 @@ JANET_FN(get_info,
 {
     janet_fixarity(argc, 1);
 
-    pkcs11_obj_t *obj = janet_getabstract(argv, 0, get_obj_type());
+    p11_obj_t *obj = janet_getabstract(argv, 0, get_p11_obj_type());
 
     CK_INFO info;
     memset(&info, 0, sizeof(info));
@@ -138,7 +139,8 @@ static void submod_general_purpose(JanetTable *env)
 }
 
 JANET_MODULE_ENTRY(JanetTable *env) {
-    janet_register_abstract_type(get_obj_type());
+    janet_register_abstract_type(get_p11_obj_type());
     submod_general_purpose(env);
     submod_slot_and_token(env);
+    submod_session(env);
 }

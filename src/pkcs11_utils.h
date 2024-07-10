@@ -7,11 +7,16 @@
 #ifndef PKCS11_UTILS_H
 #define PKCS11_UTILS_H
 
+#define IS_ARG_KEYWORD(n, keyword)                                  \
+    (((argc >= (n+1)) &&                                            \
+      (janet_cstrcmp(janet_getkeyword(argv, n), keyword) == 0)) ?   \
+     1 : 0)
+
 #define PKCS11_ASSERT(rval, desc)                   \
     if (rval != 0) {                                \
         janet_panicf("%s, rv:%s",                   \
                      desc, getPkcs11Error(rval));   \
-    }                                               \
+    }
 
 static const char* getPkcs11Error(int error) {
     switch(error) {

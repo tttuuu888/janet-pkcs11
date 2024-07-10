@@ -36,7 +36,7 @@ JANET_FN(get_slot_list,
 {
     janet_fixarity(argc, 1);
 
-    pkcs11_obj_t *obj = janet_getabstract(argv, 0, get_obj_type());
+    p11_obj_t *obj = janet_getabstract(argv, 0, get_p11_obj_type());
 
     CK_BBOOL token_present = TRUE;
     CK_SLOT_ID_PTR p_slot_list = NULL_PTR;
@@ -72,7 +72,7 @@ JANET_FN(get_slot_info,
 {
     janet_arity(argc, 1, 2);
 
-    pkcs11_obj_t *obj = janet_getabstract(argv, 0, get_obj_type());
+    p11_obj_t *obj = janet_getabstract(argv, 0, get_p11_obj_type());
 
     CK_BBOOL token_present = TRUE;
     CK_SLOT_ID_PTR p_slot_list = NULL_PTR;
@@ -135,7 +135,7 @@ JANET_FN(get_token_info,
 {
     janet_fixarity(argc, 2);
 
-    pkcs11_obj_t *obj = janet_getabstract(argv, 0, get_obj_type());
+    p11_obj_t *obj = janet_getabstract(argv, 0, get_p11_obj_type());
     CK_SLOT_ID slot_id = janet_getinteger64(argv, 1);
     CK_TOKEN_INFO info;
     CK_RV rv;
@@ -180,7 +180,7 @@ JANET_FN(wait_for_slot_event,
 {
     janet_fixarity(argc, 1);
 
-    pkcs11_obj_t *obj = janet_getabstract(argv, 0, get_obj_type());
+    p11_obj_t *obj = janet_getabstract(argv, 0, get_p11_obj_type());
     int event_slots = 0;
     CK_SLOT_ID slot_ids[32] = {0,};
     CK_SLOT_ID slot_id;
@@ -215,7 +215,7 @@ JANET_FN(get_mechanism_list,
 {
     janet_fixarity(argc, 2);
 
-    pkcs11_obj_t *obj = janet_getabstract(argv, 0, get_obj_type());
+    p11_obj_t *obj = janet_getabstract(argv, 0, get_p11_obj_type());
     CK_SLOT_ID slot_id = janet_getinteger64(argv, 1);
     CK_MECHANISM_TYPE_PTR p_mechanism_list = NULL_PTR;
     CK_ULONG count = 0;
@@ -247,7 +247,7 @@ JANET_FN(get_mechanism_info,
 {
     janet_arity(argc, 2, 3);
 
-    pkcs11_obj_t *obj = janet_getabstract(argv, 0, get_obj_type());
+    p11_obj_t *obj = janet_getabstract(argv, 0, get_p11_obj_type());
     CK_SLOT_ID slot_id = janet_getinteger64(argv, 1);
     CK_MECHANISM_TYPE_PTR p_mechanism_list = NULL_PTR;
     CK_ULONG count = 0;
@@ -297,7 +297,7 @@ JANET_FN(init_token,
 {
     janet_fixarity(argc, 4);
 
-    pkcs11_obj_t *obj = janet_getabstract(argv, 0, get_obj_type());
+    p11_obj_t *obj = janet_getabstract(argv, 0, get_p11_obj_type());
     CK_SLOT_ID slot_id = janet_getinteger64(argv, 1);
     CK_UTF8CHAR_PTR pin = (CK_UTF8CHAR_PTR)janet_getcstring(argv, 2);
     const char *jlabel = janet_getcstring(argv, 3);
