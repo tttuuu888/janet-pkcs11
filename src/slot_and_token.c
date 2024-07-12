@@ -4,9 +4,9 @@
  * Janet-pkcs11 is released under the MIT License, see the LICENSE file.
  */
 
-#include <janet.h>
 #include <stdbool.h>
 #include "main.h"
+#include "pkcs11_utils.h"
 
 /* `:slot-id` will be added to original CK_SLOT_INFO */
 static JanetStruct slot_info_to_struct(CK_SLOT_INFO_PTR info, CK_SLOT_ID slot_id)

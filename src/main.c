@@ -4,9 +4,9 @@
  * Janet-pkcs11 is released under the MIT License, see the LICENSE file.
  */
 
-#include <janet.h>
 #include <dlfcn.h>
 #include "main.h"
+#include "pkcs11_utils.h"
 
 /* Abstract Object functions */
 static int pkcs11_gc_fn(void *data, size_t len);

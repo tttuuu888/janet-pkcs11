@@ -7,8 +7,8 @@
 #ifndef MAIN_H
 #define MAIN_H
 
+#include "janet.h"
 #include "cryptoki_compat/pkcs11.h"
-#include "pkcs11_utils.h"
 
 typedef struct p11_obj {
     void *lib_handle;
