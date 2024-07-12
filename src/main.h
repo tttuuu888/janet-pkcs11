@@ -16,7 +16,8 @@ typedef struct p11_obj {
 } p11_obj_t;
 
 typedef struct session_obj {
-    CK_SESSION_HANDLE_PTR session;
+    CK_SESSION_HANDLE session;
+    CK_FUNCTION_LIST_PTR func_list;
 } session_obj_t;
 
 JanetAbstractType *get_p11_obj_type(void);
