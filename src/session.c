@@ -21,6 +21,7 @@ static JanetAbstractType session_obj_type = {
 };
 
 static JanetMethod session_methods[] = {
+    {"get-session-info", get_session_info},
     {NULL, NULL},
 };
 
@@ -78,9 +79,32 @@ JANET_FN(open_session,
     return janet_wrap_abstract(session_obj);
 }
 
+JANET_FN(get_session_info,
+         "(get-session-info session-obj)",
+         "Returns an information about a session.")
+{
+    janet_fixarity(argc, 1);
+
+    session_obj_t *obj = janet_getabstract(argv, 0, get_session_obj_type());
+
+    CK_SESSION_INFO info;
+    CK_RV rv;
+    rv = obj->func_list->C_GetSessionInfo(obj->session, &info);
+    PKCS11_ASSERT(rv, "C_GetSessionInfo");
+
+    JanetTable *ret = janet_table(4);
+    janet_table_put(ret, janet_ckeywordv("slot-id"), janet_wrap_number(info.slotID));
+    janet_table_put(ret, janet_ckeywordv("state"), janet_wrap_number(info.state));
+    janet_table_put(ret, janet_ckeywordv("flags"), janet_wrap_number(info.flags));
+    janet_table_put(ret, janet_ckeywordv("device-error"), janet_wrap_number(info.ulDeviceError));
+
+    return janet_wrap_struct(janet_table_to_struct(ret));
+}
+
 void submod_session(JanetTable *env) {
     JanetRegExt cfuns[] = {
         JANET_REG("open-session", open_session),
+        JANET_REG("get-session-info", get_session_info),
         JANET_REG_END
     };
     janet_cfuns_ext(env, "", cfuns);

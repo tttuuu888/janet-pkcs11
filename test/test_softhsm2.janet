@@ -22,7 +22,13 @@
   (assert (:get-mechanism-info
              p11 test-slot (tuple (first (:get-mechanism-list p11 test-slot)))))
   (assert (:init-token p11 test-slot test-so-pin test-token-label))
-  (assert (:open-session p11 test-slot :read-only))
+
+  (let [session-ro (assert (:open-session p11 test-slot :read-only))
+        session-rw (assert (:open-session p11 test-slot))]
+    (assert (= ((:get-session-info session-ro) :flags) 4))
+    (assert (= ((:get-session-info session-rw) :flags) 6))
+    (assert (= ((:get-session-info session-ro) :state) 0))
+    (assert (= ((:get-session-info session-rw) :state) 2)))
   )
 
 (assert (sh/exec "softhsm2-util" "--delete-token" "--token" test-token-label))
