@@ -37,13 +37,8 @@ static JanetMethod pkcs11_methods[] = {
 static int pkcs11_gc_fn(void *data, size_t len) {
     p11_obj_t *obj = (p11_obj_t *)data;
 
-    if (obj->func_list) {
-        obj->func_list->C_Finalize(NULL_PTR);
-    }
-
-    if (obj->lib_handle) {
-        dlclose(obj->lib_handle);
-    }
+    obj->func_list->C_Finalize(NULL_PTR);
+    dlclose(obj->lib_handle);
 
     return 0;
 }
