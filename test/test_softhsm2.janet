@@ -9,19 +9,10 @@
 (def test-so-pin "012345")
 (def test-user-pin "123456")
 
-### `p11-obj` and `session-obj` should work within `with` binding
+(var test-slot nil)
+
 (with [p11 (assert (new softhsm2-so-path))]
-      (let  [test-slot (min ;(:get-slot-list p11))]
-        (assert (:init-token p11 test-slot test-so-pin test-token-label))
-        (with [session-ro (assert (:open-session p11 test-slot :read-only))]
-              (assert (= ((:get-session-info session-ro) :flags) 4)))))
-
-(assert (sh/exec "softhsm2-util" "--delete-token" "--token" test-token-label))
-
-
-### `p11-obj` and `session-obj` should work within `let` binding as well
-(let [p11 (assert (new softhsm2-so-path))
-      test-slot (min ;(:get-slot-list p11))]
+  (set test-slot (min ;(:get-slot-list p11)))
 
   (let [info (:get-info p11)]
     (assert (= (info :cryptoki-version)) {:major 2 :minor 40})
@@ -35,18 +26,31 @@
              p11 test-slot (tuple (first (:get-mechanism-list p11 test-slot)))))
   (assert (:init-token p11 test-slot test-so-pin test-token-label))
 
-  (let [session-ro (assert (:open-session p11 test-slot :read-only))
-        session-rw (assert (:open-session p11 test-slot))]
-    (assert (= ((:get-session-info session-ro) :flags) 4))
+  (with [session-rw (assert (:open-session p11 test-slot))]
     (assert (= ((:get-session-info session-rw) :flags) 6))
-    (assert (= ((:get-session-info session-ro) :state) 0))
     (assert (= ((:get-session-info session-rw) :state) 2))
-
     (assert-error "softhsm2 does not support C_GetOperationState"
-                  (:get-operation-state session-ro))
+                  (:get-operation-state session-rw))
+    (assert (:login session-rw :so test-so-pin))
+    )
 
-    ))
+  (with [session-ro (assert (:open-session p11 test-slot :read-only))]
+    (assert (= ((:get-session-info session-ro) :flags) 4))
+    (assert (= ((:get-session-info session-ro) :state) 0))
+    )
+  )
 
 (assert (sh/exec "softhsm2-util" "--delete-token" "--token" test-token-label))
+
+### `p11-obj` and `session-obj` should work within `let` binding as well
+(let [p11 (assert (new softhsm2-so-path))]
+  (let  [test-slot (min ;(:get-slot-list p11))]
+    (assert (:init-token p11 test-slot test-so-pin test-token-label))
+    (let [session-ro (assert (:open-session p11 test-slot :read-only))]
+      (assert (= ((:get-session-info session-ro) :flags) 4)))))
+
+(assert (sh/exec "softhsm2-util" "--delete-token" "--token" test-token-label))
+
+
 
 (end-suite)
