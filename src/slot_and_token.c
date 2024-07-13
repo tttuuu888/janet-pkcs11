@@ -313,7 +313,7 @@ JANET_FN(init_token,
 
 JANET_FN(init_pin,
          "(init-pin session-obj pin)",
-         "Initializes the normal user’s PIN. Return `session-obj`, if "
+         "Initializes the normal user’s PIN. Returns `session-obj`, if "
          "successful.")
 {
     janet_fixarity(argc, 2);
@@ -328,6 +328,27 @@ JANET_FN(init_pin,
     return janet_wrap_abstract(obj);
 }
 
+JANET_FN(set_pin,
+         "(set-pin session-obj old-pin new-pin)",
+         "Modifies the PIN of the user that is currently logged in, or the "
+         "normal user's' PIN if the session is not logged in. "
+         "Returns `session-obj`, if successful.")
+{
+    janet_fixarity(argc, 3);
+
+    session_obj_t *obj = janet_getabstract(argv, 0, get_session_obj_type());
+    const char *old_pin = (const char *)janet_getstring(argv, 1);
+    const char *new_pin = (const char *)janet_getstring(argv, 2);
+
+    CK_RV rv;
+    rv = obj->func_list->C_SetPIN(obj->session,
+                                  (CK_UTF8CHAR_PTR)old_pin, (CK_ULONG)strlen(old_pin),
+                                  (CK_UTF8CHAR_PTR)new_pin, (CK_ULONG)strlen(new_pin));
+    PKCS11_ASSERT(rv, "C_SetPIN");
+
+    return janet_wrap_abstract(obj);
+}
+
 void submod_slot_and_token(JanetTable *env) {
     JanetRegExt cfuns[] = {
         JANET_REG("get-slot-list", get_slot_list),
@@ -338,6 +359,7 @@ void submod_slot_and_token(JanetTable *env) {
         JANET_REG("get-mechanism-info", get_mechanism_info),
         JANET_REG("init-token", init_token),
         JANET_REG("init-pin", init_pin),
+        JANET_REG("set-pin", set_pin),
         JANET_REG_END
     };
     janet_cfuns_ext(env, "", cfuns);

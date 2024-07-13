@@ -6,8 +6,10 @@
 
 (def softhsm2-so-path "/usr/lib/softhsm/libsofthsm2.so")
 (def test-token-label "janet-pkcs11-test")
-(def test-so-pin "012345")
-(def test-user-pin "123456")
+(def test-so-pin  "012345")
+(def test-so-pin2 "abcdef")
+(def test-user-pin  "123456")
+(def test-user-pin2 "bcdefg")
 
 (var test-slot nil)
 
@@ -32,15 +34,17 @@
     (assert-error "softhsm2 does not support C_GetOperationState"
                   (:get-operation-state session-rw))
     (assert (:login session-rw :so test-so-pin))
+    (assert (:set-pin session-rw test-so-pin test-so-pin2))
     (assert (:init-pin session-rw test-user-pin))
     (assert (:logout session-rw))
-    (assert (:login session-rw :user test-user-pin))
+    (assert (:set-pin session-rw test-user-pin test-user-pin2))
+    (assert (:login session-rw :user test-user-pin2))
     (assert (:logout session-rw)))
 
   (with [session-ro (assert (:open-session p11 test-slot :read-only))]
     (assert (= ((:get-session-info session-ro) :flags) 4))
     (assert (= ((:get-session-info session-ro) :state) 0))
-    (assert (:login session-ro :user test-user-pin))
+    (assert (:login session-ro :user test-user-pin2))
     (assert (:logout session-ro)))
   )
 
@@ -48,7 +52,7 @@
 
 ### `p11-obj` and `session-obj` should work within `let` binding as well
 (let [p11 (assert (new softhsm2-so-path))]
-  (let  [test-slot (min ;(:get-slot-list p11))]
+  (let [test-slot (min ;(:get-slot-list p11))]
     (assert (:init-token p11 test-slot test-so-pin test-token-label))
     (let [session-ro (assert (:open-session p11 test-slot :read-only))]
       (assert (= ((:get-session-info session-ro) :flags) 4)))))

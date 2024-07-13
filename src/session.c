@@ -27,6 +27,7 @@ static JanetMethod session_methods[] = {
     {"login", cfun_login},
     {"logout", cfun_logout},
     {"init-pin", init_pin},
+    {"set-pin", set_pin},
     {NULL, NULL},
 };
 

@@ -39,6 +39,7 @@ Janet get_mechanism_list(int32_t argc, Janet *argv);
 Janet get_mechanism_info(int32_t argc, Janet *argv);
 Janet init_token(int32_t argc, Janet *argv);
 Janet init_pin(int32_t argc, Janet *argv);
+Janet set_pin(int32_t argc, Janet *argv);
 
 /* Session management functions */
 Janet open_session(int32_t argc, Janet *argv);
