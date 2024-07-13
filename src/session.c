@@ -24,6 +24,7 @@ static JanetMethod session_methods[] = {
     {"close", cfun_session_close},
     {"get-session-info", get_session_info},
     {"get-operation-state", get_operation_state},
+    {"login", cfun_login},
     {NULL, NULL},
 };
 
@@ -143,11 +144,41 @@ JANET_FN(get_operation_state,
     return janet_wrap_string(janet_string(state->data, state_len));
 }
 
+JANET_FN(cfun_login,
+         "(login session-obj user-type pin)",
+         "Logs a user into a token. `user-type` must be one of the following: "
+         ":so, :user, or :context-specific.")
+{
+    janet_fixarity(argc, 3);
+
+    session_obj_t *obj = janet_getabstract(argv, 0, get_session_obj_type());
+    const uint8_t *user_type_kw = janet_getkeyword(argv, 1);
+    const char *pin = (const char *)janet_getstring(argv, 2);
+
+    CK_USER_TYPE user_type;
+    if (!janet_cstrcmp(user_type_kw, "so")) {
+        user_type = CKU_SO;
+    } else if (!janet_cstrcmp(user_type_kw, "user")) {
+        user_type = CKU_USER;
+    } else if (!janet_cstrcmp(user_type_kw, "context-speicifc")) {
+        user_type = CKU_CONTEXT_SPECIFIC;
+    } else {
+        janet_panicf("expected one of :so, :user, :context-speicifc, got %v", argv[1]);
+    }
+
+    CK_RV rv;
+    rv = obj->func_list->C_Login(obj->session, user_type, (CK_UTF8CHAR_PTR)pin, (CK_ULONG)strlen(pin));
+    PKCS11_ASSERT(rv, "C_Login");
+
+    return janet_wrap_abstract(obj);
+}
+
 void submod_session(JanetTable *env) {
     JanetRegExt cfuns[] = {
         JANET_REG("open-session", open_session),
         JANET_REG("get-session-info", get_session_info),
         JANET_REG("get-operation-state", get_operation_state),
+        JANET_REG("login", cfun_login),
         JANET_REG_END
     };
     janet_cfuns_ext(env, "", cfuns);
