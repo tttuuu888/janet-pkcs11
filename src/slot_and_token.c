@@ -49,7 +49,6 @@ JANET_FN(get_slot_list,
     }
 
     p_slot_list = janet_smalloc(count * sizeof(CK_SLOT_ID));
-
     rv = obj->func_list->C_GetSlotList(token_present, p_slot_list, &count);
     PKCS11_ASSERT(rv, "C_GetSlotList");
 

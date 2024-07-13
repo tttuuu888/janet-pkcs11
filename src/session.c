@@ -23,6 +23,7 @@ static JanetAbstractType session_obj_type = {
 static JanetMethod session_methods[] = {
     {"close", cfun_session_close},
     {"get-session-info", get_session_info},
+    {"get-operation-state", get_operation_state},
     {NULL, NULL},
 };
 
@@ -118,10 +119,35 @@ JANET_FN(get_session_info,
     return janet_wrap_struct(janet_table_to_struct(ret));
 }
 
+JANET_FN(get_operation_state,
+         "(get-operation-state session-obj)",
+         "Returns the cryptographic operations state of a session in string.")
+{
+    janet_fixarity(argc, 1);
+
+    session_obj_t *obj = janet_getabstract(argv, 0, get_session_obj_type());
+
+    CK_ULONG state_len;
+    CK_RV rv;
+    rv = obj->func_list->C_GetOperationState(obj->session, NULL_PTR, &state_len);
+    PKCS11_ASSERT(rv, "C_GetOperationState");
+
+    if (state_len == 0) {
+        return janet_wrap_nil();
+    }
+
+    JanetBuffer *state = janet_buffer(state_len);
+    rv = obj->func_list->C_GetOperationState(obj->session, (CK_BYTE_PTR)state->data, &state_len);
+    PKCS11_ASSERT(rv, "C_GetOperationState");
+
+    return janet_wrap_string(janet_string(state->data, state_len));
+}
+
 void submod_session(JanetTable *env) {
     JanetRegExt cfuns[] = {
         JANET_REG("open-session", open_session),
         JANET_REG("get-session-info", get_session_info),
+        JANET_REG("get-operation-state", get_operation_state),
         JANET_REG_END
     };
     janet_cfuns_ext(env, "", cfuns);

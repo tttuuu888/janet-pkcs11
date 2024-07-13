@@ -40,7 +40,12 @@
     (assert (= ((:get-session-info session-ro) :flags) 4))
     (assert (= ((:get-session-info session-rw) :flags) 6))
     (assert (= ((:get-session-info session-ro) :state) 0))
-    (assert (= ((:get-session-info session-rw) :state) 2))))
+    (assert (= ((:get-session-info session-rw) :state) 2))
+
+    (assert-error "softhsm2 does not support C_GetOperationState"
+                  (:get-operation-state session-ro))
+
+    ))
 
 (assert (sh/exec "softhsm2-util" "--delete-token" "--token" test-token-label))
 
