@@ -4,11 +4,11 @@
  * Janet-pkcs11 is released under the MIT License, see the LICENSE file.
  */
 
-#include <stdbool.h>
 #include "main.h"
 #include "pkcs11_utils.h"
 
 /* Abstract Object functions */
+static Janet cfun_session_close(int32_t argc, Janet *argv);
 static int session_gc_fn(void *data, size_t len);
 static int session_get_fn(void *data, Janet key, Janet *out);
 
@@ -21,17 +21,24 @@ static JanetAbstractType session_obj_type = {
 };
 
 static JanetMethod session_methods[] = {
+    {"close", cfun_session_close},
     {"get-session-info", get_session_info},
     {NULL, NULL},
 };
 
+static void session_close(session_obj_t *obj) {
+    if (obj->is_session_open) {
+        CK_RV rv;
+        rv = obj->func_list->C_CloseSession(obj->session);
+        PKCS11_ASSERT(rv, "C_CloseSession");
+        obj->is_session_open = false;
+    }
+}
+
 /* Abstract Object functions */
 static int session_gc_fn(void *data, size_t len) {
     session_obj_t *obj = (session_obj_t *)data;
-
-    CK_RV rv;
-    rv = obj->func_list->C_CloseSession(obj->session);
-    PKCS11_ASSERT(rv, "C_CloseSession");
+    session_close(obj);
 
     return 0;
 }
@@ -43,6 +50,15 @@ static int session_get_fn(void *data, Janet key, Janet *out) {
     }
 
     return janet_getmethod(janet_unwrap_keyword(key), session_methods, out);
+}
+
+static Janet cfun_session_close(int32_t argc, Janet *argv) {
+    janet_fixarity(argc, 1);
+
+    session_obj_t *obj = janet_getabstract(argv, 0, get_session_obj_type());
+    session_close(obj);
+
+    return janet_wrap_nil();
 }
 
 JanetAbstractType *get_session_obj_type(void) {
@@ -75,6 +91,7 @@ JANET_FN(open_session,
     memset(session_obj, 0, sizeof(session_obj_t));
     session_obj->session = session;
     session_obj->func_list = obj->func_list;
+    session_obj->is_session_open = true;
 
     return janet_wrap_abstract(session_obj);
 }

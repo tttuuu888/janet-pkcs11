@@ -9,6 +9,7 @@
 #include "pkcs11_utils.h"
 
 /* Abstract Object functions */
+static Janet cfun_pkcs11_close(int32_t argc, Janet *argv);
 static int pkcs11_gc_fn(void *data, size_t len);
 static int pkcs11_get_fn(void *data, Janet key, Janet *out);
 
@@ -21,6 +22,7 @@ static JanetAbstractType p11_obj_type = {
 };
 
 static JanetMethod pkcs11_methods[] = {
+    {"close", cfun_pkcs11_close},
     {"get-info", get_info},
     {"get-slot-list", get_slot_list},
     {"get-slot-info", get_slot_info},
@@ -33,12 +35,18 @@ static JanetMethod pkcs11_methods[] = {
     {NULL, NULL},
 };
 
+static void pkcs11_close(p11_obj_t *obj) {
+    if (obj->is_p11_open) {
+        obj->func_list->C_Finalize(NULL_PTR);
+        dlclose(obj->lib_handle);
+        obj->is_p11_open = false;
+    }
+}
+
 /* Abstract Object functions */
 static int pkcs11_gc_fn(void *data, size_t len) {
     p11_obj_t *obj = (p11_obj_t *)data;
-
-    obj->func_list->C_Finalize(NULL_PTR);
-    dlclose(obj->lib_handle);
+    pkcs11_close(obj);
 
     return 0;
 }
@@ -50,6 +58,15 @@ static int pkcs11_get_fn(void *data, Janet key, Janet *out) {
     }
 
     return janet_getmethod(janet_unwrap_keyword(key), pkcs11_methods, out);
+}
+
+static Janet cfun_pkcs11_close(int32_t argc, Janet *argv) {
+    janet_fixarity(argc, 1);
+
+    p11_obj_t *obj = janet_getabstract(argv, 0, get_p11_obj_type());
+    pkcs11_close(obj);
+
+    return janet_wrap_nil();
 }
 
 JanetAbstractType *get_p11_obj_type(void) {
@@ -85,6 +102,8 @@ JANET_FN(new,
 
     rv = obj->func_list->C_Initialize(NULL_PTR);
     PKCS11_ASSERT(rv, "C_Initialize");
+
+    obj->is_p11_open = true;
 
     return janet_wrap_abstract(obj);
 }

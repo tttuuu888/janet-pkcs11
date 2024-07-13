@@ -7,17 +7,20 @@
 #ifndef MAIN_H
 #define MAIN_H
 
+#include <stdbool.h>
 #include "janet.h"
 #include "cryptoki_compat/pkcs11.h"
 
 typedef struct p11_obj {
     void *lib_handle;
     CK_FUNCTION_LIST_PTR func_list;
+    bool is_p11_open;
 } p11_obj_t;
 
 typedef struct session_obj {
     CK_SESSION_HANDLE session;
     CK_FUNCTION_LIST_PTR func_list;
+    bool is_session_open;
 } session_obj_t;
 
 JanetAbstractType *get_p11_obj_type(void);

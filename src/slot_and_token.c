@@ -4,7 +4,6 @@
  * Janet-pkcs11 is released under the MIT License, see the LICENSE file.
  */
 
-#include <stdbool.h>
 #include "main.h"
 #include "pkcs11_utils.h"
 
