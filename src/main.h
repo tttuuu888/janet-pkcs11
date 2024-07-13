@@ -45,6 +45,7 @@ Janet open_session(int32_t argc, Janet *argv);
 Janet get_session_info(int32_t argc, Janet *argv);
 Janet get_operation_state(int32_t argc, Janet *argv);
 Janet cfun_login(int32_t argc, Janet *argv);
+Janet cfun_logout(int32_t argc, Janet *argv);
 
 /* Sub modules */
 void submod_slot_and_token(JanetTable *env);

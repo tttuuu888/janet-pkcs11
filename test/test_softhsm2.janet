@@ -32,12 +32,16 @@
     (assert-error "softhsm2 does not support C_GetOperationState"
                   (:get-operation-state session-rw))
     (assert (:login session-rw :so test-so-pin))
-    )
+    (assert (:init-pin session-rw test-user-pin))
+    (assert (:logout session-rw))
+    (assert (:login session-rw :user test-user-pin))
+    (assert (:logout session-rw)))
 
   (with [session-ro (assert (:open-session p11 test-slot :read-only))]
     (assert (= ((:get-session-info session-ro) :flags) 4))
     (assert (= ((:get-session-info session-ro) :state) 0))
-    )
+    (assert (:login session-ro :user test-user-pin))
+    (assert (:logout session-ro)))
   )
 
 (assert (sh/exec "softhsm2-util" "--delete-token" "--token" test-token-label))

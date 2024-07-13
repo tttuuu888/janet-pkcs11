@@ -25,6 +25,7 @@ static JanetMethod session_methods[] = {
     {"get-session-info", get_session_info},
     {"get-operation-state", get_operation_state},
     {"login", cfun_login},
+    {"logout", cfun_logout},
     {"init-pin", init_pin},
     {NULL, NULL},
 };
@@ -71,8 +72,8 @@ JanetAbstractType *get_session_obj_type(void) {
 JANET_FN(open_session,
          "(open-session p11-obj slot-id &opt :read-only)",
          "Opens a session between an application and a token in a particular "
-         "slot. Returns `session-obj`, if successful."
-         "Open R/W session unless `:read-only` is passed.")
+         "slot. Opens R/W session unless `:read-only` is passed. "
+         "Returns `session-obj`, if successful.")
 {
     janet_arity(argc, 2, 3);
 
@@ -148,7 +149,8 @@ JANET_FN(get_operation_state,
 JANET_FN(cfun_login,
          "(login session-obj user-type pin)",
          "Logs a user into a token. `user-type` must be one of the following: "
-         ":so, :user, or :context-specific.")
+         ":so, :user, or :context-specific. Returns `session-obj`, if "
+         "successful.")
 {
     janet_fixarity(argc, 3);
 
@@ -174,12 +176,27 @@ JANET_FN(cfun_login,
     return janet_wrap_abstract(obj);
 }
 
+JANET_FN(cfun_logout,
+         "(logout session-obj)",
+         "Logs a user out from a token. Returns `session-obj`, if successful.")
+{
+    janet_fixarity(argc, 1);
+
+    session_obj_t *obj = janet_getabstract(argv, 0, get_session_obj_type());
+    CK_RV rv;
+    rv = obj->func_list->C_Logout(obj->session);
+    PKCS11_ASSERT(rv, "C_Logout");
+
+    return janet_wrap_abstract(obj);
+}
+
 void submod_session(JanetTable *env) {
     JanetRegExt cfuns[] = {
         JANET_REG("open-session", open_session),
         JANET_REG("get-session-info", get_session_info),
         JANET_REG("get-operation-state", get_operation_state),
         JANET_REG("login", cfun_login),
+        JANET_REG("logout", cfun_logout),
         JANET_REG_END
     };
     janet_cfuns_ext(env, "", cfuns);
