@@ -75,12 +75,11 @@ JanetAbstractType *get_p11_obj_type(void) {
 }
 
 JANET_FN(new,
-         "(new &opt lib-path)",
+         "(new lib-path)",
          "Get the `p11-obj`(an instance holding a handle to the opened PKCS#11 "
-         "library). If `lib-path` is not provided, try to open a libirary in "
-         "environment variable, `PKCS11_MODULE`")
+         "library).")
 {
-    janet_arity(argc, 0, 1);
+    janet_fixarity(argc, 1);
 
     p11_obj_t *obj = janet_abstract(get_p11_obj_type(), sizeof(p11_obj_t));
     memset(obj, 0, sizeof(p11_obj_t));
