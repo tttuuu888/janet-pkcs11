@@ -7,8 +7,9 @@
 #include "main.h"
 #include "pkcs11_utils.h"
 
-/* Abstract Object functions */
 static Janet cfun_session_close(int32_t argc, Janet *argv);
+
+/* Abstract Object functions */
 static int session_gc_fn(void *data, size_t len);
 static int session_get_fn(void *data, Janet key, Janet *out);
 
@@ -99,6 +100,22 @@ JANET_FN(open_session,
     session_obj->is_session_open = true;
 
     return janet_wrap_abstract(session_obj);
+}
+
+JANET_FN(close_all_sessions,
+         "(close-all-sessions p11-obj slot-id)",
+         "Closes all sessions an application has with a token.")
+{
+    janet_fixarity(argc, 2);
+
+    p11_obj_t *obj = janet_getabstract(argv, 0, get_p11_obj_type());
+    CK_SLOT_ID slot_id = janet_getinteger64(argv, 1);
+
+    CK_RV rv;
+    rv = obj->func_list->C_CloseAllSessions(slot_id);
+    PKCS11_ASSERT(rv, "C_CloseAllSessions");
+
+    return janet_wrap_nil();
 }
 
 JANET_FN(get_session_info,
@@ -194,6 +211,7 @@ JANET_FN(cfun_logout,
 void submod_session(JanetTable *env) {
     JanetRegExt cfuns[] = {
         JANET_REG("open-session", open_session),
+        JANET_REG("close-all-sessions", close_all_sessions),
         JANET_REG("get-session-info", get_session_info),
         JANET_REG("get-operation-state", get_operation_state),
         JANET_REG("login", cfun_login),

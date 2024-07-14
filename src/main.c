@@ -32,6 +32,7 @@ static JanetMethod pkcs11_methods[] = {
     {"get-mechanism-info", get_mechanism_info},
     {"init-token", init_token},
     {"open-session", open_session},
+    {"close-all-sessions", close_all_sessions},
     {NULL, NULL},
 };
 

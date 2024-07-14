@@ -46,7 +46,8 @@
     (assert (= ((:get-session-info session-ro) :state) 0))
     (assert (:login session-ro :user test-user-pin2))
     (assert (:logout session-ro)))
-  )
+
+  (assert (= (:close-all-sessions p11 test-slot) nil)))
 
 (assert (sh/exec "softhsm2-util" "--delete-token" "--token" test-token-label))
 

@@ -43,6 +43,7 @@ Janet set_pin(int32_t argc, Janet *argv);
 
 /* Session management functions */
 Janet open_session(int32_t argc, Janet *argv);
+Janet close_all_sessions(int32_t argc, Janet *argv);
 Janet get_session_info(int32_t argc, Janet *argv);
 Janet get_operation_state(int32_t argc, Janet *argv);
 Janet cfun_login(int32_t argc, Janet *argv);
