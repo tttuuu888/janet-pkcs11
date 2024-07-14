@@ -7,8 +7,6 @@
 #include "main.h"
 #include "pkcs11_utils.h"
 
-static Janet cfun_session_close(int32_t argc, Janet *argv);
-
 /* Abstract Object functions */
 static int session_gc_fn(void *data, size_t len);
 static int session_get_fn(void *data, Janet key, Janet *out);
@@ -22,7 +20,8 @@ static JanetAbstractType session_obj_type = {
 };
 
 static JanetMethod session_methods[] = {
-    {"close", cfun_session_close},
+    {"close", close_session},
+    {"close-session", close_session},
     {"get-session-info", get_session_info},
     {"get-operation-state", get_operation_state},
     {"login", cfun_login},
@@ -58,15 +57,6 @@ static int session_get_fn(void *data, Janet key, Janet *out) {
     return janet_getmethod(janet_unwrap_keyword(key), session_methods, out);
 }
 
-static Janet cfun_session_close(int32_t argc, Janet *argv) {
-    janet_fixarity(argc, 1);
-
-    session_obj_t *obj = janet_getabstract(argv, 0, get_session_obj_type());
-    session_close(obj);
-
-    return janet_wrap_nil();
-}
-
 JanetAbstractType *get_session_obj_type(void) {
     return &session_obj_type;
 }
@@ -100,6 +90,18 @@ JANET_FN(open_session,
     session_obj->is_session_open = true;
 
     return janet_wrap_abstract(session_obj);
+}
+
+JANET_FN(close_session,
+         "(close-session session-obj)",
+         "Closes a session between an application and a token.")
+{
+    janet_fixarity(argc, 1);
+
+    session_obj_t *obj = janet_getabstract(argv, 0, get_session_obj_type());
+    session_close(obj);
+
+    return janet_wrap_nil();
 }
 
 JANET_FN(close_all_sessions,
@@ -211,6 +213,7 @@ JANET_FN(cfun_logout,
 void submod_session(JanetTable *env) {
     JanetRegExt cfuns[] = {
         JANET_REG("open-session", open_session),
+        JANET_REG("close-session", close_session),
         JANET_REG("close-all-sessions", close_all_sessions),
         JANET_REG("get-session-info", get_session_info),
         JANET_REG("get-operation-state", get_operation_state),
