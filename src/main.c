@@ -23,16 +23,16 @@ static JanetAbstractType p11_obj_type = {
 
 static JanetMethod pkcs11_methods[] = {
     {"close", cfun_pkcs11_close},
-    {"get-info", get_info},
-    {"get-slot-list", get_slot_list},
-    {"get-slot-info", get_slot_info},
-    {"get-token-info", get_token_info},
-    {"wait-for-slot-event", wait_for_slot_event},
-    {"get-mechanism-list", get_mechanism_list},
-    {"get-mechanism-info", get_mechanism_info},
-    {"init-token", init_token},
-    {"open-session", open_session},
-    {"close-all-sessions", close_all_sessions},
+    {"get-info", p11_get_info},
+    {"get-slot-list", p11_get_slot_list},
+    {"get-slot-info", p11_get_slot_info},
+    {"get-token-info", p11_get_token_info},
+    {"wait-for-slot-event", p11_wait_for_slot_event},
+    {"get-mechanism-list", p11_get_mechanism_list},
+    {"get-mechanism-info", p11_get_mechanism_info},
+    {"init-token", p11_init_token},
+    {"open-session", p11_open_session},
+    {"close-all-sessions", p11_close_all_sessions},
     {NULL, NULL},
 };
 
@@ -74,7 +74,7 @@ JanetAbstractType *get_p11_obj_type(void) {
     return &p11_obj_type;
 }
 
-JANET_FN(new,
+JANET_FN(p11_new,
          "(new lib-path)",
          "Get the `p11-obj`(an instance holding a handle to the opened PKCS#11 "
          "library).")
@@ -108,7 +108,7 @@ JANET_FN(new,
     return janet_wrap_abstract(obj);
 }
 
-JANET_FN(get_info,
+JANET_FN(p11_get_info,
          "(get-info p11-obj)",
          "Returns general information about Cryptoki.")
 {
@@ -145,8 +145,8 @@ JANET_FN(get_info,
 static void submod_general_purpose(JanetTable *env)
 {
     JanetRegExt cfuns[] = {
-        JANET_REG("new", new),
-        JANET_REG("get-info", get_info),
+        JANET_REG("new", p11_new),
+        JANET_REG("get-info", p11_get_info),
         JANET_REG_END
     };
     janet_cfuns_ext(env, "", cfuns);

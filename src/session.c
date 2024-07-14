@@ -20,14 +20,14 @@ static JanetAbstractType session_obj_type = {
 };
 
 static JanetMethod session_methods[] = {
-    {"close", close_session},
-    {"close-session", close_session},
-    {"get-session-info", get_session_info},
-    {"get-operation-state", get_operation_state},
-    {"login", cfun_login},
-    {"logout", cfun_logout},
-    {"init-pin", init_pin},
-    {"set-pin", set_pin},
+    {"close", p11_close_session},
+    {"close-session", p11_close_session},
+    {"get-session-info", p11_get_session_info},
+    {"get-operation-state", p11_get_operation_state},
+    {"login", p11_login},
+    {"logout", p11_logout},
+    {"init-pin", p11_init_pin},
+    {"set-pin", p11_set_pin},
     {NULL, NULL},
 };
 
@@ -61,7 +61,7 @@ JanetAbstractType *get_session_obj_type(void) {
     return &session_obj_type;
 }
 
-JANET_FN(open_session,
+JANET_FN(p11_open_session,
          "(open-session p11-obj slot-id &opt :read-only)",
          "Opens a session between an application and a token in a particular "
          "slot. Opens R/W session unless `:read-only` is passed. "
@@ -92,7 +92,7 @@ JANET_FN(open_session,
     return janet_wrap_abstract(session_obj);
 }
 
-JANET_FN(close_session,
+JANET_FN(p11_close_session,
          "(close-session session-obj)",
          "Closes a session between an application and a token.")
 {
@@ -104,7 +104,7 @@ JANET_FN(close_session,
     return janet_wrap_nil();
 }
 
-JANET_FN(close_all_sessions,
+JANET_FN(p11_close_all_sessions,
          "(close-all-sessions p11-obj slot-id)",
          "Closes all sessions an application has with a token.")
 {
@@ -120,7 +120,7 @@ JANET_FN(close_all_sessions,
     return janet_wrap_nil();
 }
 
-JANET_FN(get_session_info,
+JANET_FN(p11_get_session_info,
          "(get-session-info session-obj)",
          "Returns an information about a session.")
 {
@@ -142,7 +142,7 @@ JANET_FN(get_session_info,
     return janet_wrap_struct(janet_table_to_struct(ret));
 }
 
-JANET_FN(get_operation_state,
+JANET_FN(p11_get_operation_state,
          "(get-operation-state session-obj)",
          "Returns the cryptographic operations state of a session in string.")
 {
@@ -166,7 +166,7 @@ JANET_FN(get_operation_state,
     return janet_wrap_string(janet_string(state->data, state_len));
 }
 
-JANET_FN(cfun_login,
+JANET_FN(p11_login,
          "(login session-obj user-type pin)",
          "Logs a user into a token. `user-type` must be one of the following: "
          ":so, :user, or :context-specific. Returns `session-obj`, if "
@@ -196,7 +196,7 @@ JANET_FN(cfun_login,
     return janet_wrap_abstract(obj);
 }
 
-JANET_FN(cfun_logout,
+JANET_FN(p11_logout,
          "(logout session-obj)",
          "Logs a user out from a token. Returns `session-obj`, if successful.")
 {
@@ -212,13 +212,13 @@ JANET_FN(cfun_logout,
 
 void submod_session(JanetTable *env) {
     JanetRegExt cfuns[] = {
-        JANET_REG("open-session", open_session),
-        JANET_REG("close-session", close_session),
-        JANET_REG("close-all-sessions", close_all_sessions),
-        JANET_REG("get-session-info", get_session_info),
-        JANET_REG("get-operation-state", get_operation_state),
-        JANET_REG("login", cfun_login),
-        JANET_REG("logout", cfun_logout),
+        JANET_REG("open-session", p11_open_session),
+        JANET_REG("close-session", p11_close_session),
+        JANET_REG("close-all-sessions", p11_close_all_sessions),
+        JANET_REG("get-session-info", p11_get_session_info),
+        JANET_REG("get-operation-state", p11_get_operation_state),
+        JANET_REG("login", p11_login),
+        JANET_REG("logout", p11_logout),
         JANET_REG_END
     };
     janet_cfuns_ext(env, "", cfuns);

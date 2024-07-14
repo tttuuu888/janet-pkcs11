@@ -27,28 +27,28 @@ JanetAbstractType *get_p11_obj_type(void);
 JanetAbstractType *get_session_obj_type(void);
 
 /* General purpose functions */
-Janet new(int32_t argc, Janet *argv);
-Janet get_info(int32_t argc, Janet *argv);
+Janet p11_new(int32_t argc, Janet *argv);
+Janet p11_get_info(int32_t argc, Janet *argv);
 
 /* Slot and token management functions */
-Janet get_slot_list(int32_t argc, Janet *argv);
-Janet get_slot_info(int32_t argc, Janet *argv);
-Janet get_token_info(int32_t argc, Janet *argv);
-Janet wait_for_slot_event(int32_t argc, Janet *argv);
-Janet get_mechanism_list(int32_t argc, Janet *argv);
-Janet get_mechanism_info(int32_t argc, Janet *argv);
-Janet init_token(int32_t argc, Janet *argv);
-Janet init_pin(int32_t argc, Janet *argv);
-Janet set_pin(int32_t argc, Janet *argv);
+Janet p11_get_slot_list(int32_t argc, Janet *argv);
+Janet p11_get_slot_info(int32_t argc, Janet *argv);
+Janet p11_get_token_info(int32_t argc, Janet *argv);
+Janet p11_wait_for_slot_event(int32_t argc, Janet *argv);
+Janet p11_get_mechanism_list(int32_t argc, Janet *argv);
+Janet p11_get_mechanism_info(int32_t argc, Janet *argv);
+Janet p11_init_token(int32_t argc, Janet *argv);
+Janet p11_init_pin(int32_t argc, Janet *argv);
+Janet p11_set_pin(int32_t argc, Janet *argv);
 
 /* Session management functions */
-Janet open_session(int32_t argc, Janet *argv);
-Janet close_session(int32_t argc, Janet *argv);
-Janet close_all_sessions(int32_t argc, Janet *argv);
-Janet get_session_info(int32_t argc, Janet *argv);
-Janet get_operation_state(int32_t argc, Janet *argv);
-Janet cfun_login(int32_t argc, Janet *argv);
-Janet cfun_logout(int32_t argc, Janet *argv);
+Janet p11_open_session(int32_t argc, Janet *argv);
+Janet p11_close_session(int32_t argc, Janet *argv);
+Janet p11_close_all_sessions(int32_t argc, Janet *argv);
+Janet p11_get_session_info(int32_t argc, Janet *argv);
+Janet p11_get_operation_state(int32_t argc, Janet *argv);
+Janet p11_login(int32_t argc, Janet *argv);
+Janet p11_logout(int32_t argc, Janet *argv);
 
 /* Sub modules */
 void submod_slot_and_token(JanetTable *env);

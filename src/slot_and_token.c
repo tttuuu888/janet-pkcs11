@@ -29,7 +29,7 @@ static JanetStruct slot_info_to_struct(CK_SLOT_INFO_PTR info, CK_SLOT_ID slot_id
     return janet_table_to_struct(ret);
 }
 
-JANET_FN(get_slot_list,
+JANET_FN(p11_get_slot_list,
          "(get-slot-list p11-obj)",
          "Returns a list of slots in the system")
 {
@@ -60,7 +60,7 @@ JANET_FN(get_slot_list,
     return janet_wrap_tuple(janet_tuple_end(tup));
 }
 
-JANET_FN(get_slot_info,
+JANET_FN(p11_get_slot_info,
          "(get-slot-info p11-obj &opt slot-id)",
          "Returns information about a particular slot in the system. If "
          "`slot-id` is not provided, information about all slots is returned "
@@ -126,7 +126,7 @@ JANET_FN(get_slot_info,
     return janet_wrap_tuple(janet_tuple_end(tup));
 }
 
-JANET_FN(get_token_info,
+JANET_FN(p11_get_token_info,
          "(get-token-info p11-obj slot-id)",
          "Returns information about a particular token in the system. "
          "`slot-id` is the ID of the token’s slot.")
@@ -171,7 +171,7 @@ JANET_FN(get_token_info,
     return janet_wrap_struct(janet_table_to_struct(ret));
 }
 
-JANET_FN(wait_for_slot_event,
+JANET_FN(p11_wait_for_slot_event,
          "(wait-for-slot-event p11-obj)",
          "Returns a list of slot-id of slots where events occurred. "
          "Returns `nil` if there are no event in any slots.")
@@ -206,7 +206,7 @@ JANET_FN(wait_for_slot_event,
     return janet_wrap_tuple(janet_tuple_end(tup));
 }
 
-JANET_FN(get_mechanism_list,
+JANET_FN(p11_get_mechanism_list,
          "(get-mechanism-list p11-obj slot-id)",
          "Returns a list of mechanisms supported by a token."
          "`slot-id` is the ID of the token’s slot.")
@@ -237,7 +237,7 @@ JANET_FN(get_mechanism_list,
     return janet_wrap_tuple(janet_tuple_end(tup));
 }
 
-JANET_FN(get_mechanism_info,
+JANET_FN(p11_get_mechanism_info,
          "(get-mechanism-info p11-obj slot-id &opt mechanism-list)",
          "Returns a list of mechanisms information of `mechanism-list` list."
          "`slot-id` is the ID of the token’s slot. If `mechanism-list` is not "
@@ -289,7 +289,7 @@ JANET_FN(get_mechanism_info,
     return janet_wrap_tuple(janet_tuple_end(ret));
 }
 
-JANET_FN(init_token,
+JANET_FN(p11_init_token,
          "(init-token p11-obj slot-id so-pin label)",
          "Initializes a token. Return `p11-obj`, if successful.")
 {
@@ -311,7 +311,7 @@ JANET_FN(init_token,
     return janet_wrap_abstract(obj);
 }
 
-JANET_FN(init_pin,
+JANET_FN(p11_init_pin,
          "(init-pin session-obj pin)",
          "Initializes the normal user’s PIN. Returns `session-obj`, if "
          "successful.")
@@ -328,7 +328,7 @@ JANET_FN(init_pin,
     return janet_wrap_abstract(obj);
 }
 
-JANET_FN(set_pin,
+JANET_FN(p11_set_pin,
          "(set-pin session-obj old-pin new-pin)",
          "Modifies the PIN of the user that is currently logged in, or the "
          "normal user's' PIN if the session is not logged in. "
@@ -351,15 +351,15 @@ JANET_FN(set_pin,
 
 void submod_slot_and_token(JanetTable *env) {
     JanetRegExt cfuns[] = {
-        JANET_REG("get-slot-list", get_slot_list),
-        JANET_REG("get-slot-info", get_slot_info),
-        JANET_REG("get-token-info", get_token_info),
-        JANET_REG("wait-for-slot-event", wait_for_slot_event),
-        JANET_REG("get-mechanism-list", get_mechanism_list),
-        JANET_REG("get-mechanism-info", get_mechanism_info),
-        JANET_REG("init-token", init_token),
-        JANET_REG("init-pin", init_pin),
-        JANET_REG("set-pin", set_pin),
+        JANET_REG("get-slot-list", p11_get_slot_list),
+        JANET_REG("get-slot-info", p11_get_slot_info),
+        JANET_REG("get-token-info", p11_get_token_info),
+        JANET_REG("wait-for-slot-event", p11_wait_for_slot_event),
+        JANET_REG("get-mechanism-list", p11_get_mechanism_list),
+        JANET_REG("get-mechanism-info", p11_get_mechanism_info),
+        JANET_REG("init-token", p11_init_token),
+        JANET_REG("init-pin", p11_init_pin),
+        JANET_REG("set-pin", p11_set_pin),
         JANET_REG_END
     };
     janet_cfuns_ext(env, "", cfuns);
