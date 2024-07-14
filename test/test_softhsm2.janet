@@ -45,9 +45,7 @@
     (assert (= ((:get-session-info session-ro) :flags) 4))
     (assert (= ((:get-session-info session-ro) :state) 0))
     (assert (:login session-ro :user test-user-pin2))
-    (assert (:logout session-ro)))
-
-  (assert (= (:close-all-sessions p11 test-slot) nil)))
+    (assert (:logout session-ro))))
 
 (assert (sh/exec "softhsm2-util" "--delete-token" "--token" test-token-label))
 
@@ -56,7 +54,9 @@
   (let [test-slot (min ;(:get-slot-list p11))]
     (assert (:init-token p11 test-slot test-so-pin test-token-label))
     (let [session-ro (assert (:open-session p11 test-slot :read-only))]
-      (assert (= ((:get-session-info session-ro) :flags) 4)))))
+      (assert (= ((:get-session-info session-ro) :flags) 4))
+      (assert (= (:close-session session-ro) nil)))
+    (assert (= (:close-all-sessions p11 test-slot) nil))))
 
 (assert (sh/exec "softhsm2-util" "--delete-token" "--token" test-token-label))
 
