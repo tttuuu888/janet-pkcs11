@@ -51,6 +51,8 @@ Janet p11_login(int32_t argc, Janet *argv);
 Janet p11_logout(int32_t argc, Janet *argv);
 
 /* Sub modules */
+void submod_utils(JanetTable *env);
+void submod_types(JanetTable *env);
 void submod_slot_and_token(JanetTable *env);
 void submod_session(JanetTable *env);
 void submod_utils(JanetTable *env);

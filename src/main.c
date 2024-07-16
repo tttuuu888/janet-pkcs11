@@ -154,8 +154,10 @@ static void submod_general_purpose(JanetTable *env)
 }
 
 JANET_MODULE_ENTRY(JanetTable *env) {
+    submod_utils(env);
+    submod_types(env);
+
     submod_general_purpose(env);
     submod_slot_and_token(env);
     submod_session(env);
-    submod_utils(env);
 }

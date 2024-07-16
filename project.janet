@@ -12,6 +12,9 @@
  :name "pkcs11"
  :cflags ["-Isrc" "-Wall" ;default-cflags]
  :source ["src/main.c"
+          "src/error.c"
+          "src/utils.c"
+          "src/types.c"
           "src/slot_and_token.c"
           "src/session.c"
           "src/error.c"
