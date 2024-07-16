@@ -5,8 +5,8 @@
  */
 
 #include "main.h"
-#include "pkcs11_error.h"
-#include "pkcs11_utils.h"
+#include "error.h"
+#include "utils.h"
 
 /* Abstract Object functions */
 static int session_gc_fn(void *data, size_t len);

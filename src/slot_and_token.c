@@ -5,7 +5,7 @@
  */
 
 #include "main.h"
-#include "pkcs11_error.h"
+#include "error.h"
 
 /* `:slot-id` will be added to original CK_SLOT_INFO */
 static JanetStruct slot_info_to_struct(CK_SLOT_INFO_PTR info, CK_SLOT_ID slot_id)

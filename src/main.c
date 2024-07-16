@@ -6,7 +6,7 @@
 
 #include <dlfcn.h>
 #include "main.h"
-#include "pkcs11_error.h"
+#include "error.h"
 
 /* Abstract Object functions */
 static Janet cfun_pkcs11_close(int32_t argc, Janet *argv);

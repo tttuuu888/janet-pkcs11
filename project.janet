@@ -14,6 +14,6 @@
  :source ["src/main.c"
           "src/slot_and_token.c"
           "src/session.c"
-          "src/pkcs11_error.c"
-          "src/pkcs11_utils.c"
+          "src/error.c"
+          "src/utils.c"
          ])
