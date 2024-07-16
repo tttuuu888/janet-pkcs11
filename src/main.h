@@ -50,6 +50,9 @@ Janet p11_get_operation_state(int32_t argc, Janet *argv);
 Janet p11_login(int32_t argc, Janet *argv);
 Janet p11_logout(int32_t argc, Janet *argv);
 
+/* Object management functions */
+Janet p11_create_object(int32_t argc, Janet *argv);
+
 /* Sub modules */
 void submod_utils(JanetTable *env);
 void submod_types(JanetTable *env);

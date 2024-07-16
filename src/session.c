@@ -29,6 +29,7 @@ static JanetMethod session_methods[] = {
     {"logout", p11_logout},
     {"init-pin", p11_init_pin},
     {"set-pin", p11_set_pin},
+    {"create-object", p11_create_object},
     {NULL, NULL},
 };
 

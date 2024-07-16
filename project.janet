@@ -17,6 +17,6 @@
           "src/types.c"
           "src/slot_and_token.c"
           "src/session.c"
-          "src/error.c"
-          "src/utils.c"
+          "src/object.c"
+          "src/attribute.c"
          ])

@@ -39,6 +39,12 @@
     (assert (:logout session-rw))
     (assert (:set-pin session-rw test-user-pin test-user-pin2))
     (assert (:login session-rw :user test-user-pin2))
+
+    (assert (:create-object session-rw {CKA_CLASS CKO_DATA
+                                        CKA_TOKEN true
+                                        CKA_APPLICATION "My Application"
+                                        CKA_VALUE ""}))
+
     (assert (:logout session-rw)))
 
   (with [session-ro (assert (:open-session p11 test-slot :read-only))]
