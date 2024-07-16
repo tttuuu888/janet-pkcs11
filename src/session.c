@@ -5,6 +5,7 @@
  */
 
 #include "main.h"
+#include "pkcs11_error.h"
 #include "pkcs11_utils.h"
 
 /* Abstract Object functions */
@@ -222,4 +223,5 @@ void submod_session(JanetTable *env) {
         JANET_REG_END
     };
     janet_cfuns_ext(env, "", cfuns);
+    janet_register_abstract_type(get_session_obj_type());
 }

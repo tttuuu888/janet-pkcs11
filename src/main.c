@@ -6,7 +6,7 @@
 
 #include <dlfcn.h>
 #include "main.h"
-#include "pkcs11_utils.h"
+#include "pkcs11_error.h"
 
 /* Abstract Object functions */
 static Janet cfun_pkcs11_close(int32_t argc, Janet *argv);
@@ -150,11 +150,12 @@ static void submod_general_purpose(JanetTable *env)
         JANET_REG_END
     };
     janet_cfuns_ext(env, "", cfuns);
+    janet_register_abstract_type(get_p11_obj_type());
 }
 
 JANET_MODULE_ENTRY(JanetTable *env) {
-    janet_register_abstract_type(get_p11_obj_type());
     submod_general_purpose(env);
     submod_slot_and_token(env);
     submod_session(env);
+    submod_utils(env);
 }
