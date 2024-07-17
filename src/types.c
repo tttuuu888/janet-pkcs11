@@ -4,8 +4,267 @@
  * Janet-pkcs11 is released under the MIT License, see the LICENSE file.
  */
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include "main.h"
 #include "types.h"
+
+#define MAX_TYPES 200
+#define HASH_SIZE 2000
+
+typedef struct {
+    const char *name;
+    int value;
+} TypeEntry;
+
+TypeEntry type_table[MAX_TYPES] = {
+    {"CK_INVALID_HANDLE",                    CK_INVALID_HANDLE},
+    {"CKN_SURRENDER",                        CKN_SURRENDER},
+    {"CK_EFFECTIVELY_INFINITE",              CK_EFFECTIVELY_INFINITE},
+    {"CKF_DONT_BLOCK",                       CKF_DONT_BLOCK},
+    {"CKF_ARRAY_ATTRIBUTE",                  CKF_ARRAY_ATTRIBUTE},
+    {"CKU_SO",                               CKU_SO},
+    {"CKU_USER",                             CKU_USER},
+    {"CKU_CONTEXT_SPECIFIC",                 CKU_CONTEXT_SPECIFIC},
+    {"CKS_RO_PUBLIC_SESSION",                CKS_RO_PUBLIC_SESSION},
+    {"CKS_RO_USER_FUNCTIONS",                CKS_RO_USER_FUNCTIONS},
+    {"CKS_RW_PUBLIC_SESSION",                CKS_RW_PUBLIC_SESSION},
+    {"CKS_RW_USER_FUNCTIONS",                CKS_RW_USER_FUNCTIONS},
+    {"CKS_RW_SO_FUNCTIONS",                  CKS_RW_SO_FUNCTIONS},
+    {"CKO_DATA",                             CKO_DATA},
+    {"CKO_CERTIFICATE",                      CKO_CERTIFICATE},
+    {"CKO_PUBLIC_KEY",                       CKO_PUBLIC_KEY},
+    {"CKO_PRIVATE_KEY",                      CKO_PRIVATE_KEY},
+    {"CKO_SECRET_KEY",                       CKO_SECRET_KEY},
+    {"CKO_HW_FEATURE",                       CKO_HW_FEATURE},
+    {"CKO_DOMAIN_PARAMETERS",                CKO_DOMAIN_PARAMETERS},
+    {"CKO_MECHANISM",                        CKO_MECHANISM},
+    {"CKO_VENDOR_DEFINED",                   CKO_VENDOR_DEFINED},
+    {"CKH_MONOTONIC_COUNTER",                CKH_MONOTONIC_COUNTER},
+    {"CKH_CLOCK",                            CKH_CLOCK},
+    {"CKH_USER_INTERFACE",                   CKH_USER_INTERFACE},
+    {"CKH_VENDOR_DEFINED",                   CKH_VENDOR_DEFINED},
+    {"CKA_CLASS",                            CKA_CLASS},
+    {"CKA_TOKEN",                            CKA_TOKEN},
+    {"CKA_PRIVATE",                          CKA_PRIVATE},
+    {"CKA_LABEL",                            CKA_LABEL},
+    {"CKA_APPLICATION",                      CKA_APPLICATION},
+    {"CKA_VALUE",                            CKA_VALUE},
+    {"CKA_OBJECT_ID",                        CKA_OBJECT_ID},
+    {"CKA_CERTIFICATE_TYPE",                 CKA_CERTIFICATE_TYPE},
+    {"CKA_ISSUER",                           CKA_ISSUER},
+    {"CKA_SERIAL_NUMBER",                    CKA_SERIAL_NUMBER},
+    {"CKA_AC_ISSUER",                        CKA_AC_ISSUER},
+    {"CKA_OWNER",                            CKA_OWNER},
+    {"CKA_ATTR_TYPES",                       CKA_ATTR_TYPES},
+    {"CKA_TRUSTED",                          CKA_TRUSTED},
+    {"CKA_CERTIFICATE_CATEGORY",             CKA_CERTIFICATE_CATEGORY},
+    {"CKA_JAVA_MIDP_SECURITY_DOMAIN",        CKA_JAVA_MIDP_SECURITY_DOMAIN},
+    {"CKA_URL",                              CKA_URL},
+    {"CKA_HASH_OF_SUBJECT_PUBLIC_KEY",       CKA_HASH_OF_SUBJECT_PUBLIC_KEY},
+    {"CKA_HASH_OF_ISSUER_PUBLIC_KEY",        CKA_HASH_OF_ISSUER_PUBLIC_KEY},
+    {"CKA_NAME_HASH_ALGORITHM",              CKA_NAME_HASH_ALGORITHM},
+    {"CKA_CHECK_VALUE",                      CKA_CHECK_VALUE},
+    {"CKA_KEY_TYPE",                         CKA_KEY_TYPE},
+    {"CKA_SUBJECT",                          CKA_SUBJECT},
+    {"CKA_ID",                               CKA_ID},
+    {"CKA_SENSITIVE",                        CKA_SENSITIVE},
+    {"CKA_ENCRYPT",                          CKA_ENCRYPT},
+    {"CKA_DECRYPT",                          CKA_DECRYPT},
+    {"CKA_WRAP",                             CKA_WRAP},
+    {"CKA_UNWRAP",                           CKA_UNWRAP},
+    {"CKA_SIGN",                             CKA_SIGN},
+    {"CKA_SIGN_RECOVER",                     CKA_SIGN_RECOVER},
+    {"CKA_VERIFY",                           CKA_VERIFY},
+    {"CKA_VERIFY_RECOVER",                   CKA_VERIFY_RECOVER},
+    {"CKA_DERIVE",                           CKA_DERIVE},
+    {"CKA_START_DATE",                       CKA_START_DATE},
+    {"CKA_END_DATE",                         CKA_END_DATE},
+    {"CKA_MODULUS",                          CKA_MODULUS},
+    {"CKA_MODULUS_BITS",                     CKA_MODULUS_BITS},
+    {"CKA_PUBLIC_EXPONENT",                  CKA_PUBLIC_EXPONENT},
+    {"CKA_PRIVATE_EXPONENT",                 CKA_PRIVATE_EXPONENT},
+    {"CKA_PRIME_2",                          CKA_PRIME_2},
+    {"CKA_COEFFICIENT",                      CKA_COEFFICIENT},
+    {"CKA_PRIME",                            CKA_PRIME},
+    {"CKA_SUBPRIME",                         CKA_SUBPRIME},
+    {"CKA_BASE",                             CKA_BASE},
+    {"CKA_PRIME_BITS",                       CKA_PRIME_BITS},
+    {"CKA_VALUE_BITS",                       CKA_VALUE_BITS},
+    {"CKA_VALUE_LEN",                        CKA_VALUE_LEN},
+    {"CKA_EXTRACTABLE",                      CKA_EXTRACTABLE},
+    {"CKA_LOCAL",                            CKA_LOCAL},
+    {"CKA_NEVER_EXTRACTABLE",                CKA_NEVER_EXTRACTABLE},
+    {"CKA_ALWAYS_SENSITIVE",                 CKA_ALWAYS_SENSITIVE},
+    {"CKA_KEY_GEN_MECHANISM",                CKA_KEY_GEN_MECHANISM},
+    {"CKA_MODIFIABLE",                       CKA_MODIFIABLE},
+    {"CKA_COPYABLE",                         CKA_COPYABLE},
+    {"CKA_DESTROYABLE",                      CKA_DESTROYABLE},
+    {"CKA_EC_PARAMS",                        CKA_EC_PARAMS},
+    {"CKA_EC_POINT",                         CKA_EC_POINT},
+    {"CKA_ALWAYS_AUTHENTICATE",              CKA_ALWAYS_AUTHENTICATE},
+    {"CKA_WRAP_WITH_TRUSTED",                CKA_WRAP_WITH_TRUSTED},
+    {"CKA_WRAP_TEMPLATE",                    CKA_WRAP_TEMPLATE},
+    {"CKA_UNWRAP_TEMPLATE",                  CKA_UNWRAP_TEMPLATE},
+    {"CKA_HW_FEATURE_TYPE",                  CKA_HW_FEATURE_TYPE},
+    {"CKA_RESET_ON_INIT",                    CKA_RESET_ON_INIT},
+    {"CKA_HAS_RESET",                        CKA_HAS_RESET},
+    {"CKA_PIXEL_X",                          CKA_PIXEL_X},
+    {"CKA_PIXEL_Y",                          CKA_PIXEL_Y},
+    {"CKA_RESOLUTION",                       CKA_RESOLUTION},
+    {"CKA_CHAR_ROWS",                        CKA_CHAR_ROWS},
+    {"CKA_CHAR_COLUMNS",                     CKA_CHAR_COLUMNS},
+    {"CKA_COLOR",                            CKA_COLOR},
+    {"CKA_BITS_PER_PIXEL",                   CKA_BITS_PER_PIXEL},
+    {"CKA_CHAR_SETS",                        CKA_CHAR_SETS},
+    {"CKA_ENCODING_METHODS",                 CKA_ENCODING_METHODS},
+    {"CKA_MIME_TYPES",                       CKA_MIME_TYPES},
+    {"CKA_MECHANISM_TYPE",                   CKA_MECHANISM_TYPE},
+    {"CKA_REQUIRED_CMS_ATTRIBUTES",          CKA_REQUIRED_CMS_ATTRIBUTES},
+    {"CKA_DEFAULT_CMS_ATTRIBUTES",           CKA_DEFAULT_CMS_ATTRIBUTES},
+    {"CKA_SUPPORTED_CMS_ATTRIBUTES",         CKA_SUPPORTED_CMS_ATTRIBUTES},
+    {"CKA_ALLOWED_MECHANISMS",               CKA_ALLOWED_MECHANISMS},
+    {"CKA_VENDOR_DEFINED",                   CKA_VENDOR_DEFINED},
+    {"CKR_OK",                               CKR_OK},
+    {"CKR_CANCEL",                           CKR_CANCEL},
+    {"CKR_HOST_MEMORY",                      CKR_HOST_MEMORY},
+    {"CKR_SLOT_ID_INVALID",                  CKR_SLOT_ID_INVALID},
+    {"CKR_GENERAL_ERROR",                    CKR_GENERAL_ERROR},
+    {"CKR_FUNCTION_FAILED",                  CKR_FUNCTION_FAILED},
+    {"CKR_ARGUMENTS_BAD",                    CKR_ARGUMENTS_BAD},
+    {"CKR_NO_EVENT",                         CKR_NO_EVENT},
+    {"CKR_NEED_TO_CREATE_THREADS",           CKR_NEED_TO_CREATE_THREADS},
+    {"CKR_CANT_LOCK",                        CKR_CANT_LOCK},
+    {"CKR_ATTRIBUTE_READ_ONLY",              CKR_ATTRIBUTE_READ_ONLY},
+    {"CKR_ATTRIBUTE_SENSITIVE",              CKR_ATTRIBUTE_SENSITIVE},
+    {"CKR_ATTRIBUTE_TYPE_INVALID",           CKR_ATTRIBUTE_TYPE_INVALID},
+    {"CKR_ATTRIBUTE_VALUE_INVALID",          CKR_ATTRIBUTE_VALUE_INVALID},
+    {"CKR_ACTION_PROHIBITED",                CKR_ACTION_PROHIBITED},
+    {"CKR_DATA_INVALID",                     CKR_DATA_INVALID},
+    {"CKR_DATA_LEN_RANGE",                   CKR_DATA_LEN_RANGE},
+    {"CKR_DEVICE_ERROR",                     CKR_DEVICE_ERROR},
+    {"CKR_DEVICE_MEMORY",                    CKR_DEVICE_MEMORY},
+    {"CKR_DEVICE_REMOVED",                   CKR_DEVICE_REMOVED},
+    {"CKR_ENCRYPTED_DATA_INVALID",           CKR_ENCRYPTED_DATA_INVALID},
+    {"CKR_ENCRYPTED_DATA_LEN_RANGE",         CKR_ENCRYPTED_DATA_LEN_RANGE},
+    {"CKR_FUNCTION_CANCELED",                CKR_FUNCTION_CANCELED},
+    {"CKR_FUNCTION_NOT_PARALLEL",            CKR_FUNCTION_NOT_PARALLEL},
+    {"CKR_FUNCTION_NOT_SUPPORTED",           CKR_FUNCTION_NOT_SUPPORTED},
+    {"CKR_KEY_HANDLE_INVALID",               CKR_KEY_HANDLE_INVALID},
+    {"CKR_KEY_SIZE_RANGE",                   CKR_KEY_SIZE_RANGE},
+    {"CKR_KEY_TYPE_INCONSISTENT",            CKR_KEY_TYPE_INCONSISTENT},
+    {"CKR_KEY_NOT_NEEDED",                   CKR_KEY_NOT_NEEDED},
+    {"CKR_KEY_CHANGED",                      CKR_KEY_CHANGED},
+    {"CKR_KEY_NEEDED",                       CKR_KEY_NEEDED},
+    {"CKR_KEY_INDIGESTIBLE",                 CKR_KEY_INDIGESTIBLE},
+    {"CKR_KEY_FUNCTION_NOT_PERMITTED",       CKR_KEY_FUNCTION_NOT_PERMITTED},
+    {"CKR_KEY_NOT_WRAPPABLE",                CKR_KEY_NOT_WRAPPABLE},
+    {"CKR_KEY_UNEXTRACTABLE",                CKR_KEY_UNEXTRACTABLE},
+    {"CKR_MECHANISM_INVALID",                CKR_MECHANISM_INVALID},
+    {"CKR_MECHANISM_PARAM_INVALID",          CKR_MECHANISM_PARAM_INVALID},
+    {"CKR_OBJECT_HANDLE_INVALID",            CKR_OBJECT_HANDLE_INVALID},
+    {"CKR_OPERATION_ACTIVE",                 CKR_OPERATION_ACTIVE},
+    {"CKR_OPERATION_NOT_INITIALIZED",        CKR_OPERATION_NOT_INITIALIZED},
+    {"CKR_PIN_INCORRECT",                    CKR_PIN_INCORRECT},
+    {"CKR_PIN_INVALID",                      CKR_PIN_INVALID},
+    {"CKR_PIN_LEN_RANGE",                    CKR_PIN_LEN_RANGE},
+    {"CKR_PIN_EXPIRED",                      CKR_PIN_EXPIRED},
+    {"CKR_PIN_LOCKED",                       CKR_PIN_LOCKED},
+    {"CKR_SESSION_CLOSED",                   CKR_SESSION_CLOSED},
+    {"CKR_SESSION_COUNT",                    CKR_SESSION_COUNT},
+    {"CKR_SESSION_HANDLE_INVALID",           CKR_SESSION_HANDLE_INVALID},
+    {"CKR_SESSION_PARALLEL_NOT_SUPPORTED",   CKR_SESSION_PARALLEL_NOT_SUPPORTED},
+    {"CKR_SESSION_READ_ONLY",                CKR_SESSION_READ_ONLY},
+    {"CKR_SESSION_EXISTS",                   CKR_SESSION_EXISTS},
+    {"CKR_SESSION_READ_ONLY_EXISTS",         CKR_SESSION_READ_ONLY_EXISTS},
+    {"CKR_SESSION_READ_WRITE_SO_EXISTS",     CKR_SESSION_READ_WRITE_SO_EXISTS},
+    {"CKR_SIGNATURE_INVALID",                CKR_SIGNATURE_INVALID},
+    {"CKR_SIGNATURE_LEN_RANGE",              CKR_SIGNATURE_LEN_RANGE},
+    {"CKR_TEMPLATE_INCOMPLETE",              CKR_TEMPLATE_INCOMPLETE},
+    {"CKR_TEMPLATE_INCONSISTENT",            CKR_TEMPLATE_INCONSISTENT},
+    {"CKR_TOKEN_NOT_PRESENT",                CKR_TOKEN_NOT_PRESENT},
+    {"CKR_TOKEN_NOT_RECOGNIZED",             CKR_TOKEN_NOT_RECOGNIZED},
+    {"CKR_TOKEN_WRITE_PROTECTED",            CKR_TOKEN_WRITE_PROTECTED},
+    {"CKR_UNWRAPPING_KEY_HANDLE_INVALID",    CKR_UNWRAPPING_KEY_HANDLE_INVALID},
+    {"CKR_UNWRAPPING_KEY_SIZE_RANGE",        CKR_UNWRAPPING_KEY_SIZE_RANGE},
+    {"CKR_UNWRAPPING_KEY_TYPE_INCONSISTENT", CKR_UNWRAPPING_KEY_TYPE_INCONSISTENT},
+    {"CKR_USER_ALREADY_LOGGED_IN",           CKR_USER_ALREADY_LOGGED_IN},
+    {"CKR_USER_NOT_LOGGED_IN",               CKR_USER_NOT_LOGGED_IN},
+    {"CKR_USER_PIN_NOT_INITIALIZED",         CKR_USER_PIN_NOT_INITIALIZED},
+    {"CKR_USER_TYPE_INVALID",                CKR_USER_TYPE_INVALID},
+    {"CKR_USER_ANOTHER_ALREADY_LOGGED_IN",   CKR_USER_ANOTHER_ALREADY_LOGGED_IN},
+    {"CKR_USER_TOO_MANY_TYPES",              CKR_USER_TOO_MANY_TYPES},
+    {"CKR_WRAPPED_KEY_INVALID",              CKR_WRAPPED_KEY_INVALID},
+    {"CKR_WRAPPED_KEY_LEN_RANGE",            CKR_WRAPPED_KEY_LEN_RANGE},
+    {"CKR_WRAPPING_KEY_HANDLE_INVALID",      CKR_WRAPPING_KEY_HANDLE_INVALID},
+    {"CKR_WRAPPING_KEY_SIZE_RANGE",          CKR_WRAPPING_KEY_SIZE_RANGE},
+    {"CKR_WRAPPING_KEY_TYPE_INCONSISTENT",   CKR_WRAPPING_KEY_TYPE_INCONSISTENT},
+    {"CKR_RANDOM_SEED_NOT_SUPPORTED",        CKR_RANDOM_SEED_NOT_SUPPORTED},
+    {"CKR_RANDOM_NO_RNG",                    CKR_RANDOM_NO_RNG},
+    {"CKR_DOMAIN_PARAMS_INVALID",            CKR_DOMAIN_PARAMS_INVALID},
+    {"CKR_CURVE_NOT_SUPPORTED",              CKR_CURVE_NOT_SUPPORTED},
+    {"CKR_BUFFER_TOO_SMALL",                 CKR_BUFFER_TOO_SMALL},
+    {"CKR_SAVED_STATE_INVALID",              CKR_SAVED_STATE_INVALID},
+    {"CKR_INFORMATION_SENSITIVE",            CKR_INFORMATION_SENSITIVE},
+    {"CKR_STATE_UNSAVEABLE",                 CKR_STATE_UNSAVEABLE},
+    {"CKR_CRYPTOKI_NOT_INITIALIZED",         CKR_CRYPTOKI_NOT_INITIALIZED},
+    {"CKR_CRYPTOKI_ALREADY_INITIALIZED",     CKR_CRYPTOKI_ALREADY_INITIALIZED},
+    {"CKR_MUTEX_BAD",                        CKR_MUTEX_BAD},
+    {"CKR_MUTEX_NOT_LOCKED",                 CKR_MUTEX_NOT_LOCKED},
+    {"CKR_FUNCTION_REJECTED",                CKR_FUNCTION_REJECTED},
+    {"CKR_VENDOR_DEFINED",                   CKR_VENDOR_DEFINED},
+    {NULL, 0}
+};
+
+typedef struct {
+    const char *key;
+    unsigned long value;
+} HashEntry;
+
+static HashEntry hash_table[HASH_SIZE] = {{NULL, 0}};
+
+static unsigned int djb2_hash(const char *str) {
+    unsigned int hash = 5381;
+    int c;
+
+    while ((c = *str++))
+        hash = ((hash << 5) + hash) + c;
+
+    return hash % HASH_SIZE;
+}
+
+static void init_hash_table() {
+    static char init = 0;
+    if (init)
+        return;
+
+    for (int i = 0; type_table[i].name != NULL; i++) {
+        unsigned int index = djb2_hash(type_table[i].name);
+        while (hash_table[index].key != NULL)
+            index = (index + 1) % HASH_SIZE;
+        hash_table[index].key = type_table[i].name;
+        hash_table[index].value = type_table[i].value;
+    }
+
+    init = 1;
+}
+
+unsigned long get_type_value(const unsigned char *type_name) {
+    init_hash_table();
+
+    unsigned int index = djb2_hash((const char *)type_name);
+    while (hash_table[index].key != NULL) {
+        if (strcmp(hash_table[index].key, (const char *)type_name) == 0) {
+            return hash_table[index].value;
+        }
+        index = (index + 1) % HASH_SIZE;
+    }
+
+    janet_panicf("%s type is not found", type_name);
+    return -1;
+}
+
 
 p11_attr_type_t get_attribute_type(CK_ATTRIBUTE_TYPE type) {
     switch (type) {
@@ -196,215 +455,4 @@ const char *p11_attr_type_to_string(CK_ATTRIBUTE_TYPE type) {
         default:
             janet_panicf("0x%lx type is not found.", type);
     }
-}
-
-void submod_types(JanetTable *env) {
-    JANET_DEF(env, "CK_INVALID_HANDLE", janet_wrap_number((double)CK_INVALID_HANDLE), "PKCS11 define");
-
-    JANET_DEF(env, "CKN_SURRENDER", janet_wrap_number((double)CKN_SURRENDER), "PKCS11 define");
-
-    JANET_DEF(env, "CK_UNAVAILABLE_INFORMATION", janet_wrap_number((double)CK_UNAVAILABLE_INFORMATION), "PKCS11 define");
-    JANET_DEF(env, "CK_EFFECTIVELY_INFINITE", janet_wrap_number((double)CK_EFFECTIVELY_INFINITE), "PKCS11 define");
-
-    JANET_DEF(env, "CKF_DONT_BLOCK", janet_wrap_number((double)CKF_DONT_BLOCK), "PKCS11 define");
-
-    JANET_DEF(env, "CKF_ARRAY_ATTRIBUTE", janet_wrap_number((double)CKF_ARRAY_ATTRIBUTE), "PKCS11 define");
-
-    JANET_DEF(env, "CKU_SO", janet_wrap_number((double)CKU_SO), "PKCS11 define");
-    JANET_DEF(env, "CKU_USER", janet_wrap_number((double)CKU_USER), "PKCS11 define");
-    JANET_DEF(env, "CKU_CONTEXT_SPECIFIC", janet_wrap_number((double)CKU_CONTEXT_SPECIFIC), "PKCS11 define");
-
-    JANET_DEF(env, "CKS_RO_PUBLIC_SESSION", janet_wrap_number((double)CKS_RO_PUBLIC_SESSION), "PKCS11 define");
-    JANET_DEF(env, "CKS_RO_USER_FUNCTIONS", janet_wrap_number((double)CKS_RO_USER_FUNCTIONS), "PKCS11 define");
-    JANET_DEF(env, "CKS_RW_PUBLIC_SESSION", janet_wrap_number((double)CKS_RW_PUBLIC_SESSION), "PKCS11 define");
-    JANET_DEF(env, "CKS_RW_USER_FUNCTIONS", janet_wrap_number((double)CKS_RW_USER_FUNCTIONS), "PKCS11 define");
-    JANET_DEF(env, "CKS_RW_SO_FUNCTIONS", janet_wrap_number((double)CKS_RW_SO_FUNCTIONS), "PKCS11 define");
-
-    JANET_DEF(env, "CKO_DATA", janet_wrap_number((double)CKO_DATA), "PKCS11 define");
-    JANET_DEF(env, "CKO_CERTIFICATE", janet_wrap_number((double)CKO_CERTIFICATE), "PKCS11 define");
-    JANET_DEF(env, "CKO_PUBLIC_KEY", janet_wrap_number((double)CKO_PUBLIC_KEY), "PKCS11 define");
-    JANET_DEF(env, "CKO_PRIVATE_KEY", janet_wrap_number((double)CKO_PRIVATE_KEY), "PKCS11 define");
-    JANET_DEF(env, "CKO_SECRET_KEY", janet_wrap_number((double)CKO_SECRET_KEY), "PKCS11 define");
-    JANET_DEF(env, "CKO_HW_FEATURE", janet_wrap_number((double)CKO_HW_FEATURE), "PKCS11 define");
-    JANET_DEF(env, "CKO_DOMAIN_PARAMETERS", janet_wrap_number((double)CKO_DOMAIN_PARAMETERS), "PKCS11 define");
-    JANET_DEF(env, "CKO_MECHANISM", janet_wrap_number((double)CKO_MECHANISM), "PKCS11 define");
-    JANET_DEF(env, "CKO_VENDOR_DEFINED", janet_wrap_number((double)CKO_VENDOR_DEFINED), "PKCS11 define");
-
-    JANET_DEF(env, "CKH_MONOTONIC_COUNTER", janet_wrap_number((double)CKH_MONOTONIC_COUNTER), "PKCS11 define");
-    JANET_DEF(env, "CKH_CLOCK", janet_wrap_number((double)CKH_CLOCK), "PKCS11 define");
-    JANET_DEF(env, "CKH_USER_INTERFACE", janet_wrap_number((double)CKH_USER_INTERFACE), "PKCS11 define");
-    JANET_DEF(env, "CKH_VENDOR_DEFINED", janet_wrap_number((double)CKH_VENDOR_DEFINED), "PKCS11 define");
-
-    JANET_DEF(env, "CKA_CLASS", janet_wrap_number((double)CKA_CLASS), "PKCS11 define");
-    JANET_DEF(env, "CKA_TOKEN", janet_wrap_number((double)CKA_TOKEN), "PKCS11 define");
-    JANET_DEF(env, "CKA_PRIVATE", janet_wrap_number((double)CKA_PRIVATE), "PKCS11 define");
-    JANET_DEF(env, "CKA_LABEL", janet_wrap_number((double)CKA_LABEL), "PKCS11 define");
-    JANET_DEF(env, "CKA_APPLICATION", janet_wrap_number((double)CKA_APPLICATION), "PKCS11 define");
-    JANET_DEF(env, "CKA_VALUE", janet_wrap_number((double)CKA_VALUE), "PKCS11 define");
-    JANET_DEF(env, "CKA_OBJECT_ID", janet_wrap_number((double)CKA_OBJECT_ID), "PKCS11 define");
-    JANET_DEF(env, "CKA_CERTIFICATE_TYPE", janet_wrap_number((double)CKA_CERTIFICATE_TYPE), "PKCS11 define");
-    JANET_DEF(env, "CKA_ISSUER", janet_wrap_number((double)CKA_ISSUER), "PKCS11 define");
-    JANET_DEF(env, "CKA_SERIAL_NUMBER", janet_wrap_number((double)CKA_SERIAL_NUMBER), "PKCS11 define");
-    JANET_DEF(env, "CKA_AC_ISSUER", janet_wrap_number((double)CKA_AC_ISSUER), "PKCS11 define");
-    JANET_DEF(env, "CKA_OWNER", janet_wrap_number((double)CKA_OWNER), "PKCS11 define");
-    JANET_DEF(env, "CKA_ATTR_TYPES", janet_wrap_number((double)CKA_ATTR_TYPES), "PKCS11 define");
-    JANET_DEF(env, "CKA_TRUSTED", janet_wrap_number((double)CKA_TRUSTED), "PKCS11 define");
-    JANET_DEF(env, "CKA_CERTIFICATE_CATEGORY", janet_wrap_number((double)CKA_CERTIFICATE_CATEGORY), "PKCS11 define");
-    JANET_DEF(env, "CKA_JAVA_MIDP_SECURITY_DOMAIN", janet_wrap_number((double)CKA_JAVA_MIDP_SECURITY_DOMAIN), "PKCS11 define");
-    JANET_DEF(env, "CKA_URL", janet_wrap_number((double)CKA_URL), "PKCS11 define");
-    JANET_DEF(env, "CKA_HASH_OF_SUBJECT_PUBLIC_KEY", janet_wrap_number((double)CKA_HASH_OF_SUBJECT_PUBLIC_KEY), "PKCS11 define");
-    JANET_DEF(env, "CKA_HASH_OF_ISSUER_PUBLIC_KEY", janet_wrap_number((double)CKA_HASH_OF_ISSUER_PUBLIC_KEY), "PKCS11 define");
-    JANET_DEF(env, "CKA_NAME_HASH_ALGORITHM", janet_wrap_number((double)CKA_NAME_HASH_ALGORITHM), "PKCS11 define");
-    JANET_DEF(env, "CKA_CHECK_VALUE", janet_wrap_number((double)CKA_CHECK_VALUE), "PKCS11 define");
-    JANET_DEF(env, "CKA_KEY_TYPE", janet_wrap_number((double)CKA_KEY_TYPE), "PKCS11 define");
-    JANET_DEF(env, "CKA_SUBJECT", janet_wrap_number((double)CKA_SUBJECT), "PKCS11 define");
-    JANET_DEF(env, "CKA_ID", janet_wrap_number((double)CKA_ID), "PKCS11 define");
-    JANET_DEF(env, "CKA_SENSITIVE", janet_wrap_number((double)CKA_SENSITIVE), "PKCS11 define");
-    JANET_DEF(env, "CKA_ENCRYPT", janet_wrap_number((double)CKA_ENCRYPT), "PKCS11 define");
-    JANET_DEF(env, "CKA_DECRYPT", janet_wrap_number((double)CKA_DECRYPT), "PKCS11 define");
-    JANET_DEF(env, "CKA_WRAP", janet_wrap_number((double)CKA_WRAP), "PKCS11 define");
-    JANET_DEF(env, "CKA_UNWRAP", janet_wrap_number((double)CKA_UNWRAP), "PKCS11 define");
-    JANET_DEF(env, "CKA_SIGN", janet_wrap_number((double)CKA_SIGN), "PKCS11 define");
-    JANET_DEF(env, "CKA_SIGN_RECOVER", janet_wrap_number((double)CKA_SIGN_RECOVER), "PKCS11 define");
-    JANET_DEF(env, "CKA_VERIFY", janet_wrap_number((double)CKA_VERIFY), "PKCS11 define");
-    JANET_DEF(env, "CKA_VERIFY_RECOVER", janet_wrap_number((double)CKA_VERIFY_RECOVER), "PKCS11 define");
-    JANET_DEF(env, "CKA_DERIVE", janet_wrap_number((double)CKA_DERIVE), "PKCS11 define");
-    JANET_DEF(env, "CKA_START_DATE", janet_wrap_number((double)CKA_START_DATE), "PKCS11 define");
-    JANET_DEF(env, "CKA_END_DATE", janet_wrap_number((double)CKA_END_DATE), "PKCS11 define");
-    JANET_DEF(env, "CKA_MODULUS", janet_wrap_number((double)CKA_MODULUS), "PKCS11 define");
-    JANET_DEF(env, "CKA_MODULUS_BITS", janet_wrap_number((double)CKA_MODULUS_BITS), "PKCS11 define");
-    JANET_DEF(env, "CKA_PUBLIC_EXPONENT", janet_wrap_number((double)CKA_PUBLIC_EXPONENT), "PKCS11 define");
-    JANET_DEF(env, "CKA_PRIVATE_EXPONENT", janet_wrap_number((double)CKA_PRIVATE_EXPONENT), "PKCS11 define");
-    JANET_DEF(env, "CKA_PRIME_2", janet_wrap_number((double)CKA_PRIME_2), "PKCS11 define");
-    JANET_DEF(env, "CKA_EXPONENT_2", janet_wrap_number((double)CKA_EXPONENT_2), "PKCS11 define");
-    JANET_DEF(env, "CKA_COEFFICIENT", janet_wrap_number((double)CKA_COEFFICIENT), "PKCS11 define");
-    JANET_DEF(env, "CKA_PRIME", janet_wrap_number((double)CKA_PRIME), "PKCS11 define");
-    JANET_DEF(env, "CKA_SUBPRIME", janet_wrap_number((double)CKA_SUBPRIME), "PKCS11 define");
-    JANET_DEF(env, "CKA_BASE", janet_wrap_number((double)CKA_BASE), "PKCS11 define");
-    JANET_DEF(env, "CKA_PRIME_BITS", janet_wrap_number((double)CKA_PRIME_BITS), "PKCS11 define");
-    JANET_DEF(env, "CKA_VALUE_BITS", janet_wrap_number((double)CKA_VALUE_BITS), "PKCS11 define");
-    JANET_DEF(env, "CKA_VALUE_LEN", janet_wrap_number((double)CKA_VALUE_LEN), "PKCS11 define");
-    JANET_DEF(env, "CKA_EXTRACTABLE", janet_wrap_number((double)CKA_EXTRACTABLE), "PKCS11 define");
-    JANET_DEF(env, "CKA_LOCAL", janet_wrap_number((double)CKA_LOCAL), "PKCS11 define");
-    JANET_DEF(env, "CKA_NEVER_EXTRACTABLE", janet_wrap_number((double)CKA_NEVER_EXTRACTABLE), "PKCS11 define");
-    JANET_DEF(env, "CKA_ALWAYS_SENSITIVE", janet_wrap_number((double)CKA_ALWAYS_SENSITIVE), "PKCS11 define");
-    JANET_DEF(env, "CKA_KEY_GEN_MECHANISM", janet_wrap_number((double)CKA_KEY_GEN_MECHANISM), "PKCS11 define");
-    JANET_DEF(env, "CKA_MODIFIABLE", janet_wrap_number((double)CKA_MODIFIABLE), "PKCS11 define");
-    JANET_DEF(env, "CKA_COPYABLE", janet_wrap_number((double)CKA_COPYABLE), "PKCS11 define");
-    JANET_DEF(env, "CKA_DESTROYABLE", janet_wrap_number((double)CKA_DESTROYABLE), "PKCS11 define");
-    JANET_DEF(env, "CKA_EC_PARAMS", janet_wrap_number((double)CKA_EC_PARAMS), "PKCS11 define");
-    JANET_DEF(env, "CKA_EC_POINT", janet_wrap_number((double)CKA_EC_POINT), "PKCS11 define");
-    JANET_DEF(env, "CKA_ALWAYS_AUTHENTICATE", janet_wrap_number((double)CKA_ALWAYS_AUTHENTICATE), "PKCS11 define");
-
-    JANET_DEF(env, "CKA_WRAP_WITH_TRUSTED", janet_wrap_number((double)CKA_WRAP_WITH_TRUSTED), "PKCS11 define");
-    JANET_DEF(env, "CKA_WRAP_TEMPLATE", janet_wrap_number((double)CKA_WRAP_TEMPLATE), "PKCS11 define");
-    JANET_DEF(env, "CKA_UNWRAP_TEMPLATE", janet_wrap_number((double)CKA_UNWRAP_TEMPLATE), "PKCS11 define");
-    JANET_DEF(env, "CKA_HW_FEATURE_TYPE", janet_wrap_number((double)CKA_HW_FEATURE_TYPE), "PKCS11 define");
-    JANET_DEF(env, "CKA_RESET_ON_INIT", janet_wrap_number((double)CKA_RESET_ON_INIT), "PKCS11 define");
-    JANET_DEF(env, "CKA_HAS_RESET", janet_wrap_number((double)CKA_HAS_RESET), "PKCS11 define");
-    JANET_DEF(env, "CKA_PIXEL_X", janet_wrap_number((double)CKA_PIXEL_X), "PKCS11 define");
-    JANET_DEF(env, "CKA_PIXEL_Y", janet_wrap_number((double)CKA_PIXEL_Y), "PKCS11 define");
-    JANET_DEF(env, "CKA_RESOLUTION", janet_wrap_number((double)CKA_RESOLUTION), "PKCS11 define");
-    JANET_DEF(env, "CKA_CHAR_ROWS", janet_wrap_number((double)CKA_CHAR_ROWS), "PKCS11 define");
-    JANET_DEF(env, "CKA_CHAR_COLUMNS", janet_wrap_number((double)CKA_CHAR_COLUMNS), "PKCS11 define");
-    JANET_DEF(env, "CKA_COLOR", janet_wrap_number((double)CKA_COLOR), "PKCS11 define");
-    JANET_DEF(env, "CKA_BITS_PER_PIXEL", janet_wrap_number((double)CKA_BITS_PER_PIXEL), "PKCS11 define");
-    JANET_DEF(env, "CKA_CHAR_SETS", janet_wrap_number((double)CKA_CHAR_SETS), "PKCS11 define");
-    JANET_DEF(env, "CKA_ENCODING_METHODS", janet_wrap_number((double)CKA_ENCODING_METHODS), "PKCS11 define");
-    JANET_DEF(env, "CKA_MIME_TYPES", janet_wrap_number((double)CKA_MIME_TYPES), "PKCS11 define");
-    JANET_DEF(env, "CKA_MECHANISM_TYPE", janet_wrap_number((double)CKA_MECHANISM_TYPE), "PKCS11 define");
-    JANET_DEF(env, "CKA_REQUIRED_CMS_ATTRIBUTES", janet_wrap_number((double)CKA_REQUIRED_CMS_ATTRIBUTES), "PKCS11 define");
-    JANET_DEF(env, "CKA_DEFAULT_CMS_ATTRIBUTES", janet_wrap_number((double)CKA_DEFAULT_CMS_ATTRIBUTES), "PKCS11 define");
-    JANET_DEF(env, "CKA_SUPPORTED_CMS_ATTRIBUTES", janet_wrap_number((double)CKA_SUPPORTED_CMS_ATTRIBUTES), "PKCS11 define");
-    JANET_DEF(env, "CKA_ALLOWED_MECHANISMS", janet_wrap_number((double)CKA_ALLOWED_MECHANISMS), "PKCS11 define");
-    JANET_DEF(env, "CKA_VENDOR_DEFINED", janet_wrap_number((double)CKA_VENDOR_DEFINED), "PKCS11 define");
-
-    JANET_DEF(env, "CKR_OK", janet_wrap_number((double)CKR_OK), "PKCS11 define");
-    JANET_DEF(env, "CKR_CANCEL", janet_wrap_number((double)CKR_CANCEL), "PKCS11 define");
-    JANET_DEF(env, "CKR_HOST_MEMORY", janet_wrap_number((double)CKR_HOST_MEMORY), "PKCS11 define");
-    JANET_DEF(env, "CKR_SLOT_ID_INVALID", janet_wrap_number((double)CKR_SLOT_ID_INVALID), "PKCS11 define");
-    JANET_DEF(env, "CKR_GENERAL_ERROR", janet_wrap_number((double)CKR_GENERAL_ERROR), "PKCS11 define");
-    JANET_DEF(env, "CKR_FUNCTION_FAILED", janet_wrap_number((double)CKR_FUNCTION_FAILED), "PKCS11 define");
-    JANET_DEF(env, "CKR_ARGUMENTS_BAD", janet_wrap_number((double)CKR_ARGUMENTS_BAD), "PKCS11 define");
-    JANET_DEF(env, "CKR_NO_EVENT", janet_wrap_number((double)CKR_NO_EVENT), "PKCS11 define");
-    JANET_DEF(env, "CKR_NEED_TO_CREATE_THREADS", janet_wrap_number((double)CKR_NEED_TO_CREATE_THREADS), "PKCS11 define");
-    JANET_DEF(env, "CKR_CANT_LOCK", janet_wrap_number((double)CKR_CANT_LOCK), "PKCS11 define");
-    JANET_DEF(env, "CKR_ATTRIBUTE_READ_ONLY", janet_wrap_number((double)CKR_ATTRIBUTE_READ_ONLY), "PKCS11 define");
-    JANET_DEF(env, "CKR_ATTRIBUTE_SENSITIVE", janet_wrap_number((double)CKR_ATTRIBUTE_SENSITIVE), "PKCS11 define");
-    JANET_DEF(env, "CKR_ATTRIBUTE_TYPE_INVALID", janet_wrap_number((double)CKR_ATTRIBUTE_TYPE_INVALID), "PKCS11 define");
-    JANET_DEF(env, "CKR_ATTRIBUTE_VALUE_INVALID", janet_wrap_number((double)CKR_ATTRIBUTE_VALUE_INVALID), "PKCS11 define");
-    JANET_DEF(env, "CKR_ACTION_PROHIBITED", janet_wrap_number((double)CKR_ACTION_PROHIBITED), "PKCS11 define");
-    JANET_DEF(env, "CKR_DATA_INVALID", janet_wrap_number((double)CKR_DATA_INVALID), "PKCS11 define");
-    JANET_DEF(env, "CKR_DATA_LEN_RANGE", janet_wrap_number((double)CKR_DATA_LEN_RANGE), "PKCS11 define");
-    JANET_DEF(env, "CKR_DEVICE_ERROR", janet_wrap_number((double)CKR_DEVICE_ERROR), "PKCS11 define");
-    JANET_DEF(env, "CKR_DEVICE_MEMORY", janet_wrap_number((double)CKR_DEVICE_MEMORY), "PKCS11 define");
-    JANET_DEF(env, "CKR_DEVICE_REMOVED", janet_wrap_number((double)CKR_DEVICE_REMOVED), "PKCS11 define");
-    JANET_DEF(env, "CKR_ENCRYPTED_DATA_INVALID", janet_wrap_number((double)CKR_ENCRYPTED_DATA_INVALID), "PKCS11 define");
-    JANET_DEF(env, "CKR_ENCRYPTED_DATA_LEN_RANGE", janet_wrap_number((double)CKR_ENCRYPTED_DATA_LEN_RANGE), "PKCS11 define");
-    JANET_DEF(env, "CKR_FUNCTION_CANCELED", janet_wrap_number((double)CKR_FUNCTION_CANCELED), "PKCS11 define");
-    JANET_DEF(env, "CKR_FUNCTION_NOT_PARALLEL", janet_wrap_number((double)CKR_FUNCTION_NOT_PARALLEL), "PKCS11 define");
-    JANET_DEF(env, "CKR_FUNCTION_NOT_SUPPORTED", janet_wrap_number((double)CKR_FUNCTION_NOT_SUPPORTED), "PKCS11 define");
-    JANET_DEF(env, "CKR_KEY_HANDLE_INVALID", janet_wrap_number((double)CKR_KEY_HANDLE_INVALID), "PKCS11 define");
-    JANET_DEF(env, "CKR_KEY_SIZE_RANGE", janet_wrap_number((double)CKR_KEY_SIZE_RANGE), "PKCS11 define");
-    JANET_DEF(env, "CKR_KEY_TYPE_INCONSISTENT", janet_wrap_number((double)CKR_KEY_TYPE_INCONSISTENT), "PKCS11 define");
-    JANET_DEF(env, "CKR_KEY_NOT_NEEDED", janet_wrap_number((double)CKR_KEY_NOT_NEEDED), "PKCS11 define");
-    JANET_DEF(env, "CKR_KEY_CHANGED", janet_wrap_number((double)CKR_KEY_CHANGED), "PKCS11 define");
-    JANET_DEF(env, "CKR_KEY_NEEDED", janet_wrap_number((double)CKR_KEY_NEEDED), "PKCS11 define");
-    JANET_DEF(env, "CKR_KEY_INDIGESTIBLE", janet_wrap_number((double)CKR_KEY_INDIGESTIBLE), "PKCS11 define");
-    JANET_DEF(env, "CKR_KEY_FUNCTION_NOT_PERMITTED", janet_wrap_number((double)CKR_KEY_FUNCTION_NOT_PERMITTED), "PKCS11 define");
-    JANET_DEF(env, "CKR_KEY_NOT_WRAPPABLE", janet_wrap_number((double)CKR_KEY_NOT_WRAPPABLE), "PKCS11 define");
-    JANET_DEF(env, "CKR_KEY_UNEXTRACTABLE", janet_wrap_number((double)CKR_KEY_UNEXTRACTABLE), "PKCS11 define");
-    JANET_DEF(env, "CKR_MECHANISM_INVALID", janet_wrap_number((double)CKR_MECHANISM_INVALID), "PKCS11 define");
-    JANET_DEF(env, "CKR_MECHANISM_PARAM_INVALID", janet_wrap_number((double)CKR_MECHANISM_PARAM_INVALID), "PKCS11 define");
-    JANET_DEF(env, "CKR_OBJECT_HANDLE_INVALID", janet_wrap_number((double)CKR_OBJECT_HANDLE_INVALID), "PKCS11 define");
-    JANET_DEF(env, "CKR_OPERATION_ACTIVE", janet_wrap_number((double)CKR_OPERATION_ACTIVE), "PKCS11 define");
-    JANET_DEF(env, "CKR_OPERATION_NOT_INITIALIZED", janet_wrap_number((double)CKR_OPERATION_NOT_INITIALIZED), "PKCS11 define");
-    JANET_DEF(env, "CKR_PIN_INCORRECT", janet_wrap_number((double)CKR_PIN_INCORRECT), "PKCS11 define");
-    JANET_DEF(env, "CKR_PIN_INVALID", janet_wrap_number((double)CKR_PIN_INVALID), "PKCS11 define");
-    JANET_DEF(env, "CKR_PIN_LEN_RANGE", janet_wrap_number((double)CKR_PIN_LEN_RANGE), "PKCS11 define");
-    JANET_DEF(env, "CKR_PIN_EXPIRED", janet_wrap_number((double)CKR_PIN_EXPIRED), "PKCS11 define");
-    JANET_DEF(env, "CKR_PIN_LOCKED", janet_wrap_number((double)CKR_PIN_LOCKED), "PKCS11 define");
-    JANET_DEF(env, "CKR_SESSION_CLOSED", janet_wrap_number((double)CKR_SESSION_CLOSED), "PKCS11 define");
-    JANET_DEF(env, "CKR_SESSION_COUNT", janet_wrap_number((double)CKR_SESSION_COUNT), "PKCS11 define");
-    JANET_DEF(env, "CKR_SESSION_HANDLE_INVALID", janet_wrap_number((double)CKR_SESSION_HANDLE_INVALID), "PKCS11 define");
-    JANET_DEF(env, "CKR_SESSION_PARALLEL_NOT_SUPPORTED", janet_wrap_number((double)CKR_SESSION_PARALLEL_NOT_SUPPORTED), "PKCS11 define");
-    JANET_DEF(env, "CKR_SESSION_READ_ONLY", janet_wrap_number((double)CKR_SESSION_READ_ONLY), "PKCS11 define");
-    JANET_DEF(env, "CKR_SESSION_EXISTS", janet_wrap_number((double)CKR_SESSION_EXISTS), "PKCS11 define");
-    JANET_DEF(env, "CKR_SESSION_READ_ONLY_EXISTS", janet_wrap_number((double)CKR_SESSION_READ_ONLY_EXISTS), "PKCS11 define");
-    JANET_DEF(env, "CKR_SESSION_READ_WRITE_SO_EXISTS", janet_wrap_number((double)CKR_SESSION_READ_WRITE_SO_EXISTS), "PKCS11 define");
-    JANET_DEF(env, "CKR_SIGNATURE_INVALID", janet_wrap_number((double)CKR_SIGNATURE_INVALID), "PKCS11 define");
-    JANET_DEF(env, "CKR_SIGNATURE_LEN_RANGE", janet_wrap_number((double)CKR_SIGNATURE_LEN_RANGE), "PKCS11 define");
-    JANET_DEF(env, "CKR_TEMPLATE_INCOMPLETE", janet_wrap_number((double)CKR_TEMPLATE_INCOMPLETE), "PKCS11 define");
-    JANET_DEF(env, "CKR_TEMPLATE_INCONSISTENT", janet_wrap_number((double)CKR_TEMPLATE_INCONSISTENT), "PKCS11 define");
-    JANET_DEF(env, "CKR_TOKEN_NOT_PRESENT", janet_wrap_number((double)CKR_TOKEN_NOT_PRESENT), "PKCS11 define");
-    JANET_DEF(env, "CKR_TOKEN_NOT_RECOGNIZED", janet_wrap_number((double)CKR_TOKEN_NOT_RECOGNIZED), "PKCS11 define");
-    JANET_DEF(env, "CKR_TOKEN_WRITE_PROTECTED", janet_wrap_number((double)CKR_TOKEN_WRITE_PROTECTED), "PKCS11 define");
-    JANET_DEF(env, "CKR_UNWRAPPING_KEY_HANDLE_INVALID", janet_wrap_number((double)CKR_UNWRAPPING_KEY_HANDLE_INVALID), "PKCS11 define");
-    JANET_DEF(env, "CKR_UNWRAPPING_KEY_SIZE_RANGE", janet_wrap_number((double)CKR_UNWRAPPING_KEY_SIZE_RANGE), "PKCS11 define");
-    JANET_DEF(env, "CKR_UNWRAPPING_KEY_TYPE_INCONSISTENT", janet_wrap_number((double)CKR_UNWRAPPING_KEY_TYPE_INCONSISTENT), "PKCS11 define");
-    JANET_DEF(env, "CKR_USER_ALREADY_LOGGED_IN", janet_wrap_number((double)CKR_USER_ALREADY_LOGGED_IN), "PKCS11 define");
-    JANET_DEF(env, "CKR_USER_NOT_LOGGED_IN", janet_wrap_number((double)CKR_USER_NOT_LOGGED_IN), "PKCS11 define");
-    JANET_DEF(env, "CKR_USER_PIN_NOT_INITIALIZED", janet_wrap_number((double)CKR_USER_PIN_NOT_INITIALIZED), "PKCS11 define");
-    JANET_DEF(env, "CKR_USER_TYPE_INVALID", janet_wrap_number((double)CKR_USER_TYPE_INVALID), "PKCS11 define");
-    JANET_DEF(env, "CKR_USER_ANOTHER_ALREADY_LOGGED_IN", janet_wrap_number((double)CKR_USER_ANOTHER_ALREADY_LOGGED_IN), "PKCS11 define");
-    JANET_DEF(env, "CKR_USER_TOO_MANY_TYPES", janet_wrap_number((double)CKR_USER_TOO_MANY_TYPES), "PKCS11 define");
-    JANET_DEF(env, "CKR_WRAPPED_KEY_INVALID", janet_wrap_number((double)CKR_WRAPPED_KEY_INVALID), "PKCS11 define");
-    JANET_DEF(env, "CKR_WRAPPED_KEY_LEN_RANGE", janet_wrap_number((double)CKR_WRAPPED_KEY_LEN_RANGE), "PKCS11 define");
-    JANET_DEF(env, "CKR_WRAPPING_KEY_HANDLE_INVALID", janet_wrap_number((double)CKR_WRAPPING_KEY_HANDLE_INVALID), "PKCS11 define");
-    JANET_DEF(env, "CKR_WRAPPING_KEY_SIZE_RANGE", janet_wrap_number((double)CKR_WRAPPING_KEY_SIZE_RANGE), "PKCS11 define");
-    JANET_DEF(env, "CKR_WRAPPING_KEY_TYPE_INCONSISTENT", janet_wrap_number((double)CKR_WRAPPING_KEY_TYPE_INCONSISTENT), "PKCS11 define");
-    JANET_DEF(env, "CKR_RANDOM_SEED_NOT_SUPPORTED", janet_wrap_number((double)CKR_RANDOM_SEED_NOT_SUPPORTED), "PKCS11 define");
-    JANET_DEF(env, "CKR_RANDOM_NO_RNG", janet_wrap_number((double)CKR_RANDOM_NO_RNG), "PKCS11 define");
-    JANET_DEF(env, "CKR_DOMAIN_PARAMS_INVALID", janet_wrap_number((double)CKR_DOMAIN_PARAMS_INVALID), "PKCS11 define");
-    JANET_DEF(env, "CKR_CURVE_NOT_SUPPORTED", janet_wrap_number((double)CKR_CURVE_NOT_SUPPORTED), "PKCS11 define");
-    JANET_DEF(env, "CKR_BUFFER_TOO_SMALL", janet_wrap_number((double)CKR_BUFFER_TOO_SMALL), "PKCS11 define");
-    JANET_DEF(env, "CKR_SAVED_STATE_INVALID", janet_wrap_number((double)CKR_SAVED_STATE_INVALID), "PKCS11 define");
-    JANET_DEF(env, "CKR_INFORMATION_SENSITIVE", janet_wrap_number((double)CKR_INFORMATION_SENSITIVE), "PKCS11 define");
-    JANET_DEF(env, "CKR_STATE_UNSAVEABLE", janet_wrap_number((double)CKR_STATE_UNSAVEABLE), "PKCS11 define");
-    JANET_DEF(env, "CKR_CRYPTOKI_NOT_INITIALIZED", janet_wrap_number((double)CKR_CRYPTOKI_NOT_INITIALIZED), "PKCS11 define");
-    JANET_DEF(env, "CKR_CRYPTOKI_ALREADY_INITIALIZED", janet_wrap_number((double)CKR_CRYPTOKI_ALREADY_INITIALIZED), "PKCS11 define");
-    JANET_DEF(env, "CKR_MUTEX_BAD", janet_wrap_number((double)CKR_MUTEX_BAD), "PKCS11 define");
-    JANET_DEF(env, "CKR_MUTEX_NOT_LOCKED", janet_wrap_number((double)CKR_MUTEX_NOT_LOCKED), "PKCS11 define");
-    JANET_DEF(env, "CKR_FUNCTION_REJECTED", janet_wrap_number((double)CKR_FUNCTION_REJECTED), "PKCS11 define");
-    JANET_DEF(env, "CKR_VENDOR_DEFINED", janet_wrap_number((double)CKR_VENDOR_DEFINED), "PKCS11 define");
 }

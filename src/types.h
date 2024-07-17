@@ -15,6 +15,7 @@ typedef enum p11_attr_type {
     P11_ATTR_STRING
 } p11_attr_type_t;
 
+unsigned long get_type_value(const unsigned char *type_name);
 p11_attr_type_t get_attribute_type(CK_ATTRIBUTE_TYPE type);
 const char *p11_attr_type_to_string(unsigned long type);
 

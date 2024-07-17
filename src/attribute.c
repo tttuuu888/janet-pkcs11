@@ -12,11 +12,19 @@ static void set_attribute(CK_ATTRIBUTE *attribute, const JanetKV *kv)
     Janet key = kv->key;
     Janet val = kv->value;
 
-    CK_ATTRIBUTE_TYPE attr_type = (CK_ATTRIBUTE_TYPE)janet_unwrap_number(key);
+    CK_ATTRIBUTE_TYPE attr_type = get_type_value(janet_unwrap_keyword(key));
 
     attribute->type = attr_type;
-    JanetType jt = janet_type(val);
-    switch(jt) {
+    JanetType val_type = janet_type(val);
+    switch(val_type) {
+        case JANET_KEYWORD: {
+            CK_ULONG *value = janet_smalloc(sizeof(CK_ULONG));
+            *value = get_type_value(janet_unwrap_keyword(val));
+
+            attribute->pValue = (void*)value;
+            attribute->ulValueLen = sizeof(CK_ULONG);
+            break;
+        }
         case JANET_NUMBER: {
             CK_ULONG *value = janet_smalloc(sizeof(CK_ULONG));
             *value = (CK_ULONG)janet_unwrap_number(val);
@@ -123,7 +131,8 @@ CK_ATTRIBUTE_PTR create_new_p11_template_from_janet_tuple(JanetTuple tup)
     int32_t count = janet_tuple_length(tup);
     CK_ATTRIBUTE_PTR p_template = janet_smalloc(count * sizeof(CK_ATTRIBUTE));
     for (int i=0; i<count; i++) {
-        p_template[i].type = janet_getinteger64(tup, i);
+        CK_ATTRIBUTE_TYPE attr_type = get_type_value(janet_getkeyword(tup, i));
+        p_template[i].type = attr_type;
         p_template[i].pValue = NULL_PTR;
         p_template[i].ulValueLen = 0;
     }
