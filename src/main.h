@@ -57,6 +57,9 @@ Janet p11_destroy_object(int32_t argc, Janet *argv);
 Janet p11_get_object_size(int32_t argc, Janet *argv);
 Janet p11_get_attribute_value(int32_t argc, Janet *argv);
 Janet p11_set_attribute_value(int32_t argc, Janet *argv);
+Janet p11_find_objects_init(int32_t argc, Janet *argv);
+Janet p11_find_objects(int32_t argc, Janet *argv);
+Janet p11_find_objects_final(int32_t argc, Janet *argv);
 
 /* Sub modules */
 void submod_utils(JanetTable *env);

@@ -132,6 +132,74 @@ JANET_FN(p11_set_attribute_value,
     return janet_wrap_abstract(obj);
 }
 
+JANET_FN(p11_find_objects_init,
+         "(find-objects-init session-obj &opt template)",
+         "Initializes a search for token and session objects that match a "
+         "`template`. Find all objects if `template` is not provided. "
+         "Returns a `session-obj`, if successful.")
+{
+    janet_arity(argc, 1, 2);
+
+    session_obj_t *obj = janet_getabstract(argv, 0, get_session_obj_type());
+
+    JanetStruct template;
+    CK_ULONG count = 0;
+    CK_ATTRIBUTE_PTR p_template = NULL_PTR;
+
+    if (argc == 2) {
+        template = janet_getstruct(argv, 1);
+        count = (CK_ULONG)janet_struct_length(template);
+        p_template = janet_struct_to_p11_template(template);
+    }
+
+    CK_RV rv;
+    rv = obj->func_list->C_FindObjectsInit(obj->session, p_template, count);
+    PKCS11_ASSERT(rv, "C_FindObjectsInit");
+
+    return janet_wrap_abstract(obj);
+}
+
+JANET_FN(p11_find_objects,
+         "(find-objects session-obj max-obj-count)",
+         "Continues a search for token and session objects that match a "
+         "`template`. Returns a list of `obj-handle`, if successful.")
+{
+    janet_fixarity(argc, 2);
+
+    session_obj_t *obj = janet_getabstract(argv, 0, get_session_obj_type());
+    CK_ULONG max_obj_count = (CK_ULONG)janet_getnumber(argv, 1);
+    CK_ULONG count = 0;
+
+    CK_OBJECT_HANDLE_PTR obj_list = janet_smalloc(max_obj_count * sizeof(CK_OBJECT_HANDLE));
+    CK_RV rv;
+    rv = obj->func_list->C_FindObjects(obj->session, obj_list, max_obj_count, &count);
+    PKCS11_ASSERT(rv, "C_FindObjects");
+
+    Janet *tup = janet_tuple_begin(count);
+    for (int i=0; i<count; i++) {
+        tup[i] = janet_wrap_number(obj_list[i]);
+    }
+
+    janet_sfree(obj_list);
+
+    return janet_wrap_tuple(janet_tuple_end(tup));
+}
+
+JANET_FN(p11_find_objects_final,
+         "(find-objects-final session-obj)",
+         "Terminates a search for token and session objects. "
+         "Returns a `session-obj`, if successful.")
+{
+    janet_fixarity(argc, 1);
+
+    session_obj_t *obj = janet_getabstract(argv, 0, get_session_obj_type());
+    CK_RV rv;
+    rv = obj->func_list->C_FindObjectsFinal(obj->session);
+    PKCS11_ASSERT(rv, "C_FindObjectsFinal");
+
+    return janet_wrap_abstract(obj);
+}
+
 void submod_object(JanetTable *env) {
     JanetRegExt cfuns[] = {
         JANET_REG("create-object", p11_create_object),
@@ -140,6 +208,9 @@ void submod_object(JanetTable *env) {
         JANET_REG("get-object-size", p11_get_object_size),
         JANET_REG("get-attribute-value", p11_get_attribute_value),
         JANET_REG("set-attribute-value", p11_set_attribute_value),
+        JANET_REG("find-objects-init", p11_find_objects_init),
+        JANET_REG("find-objects", p11_find_objects),
+        JANET_REG("find-objects-final", p11_find_objects_final),
         JANET_REG_END
     };
     janet_cfuns_ext(env, "", cfuns);

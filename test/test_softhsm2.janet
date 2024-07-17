@@ -86,6 +86,9 @@
                                                 :CKA_LABEL]))]
         (assert (= "Label 2" (attr :CKA_LABEL)))))
 
+    (assert (:find-objects-init session-rw))
+    (assert (:find-objects session-rw 10))
+    (assert (:find-objects-final session-rw))
 
     (assert (:logout session-rw)))
 
