@@ -40,6 +40,8 @@
     (assert (:set-pin session-rw test-user-pin test-user-pin2))
     (assert (:login session-rw :user test-user-pin2))
 
+    ## The template is a struct. PKCS11 attribute defines can be used here, but
+    ## only in Janet keyword format.
     (let [obj-handle1 (assert (:create-object session-rw
                                               {:CKA_CLASS :CKO_DATA
                                                :CKA_TOKEN true
@@ -48,7 +50,6 @@
           obj-handle2 (assert (:copy-object session-rw
                                             obj-handle1
                                             {:CKA_LABEL "copy object"}))]
-      (assert (= nil (:destroy-object session-rw obj-handle2)))
       (assert (:get-object-size session-rw obj-handle1))
 
       (let [attr (assert (:get-attribute-value session-rw
@@ -84,12 +85,22 @@
                                                 :CKA_VALUE
                                                 :CKA_APPLICATION
                                                 :CKA_LABEL]))]
-        (assert (= "Label 2" (attr :CKA_LABEL)))))
+        (assert (= "Label 2" (attr :CKA_LABEL))))
 
-    (assert (:find-objects-init session-rw))
-    (assert (:find-objects session-rw 10))
-    (assert (:find-objects-final session-rw))
+      (assert (:find-objects-init session-rw))
+      (assert (= 2 (length (assert (:find-objects session-rw 10)))))
+      (assert (:find-objects-final session-rw))
 
+      ## Calling destroy-object between find-objects-init and find-objects-final
+      ## cause an abnormal behavior.
+      (assert (= nil (:destroy-object session-rw obj-handle2)))
+
+      (assert (:find-objects-init session-rw))
+      (assert (= 1 (length (assert (:find-objects session-rw 10)))))
+      (assert (:find-objects-final session-rw)))
+
+    ## Calling logout is not a mandatory. logout is called automatically when
+    ## session-obj is out of scope.
     (assert (:logout session-rw)))
 
   (with [session-ro (assert (:open-session p11 test-slot :read-only))]
