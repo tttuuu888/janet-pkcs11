@@ -49,7 +49,8 @@
                                                CKA_VALUE ""}))
           obj-handle2 (assert (:copy-object session-rw
                                             obj-handle1
-                                            {CKA_LABEL "copy object"}))])
+                                            {CKA_LABEL "copy object"}))]
+      (assert (= nil (:destroy-object session-rw obj-handle2))))
 
 
     (assert (:logout session-rw)))

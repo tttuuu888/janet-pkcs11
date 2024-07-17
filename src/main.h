@@ -53,6 +53,7 @@ Janet p11_logout(int32_t argc, Janet *argv);
 /* Object management functions */
 Janet p11_create_object(int32_t argc, Janet *argv);
 Janet p11_copy_object(int32_t argc, Janet *argv);
+Janet p11_destroy_object(int32_t argc, Janet *argv);
 
 /* Sub modules */
 void submod_utils(JanetTable *env);

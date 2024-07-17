@@ -49,10 +49,27 @@ JANET_FN(p11_copy_object,
     return janet_wrap_number((double)obj_handle2);
 }
 
+JANET_FN(p11_destroy_object,
+         "(destory-object session-obj obj-handle)",
+         "Destroys an object.")
+{
+    janet_fixarity(argc, 2);
+
+    session_obj_t *obj = janet_getabstract(argv, 0, get_session_obj_type());
+    CK_OBJECT_HANDLE obj_handle = (CK_OBJECT_HANDLE)janet_getnumber(argv, 1);
+
+    CK_RV rv;
+    rv = obj->func_list->C_DestroyObject(obj->session, obj_handle);
+    PKCS11_ASSERT(rv, "C_DestroyObject");
+
+    return janet_wrap_nil();
+}
+
 void submod_object(JanetTable *env) {
     JanetRegExt cfuns[] = {
         JANET_REG("create-object", p11_create_object),
         JANET_REG("copy-object", p11_copy_object),
+        JANET_REG("destroy-object", p11_destroy_object),
         JANET_REG_END
     };
     janet_cfuns_ext(env, "", cfuns);
