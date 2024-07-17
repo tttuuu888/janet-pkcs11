@@ -111,6 +111,27 @@ JANET_FN(p11_get_attribute_value,
     return janet_wrap_struct(st);
 }
 
+JANET_FN(p11_set_attribute_value,
+         "(set-attribute-value session-obj obj-handle template)",
+         "Modifies the value of one or more attributes of an object. "
+         "Returns a `session-obj`, if successful.")
+{
+    janet_fixarity(argc, 3);
+
+    session_obj_t *obj = janet_getabstract(argv, 0, get_session_obj_type());
+    CK_OBJECT_HANDLE obj_handle = (CK_OBJECT_HANDLE)janet_getnumber(argv, 1);
+    JanetStruct template = janet_getstruct(argv, 2);
+
+    CK_ULONG count = (CK_ULONG)janet_struct_length(template);
+    CK_ATTRIBUTE_PTR p_template = janet_struct_to_p11_template(template);
+
+    CK_RV rv;
+    rv = obj->func_list->C_SetAttributeValue(obj->session, obj_handle, p_template, count);
+    PKCS11_ASSERT(rv, "C_SetAttributeValue");
+
+    return janet_wrap_abstract(obj);
+}
+
 void submod_object(JanetTable *env) {
     JanetRegExt cfuns[] = {
         JANET_REG("create-object", p11_create_object),
@@ -118,6 +139,7 @@ void submod_object(JanetTable *env) {
         JANET_REG("destroy-object", p11_destroy_object),
         JANET_REG("get-object-size", p11_get_object_size),
         JANET_REG("get-attribute-value", p11_get_attribute_value),
+        JANET_REG("set-attribute-value", p11_set_attribute_value),
         JANET_REG_END
     };
     janet_cfuns_ext(env, "", cfuns);

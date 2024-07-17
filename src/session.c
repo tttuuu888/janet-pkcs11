@@ -34,6 +34,7 @@ static JanetMethod session_methods[] = {
     {"destroy-object", p11_destroy_object},
     {"get-object-size", p11_get_object_size},
     {"get-attribute-value", p11_get_attribute_value,},
+    {"set-attribute-value", p11_set_attribute_value,},
     {NULL, NULL},
 };
 

@@ -50,12 +50,41 @@
                                             {:CKA_LABEL "copy object"}))]
       (assert (= nil (:destroy-object session-rw obj-handle2)))
       (assert (:get-object-size session-rw obj-handle1))
-      (pp (:get-attribute-value session-rw
-                                obj-handle1
-                                [:CKA_TOKEN
-                                 :CKA_CLASS
-                                 :CKA_VALUE
-                                 :CKA_APPLICATION])))
+
+      (let [attr (assert (:get-attribute-value session-rw
+                                               obj-handle1
+                                               [:CKA_TOKEN
+                                                :CKA_CLASS
+                                                :CKA_VALUE
+                                                :CKA_APPLICATION]))]
+        (assert (= 0 (attr :CKA_CLASS)))
+        (assert (= true (attr :CKA_TOKEN)))
+        (assert (= "My Application" (attr :CKA_APPLICATION)))
+        (assert (= "" (attr :CKA_VALUE))))
+
+      (assert (:set-attribute-value session-rw
+                                    obj-handle1
+                                    {:CKA_LABEL "Label 1"}))
+      (let [attr (assert (:get-attribute-value session-rw
+                                               obj-handle1
+                                               [:CKA_TOKEN
+                                                :CKA_CLASS
+                                                :CKA_VALUE
+                                                :CKA_APPLICATION
+                                                :CKA_LABEL]))]
+        (assert (= "Label 1" (attr :CKA_LABEL))))
+
+      (assert (:set-attribute-value session-rw
+                                    obj-handle1
+                                    {:CKA_LABEL "Label 2"}))
+      (let [attr (assert (:get-attribute-value session-rw
+                                               obj-handle1
+                                               [:CKA_TOKEN
+                                                :CKA_CLASS
+                                                :CKA_VALUE
+                                                :CKA_APPLICATION
+                                                :CKA_LABEL]))]
+        (assert (= "Label 2" (attr :CKA_LABEL)))))
 
 
     (assert (:logout session-rw)))
