@@ -82,12 +82,42 @@ JANET_FN(p11_get_object_size,
     return janet_wrap_number((double)size);
 }
 
+JANET_FN(p11_get_attribute_value,
+         "(get-attribute-value session-obj obj-handle attr-list)",
+         "Obtains the value of one or more attributes of an object. "
+         "Returns a template struct, if successful.")
+{
+    janet_fixarity(argc, 3);
+
+    session_obj_t *obj = janet_getabstract(argv, 0, get_session_obj_type());
+    CK_OBJECT_HANDLE obj_handle = (CK_OBJECT_HANDLE)janet_getnumber(argv, 1);
+    JanetTuple tup = janet_gettuple(argv, 2);
+    CK_ULONG count = (CK_ULONG)janet_tuple_length(tup);
+    CK_ATTRIBUTE_PTR p_template = create_new_p11_template_from_janet_tuple(tup);
+
+    CK_RV rv;
+    rv = obj->func_list->C_GetAttributeValue(obj->session, obj_handle, p_template, count);
+    PKCS11_ASSERT(rv, "C_GetAttributeValue");
+
+    for (int i=0; i<count; i++) {
+        p_template[i].pValue = janet_smalloc(p_template[i].ulValueLen);
+    }
+
+    rv = obj->func_list->C_GetAttributeValue(obj->session, obj_handle, p_template, count);
+    PKCS11_ASSERT(rv, "C_GetAttributeValue");
+
+    JanetStruct st = p11_template_to_janet_struct(p_template, count);
+
+    return janet_wrap_struct(st);
+}
+
 void submod_object(JanetTable *env) {
     JanetRegExt cfuns[] = {
         JANET_REG("create-object", p11_create_object),
         JANET_REG("copy-object", p11_copy_object),
         JANET_REG("destroy-object", p11_destroy_object),
         JANET_REG("get-object-size", p11_get_object_size),
+        JANET_REG("get-attribute-value", p11_get_attribute_value),
         JANET_REG_END
     };
     janet_cfuns_ext(env, "", cfuns);
