@@ -102,7 +102,6 @@ void submod_types(JanetTable *env) {
     JANET_DEF(env, "CKA_MODIFIABLE", janet_wrap_number((double)CKA_MODIFIABLE), "PKCS11 define");
     JANET_DEF(env, "CKA_COPYABLE", janet_wrap_number((double)CKA_COPYABLE), "PKCS11 define");
     JANET_DEF(env, "CKA_DESTROYABLE", janet_wrap_number((double)CKA_DESTROYABLE), "PKCS11 define");
-    JANET_DEF(env, "CKA_ECDSA_PARAMS", janet_wrap_number((double)CKA_ECDSA_PARAMS), "PKCS11 define");
     JANET_DEF(env, "CKA_EC_PARAMS", janet_wrap_number((double)CKA_EC_PARAMS), "PKCS11 define");
     JANET_DEF(env, "CKA_EC_POINT", janet_wrap_number((double)CKA_EC_POINT), "PKCS11 define");
     JANET_DEF(env, "CKA_ALWAYS_AUTHENTICATE", janet_wrap_number((double)CKA_ALWAYS_AUTHENTICATE), "PKCS11 define");
