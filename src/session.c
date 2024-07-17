@@ -30,6 +30,7 @@ static JanetMethod session_methods[] = {
     {"init-pin", p11_init_pin},
     {"set-pin", p11_set_pin},
     {"create-object", p11_create_object},
+    {"copy-object", p11_copy_object},
     {NULL, NULL},
 };
 

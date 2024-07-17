@@ -40,10 +40,17 @@
     (assert (:set-pin session-rw test-user-pin test-user-pin2))
     (assert (:login session-rw :user test-user-pin2))
 
-    (assert (:create-object session-rw {CKA_CLASS CKO_DATA
-                                        CKA_TOKEN true
-                                        CKA_APPLICATION "My Application"
-                                        CKA_VALUE ""}))
+
+
+    (let [obj-handle1 (assert (:create-object session-rw
+                                              {CKA_CLASS CKO_DATA
+                                               CKA_TOKEN true
+                                               CKA_APPLICATION "My Application"
+                                               CKA_VALUE ""}))
+          obj-handle2 (assert (:copy-object session-rw
+                                            obj-handle1
+                                            {CKA_LABEL "copy object"}))])
+
 
     (assert (:logout session-rw)))
 
