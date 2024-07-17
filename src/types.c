@@ -275,9 +275,7 @@ void submod_types(JanetTable *env) {
     JANET_DEF(env, "CKA_MODULUS_BITS", janet_wrap_number((double)CKA_MODULUS_BITS), "PKCS11 define");
     JANET_DEF(env, "CKA_PUBLIC_EXPONENT", janet_wrap_number((double)CKA_PUBLIC_EXPONENT), "PKCS11 define");
     JANET_DEF(env, "CKA_PRIVATE_EXPONENT", janet_wrap_number((double)CKA_PRIVATE_EXPONENT), "PKCS11 define");
-    JANET_DEF(env, "CKA_PRIME_CKA_PRIME_1", janet_wrap_number((double)1), "PKCS11 define");
     JANET_DEF(env, "CKA_PRIME_2", janet_wrap_number((double)CKA_PRIME_2), "PKCS11 define");
-    JANET_DEF(env, "CKA_EXPONENT_CKA_EXPONENT_1", janet_wrap_number((double)1), "PKCS11 define");
     JANET_DEF(env, "CKA_EXPONENT_2", janet_wrap_number((double)CKA_EXPONENT_2), "PKCS11 define");
     JANET_DEF(env, "CKA_COEFFICIENT", janet_wrap_number((double)CKA_COEFFICIENT), "PKCS11 define");
     JANET_DEF(env, "CKA_PRIME", janet_wrap_number((double)CKA_PRIME), "PKCS11 define");
