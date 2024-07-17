@@ -32,6 +32,7 @@ static JanetMethod session_methods[] = {
     {"create-object", p11_create_object},
     {"copy-object", p11_copy_object},
     {"destroy-object", p11_destroy_object},
+    {"get-object-size", p11_get_object_size},
     {NULL, NULL},
 };
 

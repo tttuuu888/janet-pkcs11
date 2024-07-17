@@ -40,8 +40,6 @@
     (assert (:set-pin session-rw test-user-pin test-user-pin2))
     (assert (:login session-rw :user test-user-pin2))
 
-
-
     (let [obj-handle1 (assert (:create-object session-rw
                                               {CKA_CLASS CKO_DATA
                                                CKA_TOKEN true
@@ -50,7 +48,8 @@
           obj-handle2 (assert (:copy-object session-rw
                                             obj-handle1
                                             {CKA_LABEL "copy object"}))]
-      (assert (= nil (:destroy-object session-rw obj-handle2))))
+      (assert (= nil (:destroy-object session-rw obj-handle2)))
+      (assert (:get-object-size session-rw obj-handle1)))
 
 
     (assert (:logout session-rw)))
