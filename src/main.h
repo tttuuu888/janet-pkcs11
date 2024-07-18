@@ -61,6 +61,9 @@ Janet p11_find_objects_init(int32_t argc, Janet *argv);
 Janet p11_find_objects(int32_t argc, Janet *argv);
 Janet p11_find_objects_final(int32_t argc, Janet *argv);
 
+/* Key management functions */
+Janet p11_generate_key(int32_t argc, Janet *argv);
+
 /* Sub modules */
 void submod_utils(JanetTable *env);
 void submod_types(JanetTable *env);

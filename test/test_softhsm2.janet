@@ -99,6 +99,8 @@
       (assert (= 1 (length (assert (:find-objects session-rw 10)))))
       (assert (:find-objects-final session-rw)))
 
+    (let [key (assert (:generate-key session-rw {:mechanism :CKM_DES_KEY_GEN}))])
+
     ## Calling logout is not a mandatory. logout is called automatically when
     ## session-obj is out of scope.
     (assert (:logout session-rw)))

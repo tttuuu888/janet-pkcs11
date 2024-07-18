@@ -139,3 +139,39 @@ CK_ATTRIBUTE_PTR create_new_p11_template_from_janet_tuple(JanetTuple tup)
 
     return p_template;
 }
+
+CK_MECHANISM_PTR janet_struct_to_p11_mechanism(JanetStruct st)
+{
+    int32_t count = janet_struct_length(st);
+    int32_t capacity = janet_struct_capacity(st);
+    CK_MECHANISM_PTR p_mechanism = janet_smalloc(count * sizeof(CK_MECHANISM));
+    int index = 0;
+
+    memset(p_mechanism, 0, count * sizeof(CK_MECHANISM));
+
+    for (int i=0; i<capacity; i++) {
+        const JanetKV *kv = st + i;
+
+        if (janet_checktype(kv->key, JANET_NIL))
+            continue;
+
+        JanetKeyword key = janet_unwrap_keyword(kv->key);
+        Janet val = kv->value;
+
+        if (!janet_cstrcmp(key, "mechanism")) {
+            CK_MECHANISM_TYPE value = get_type_value(janet_unwrap_keyword(val));
+            p_mechanism->mechanism = value;
+        } else if (!janet_cstrcmp(key, "parameter")) {
+            const uint8_t *jstr = janet_unwrap_string(val);
+            int slen = janet_string_length(jstr);
+            CK_BYTE_PTR *value = janet_smalloc(slen);
+            memcpy(value, jstr, slen);
+            p_mechanism->pParameter = value;
+            p_mechanism->ulParameterLen = slen;
+        }
+
+        index++;
+    }
+
+    return p_mechanism;
+}

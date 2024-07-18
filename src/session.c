@@ -38,6 +38,7 @@ static JanetMethod session_methods[] = {
     {"find-objects-init", p11_find_objects_init},
     {"find-objects", p11_find_objects},
     {"find-objects-final", p11_find_objects_final},
+    {"generate-key", p11_generate_key},
     {NULL, NULL},
 };
 

@@ -19,4 +19,5 @@
           "src/session.c"
           "src/object.c"
           "src/attribute.c"
+          "src/key.c"
          ])
