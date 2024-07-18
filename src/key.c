@@ -75,10 +75,43 @@ JANET_FN(p11_generate_key_pair,
     return janet_wrap_tuple(janet_tuple_end(tup));
 }
 
+JANET_FN(p11_wrap_key,
+         "(wrap-key session-obj mechanism wrapping-key-handle key-handle)",
+         "Wraps (i.e., encrypts) a private or secret key."
+         "Returns a wrapped key in string, if successful.")
+{
+    janet_fixarity(argc, 4);
+
+    session_obj_t *obj = janet_getabstract(argv, 0, get_session_obj_type());
+    JanetStruct mechanism = janet_getstruct(argv, 1);
+    CK_OBJECT_HANDLE wrapping_key_handle = (CK_OBJECT_HANDLE)janet_getnumber(argv, 2);
+    CK_OBJECT_HANDLE key_handle = (CK_OBJECT_HANDLE)janet_getnumber(argv, 3);
+
+    CK_MECHANISM_PTR p_mechanism = janet_struct_to_p11_mechanism(mechanism);
+    CK_BYTE_PTR wrapped_key = NULL_PTR;
+    CK_ULONG wrapped_key_len = 0;
+
+    CK_RV rv;
+    rv = obj->func_list->C_WrapKey(obj->session, p_mechanism,
+                                   wrapping_key_handle, key_handle,
+                                   wrapped_key, &wrapped_key_len);
+    PKCS11_ASSERT(rv, "C_WrapKey");
+
+    wrapped_key = janet_smalloc(wrapped_key_len);
+
+    rv = obj->func_list->C_WrapKey(obj->session, p_mechanism,
+                                   wrapping_key_handle, key_handle,
+                                   wrapped_key, &wrapped_key_len);
+    PKCS11_ASSERT(rv, "C_WrapKey");
+
+    return janet_wrap_string(janet_string(wrapped_key, wrapped_key_len));
+}
+
 void submod_key(JanetTable *env) {
     JanetRegExt cfuns[] = {
         JANET_REG("generate-key", p11_generate_key),
         JANET_REG("generate-key-pair", p11_generate_key_pair),
+        JANET_REG("wrap-key", p11_wrap_key),
         JANET_REG_END
     };
     janet_cfuns_ext(env, "", cfuns);

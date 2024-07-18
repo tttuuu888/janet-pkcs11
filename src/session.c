@@ -40,6 +40,7 @@ static JanetMethod session_methods[] = {
     {"find-objects-final", p11_find_objects_final},
     {"generate-key", p11_generate_key},
     {"generate-key-pair", p11_generate_key_pair},
+    {"wrap-key", p11_wrap_key},
     {NULL, NULL},
 };
 
