@@ -299,11 +299,16 @@ JANET_FN(p11_init_token,
     CK_SLOT_ID slot_id = janet_getinteger64(argv, 1);
     CK_UTF8CHAR_PTR pin = (CK_UTF8CHAR_PTR)janet_getcstring(argv, 2);
     const char *jlabel = janet_getcstring(argv, 3);
+    int jlablel_len = strlen(jlabel);
     CK_UTF8CHAR label[32];
     CK_RV rv;
 
+    if (jlablel_len > 32) {
+        janet_panic("The length of the label must be 32 or less.");
+    }
+
     memset(label, ' ', sizeof(label));
-    memcpy(label, jlabel, strlen(jlabel));
+    memcpy(label, jlabel, jlablel_len);
 
     rv = obj->func_list->C_InitToken(slot_id, pin, strlen((const char *)pin), label);
     PKCS11_ASSERT(rv, "C_InitToken");
