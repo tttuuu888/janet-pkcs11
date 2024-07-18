@@ -99,7 +99,26 @@
       (assert (= 1 (length (assert (:find-objects session-rw 10)))))
       (assert (:find-objects-final session-rw)))
 
-    (let [key (assert (:generate-key session-rw {:mechanism :CKM_DES_KEY_GEN}))])
+    (let [key (assert (:generate-key session-rw {:mechanism :CKM_DES_KEY_GEN}))]
+      )
+    (let [pubkey-template {:CKA_ENCRYPT true
+                           :CKA_VERIFY true
+                           :CKA_MODULUS_BITS 768
+                           :CKA_PUBLIC_EXPONENT (string (buffer/from-bytes 0x01 0x00 0x01))}
+          privkey-template {:CKA_TOKEN true
+                            :CKA_PRIVATE true
+                            :CKA_SUBJECT "subject"
+                            :CKA_ID (string (buffer/from-bytes 1 2 3))
+                            :CKA_SENSITIVE true
+                            :CKA_DECRYPT true
+                            :CKA_SIGN true
+                            :CKA_UNWRAP true}
+          [pubkey privkey]
+          (:generate-key-pair session-rw
+                              {:mechanism :CKM_RSA_PKCS_KEY_PAIR_GEN}
+                              pubkey-template
+                              privkey-template)]
+      )
 
     ## Calling logout is not a mandatory. logout is called automatically when
     ## session-obj is out of scope.

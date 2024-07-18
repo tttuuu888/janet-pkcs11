@@ -67,6 +67,7 @@ JANET_FN(p11_generate_key_pair,
                                            p_priv_template, priv_template_count,
                                            &pub_obj_handle, &priv_obj_handle);
     PKCS11_ASSERT(rv, "C_GenerateKeyPair");
+
     Janet *tup = janet_tuple_begin(2);
     tup[0] = janet_wrap_number(pub_obj_handle);
     tup[1] = janet_wrap_number(priv_obj_handle);
