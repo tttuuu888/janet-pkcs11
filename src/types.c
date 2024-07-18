@@ -290,6 +290,11 @@ p11_attr_type_t get_attribute_type(CK_ATTRIBUTE_TYPE type) {
         case CKA_COPYABLE:
         case CKA_DESTROYABLE:
         case CKA_ALWAYS_AUTHENTICATE:
+        case CKA_WRAP_WITH_TRUSTED:
+        case CKA_RESET_ON_INIT:
+        case CKA_HAS_RESET:
+        case CKA_COLOR:
+        case CKA_OTP_USER_FRIENDLY_MODE:
             return P11_ATTR_BOOL;
 
         /* CK_ULONG attributes */
@@ -299,8 +304,25 @@ p11_attr_type_t get_attribute_type(CK_ATTRIBUTE_TYPE type) {
         case CKA_KEY_TYPE:
         case CKA_KEY_GEN_MECHANISM:
         case CKA_CLASS:
+        case CKA_MODULUS_BITS:
         case CKA_VALUE_BITS:
         case CKA_VALUE_LEN:
+        case CKA_PRIME_BITS:
+        case CKA_SUB_PRIME_BITS:
+        case CKA_PIXEL_X:
+        case CKA_PIXEL_Y:
+        case CKA_RESOLUTION:
+        case CKA_CHAR_ROWS:
+        case CKA_CHAR_COLUMNS:
+        case CKA_BITS_PER_PIXEL:
+        case CKA_PROFILE_ID:
+        case CKA_OTP_LENGTH:
+        case CKA_OTP_TIME_INTERVAL:
+        case CKA_OTP_CHALLENGE_REQUIREMENT:
+        case CKA_OTP_TIME_REQUIREMENT:
+        case CKA_OTP_COUNTER_REQUIREMENT:
+        case CKA_OTP_PIN_REQUIREMENT:
+        case CKA_HW_FEATURE_TYPE:
             return P11_ATTR_ULONG;
 
         /* Date attributes */
@@ -315,54 +337,58 @@ p11_attr_type_t get_attribute_type(CK_ATTRIBUTE_TYPE type) {
         case CKA_ID:
         case CKA_ISSUER:
         case CKA_SERIAL_NUMBER:
-        case CKA_WRAP_TEMPLATE:
-        case CKA_UNWRAP_TEMPLATE:
-        case CKA_DERIVE_TEMPLATE:
-        case CKA_MODULUS:
-        case CKA_MODULUS_BITS:
-        case CKA_PUBLIC_EXPONENT:
-        case CKA_PRIVATE_EXPONENT:
+        case CKA_AC_ISSUER:
+        case CKA_OWNER:
+        case CKA_ATTR_TYPES:
+        case CKA_ALLOWED_MECHANISMS:
+        case CKA_BASE:
+        case CKA_PRIME:
         case CKA_PRIME_1:
         case CKA_PRIME_2:
         case CKA_EXPONENT_1:
         case CKA_EXPONENT_2:
         case CKA_COEFFICIENT:
-        case CKA_PRIME:
-        case CKA_SUBPRIME:
-        case CKA_BASE:
-        case CKA_PRIME_BITS:
-        case CKA_SUB_PRIME_BITS:
+        case CKA_MODULUS:
+        case CKA_PUBLIC_EXPONENT:
+        case CKA_PRIVATE_EXPONENT:
         case CKA_EC_PARAMS:
         case CKA_EC_POINT:
-        case CKA_SECONDARY_AUTH:
-        case CKA_AUTH_PIN_FLAGS:
-        case CKA_WRAP_WITH_TRUSTED:
-        case CKA_HW_FEATURE_TYPE:
-        case CKA_RESET_ON_INIT:
-        case CKA_HAS_RESET:
-        case CKA_PIXEL_X:
-        case CKA_PIXEL_Y:
-        case CKA_RESOLUTION:
-        case CKA_CHAR_ROWS:
-        case CKA_CHAR_COLUMNS:
-        case CKA_COLOR:
-        case CKA_BITS_PER_PIXEL:
-        case CKA_CHAR_SETS:
-        case CKA_ENCODING_METHODS:
-        case CKA_MIME_TYPES:
-        case CKA_REQUIRED_CMS_ATTRIBUTES:
+        case CKA_CHECK_VALUE:
+        case CKA_GOST28147_PARAMS:
+        case CKA_GOSTR3410_PARAMS:
+        case CKA_GOSTR3411_PARAMS:
+        case CKA_WRAP_TEMPLATE:
+        case CKA_UNWRAP_TEMPLATE:
+        case CKA_DERIVE_TEMPLATE:
+        case CKA_OTP_COUNTER:
+        case CKA_OTP_SERVICE_LOGO:
+        case CKA_PUBLIC_KEY_INFO:
         case CKA_DEFAULT_CMS_ATTRIBUTES:
+        case CKA_HASH_OF_ISSUER_PUBLIC_KEY:
+        case CKA_HASH_OF_SUBJECT_PUBLIC_KEY:
+        case CKA_REQUIRED_CMS_ATTRIBUTES:
+        case CKA_SUBPRIME:
         case CKA_SUPPORTED_CMS_ATTRIBUTES:
-        case CKA_ALLOWED_MECHANISMS:
             return P11_ATTR_BYTES;
 
         /* String attributes (null-terminated) */
         case CKA_LABEL:
         case CKA_APPLICATION:
+        case CKA_URL:
+        case CKA_CHAR_SETS:
+        case CKA_ENCODING_METHODS:
+        case CKA_MIME_TYPES:
+        case CKA_JAVA_MIDP_SECURITY_DOMAIN:
+        case CKA_NAME_HASH_ALGORITHM:
+        case CKA_OTP_FORMAT:
+        case CKA_OTP_SERVICE_IDENTIFIER:
+        case CKA_OTP_SERVICE_LOGO_TYPE:
+        case CKA_OTP_USER_IDENTIFIER:
+        case CKA_OTP_TIME:
             return P11_ATTR_STRING;
 
         default:
-            janet_panicf("0x%0x type is not found", type);
+            janet_panicf("0x%0x type is not supported", type);
     }
 
     return P11_ATTR_STRING;
