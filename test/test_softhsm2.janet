@@ -5,7 +5,8 @@
 (start-suite)
 
 (def softhsm2-so-path "/usr/lib/softhsm/libsofthsm2.so")
-(def test-token-label (string "janet-pkcs11-test" (os/cryptorand 8)))
+(def test-token-label (string "janet-pkcs11-test"
+                              ;(string/bytes (os/cryptorand 4))))
 (def test-so-pin  "012345")
 (def test-so-pin2 "abcdef")
 (def test-user-pin  "123456")
