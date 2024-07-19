@@ -297,20 +297,19 @@ JANET_FN(p11_init_token,
 
     p11_obj_t *obj = janet_getabstract(argv, 0, get_p11_obj_type());
     CK_SLOT_ID slot_id = janet_getinteger64(argv, 1);
-    CK_UTF8CHAR_PTR pin = (CK_UTF8CHAR_PTR)janet_getcstring(argv, 2);
-    const char *jlabel = janet_getcstring(argv, 3);
-    int jlablel_len = strlen(jlabel);
+    JanetByteView pin = janet_getbytes(argv, 2);
+    JanetByteView jlabel = janet_getbytes(argv, 3);
     CK_UTF8CHAR label[32];
     CK_RV rv;
 
-    if (jlablel_len > 32) {
+    if (jlabel.len > 32) {
         janet_panic("The length of the label must be 32 or less.");
     }
 
     memset(label, ' ', sizeof(label));
-    memcpy(label, jlabel, jlablel_len);
+    memcpy(label, jlabel.bytes, jlabel.len);
 
-    rv = obj->func_list->C_InitToken(slot_id, pin, strlen((const char *)pin), label);
+    rv = obj->func_list->C_InitToken(slot_id, (CK_UTF8CHAR_PTR)pin.bytes, (CK_ULONG)pin.len, label);
     PKCS11_ASSERT(rv, "C_InitToken");
 
     return janet_wrap_abstract(obj);
@@ -324,10 +323,10 @@ JANET_FN(p11_init_pin,
     janet_fixarity(argc, 2);
 
     session_obj_t *obj = janet_getabstract(argv, 0, get_session_obj_type());
-    const char *pin = (const char *)janet_getstring(argv, 1);
+    JanetByteView pin = janet_getbytes(argv, 1);
 
     CK_RV rv;
-    rv = obj->func_list->C_InitPIN(obj->session, (CK_UTF8CHAR_PTR)pin, (CK_ULONG)strlen(pin));
+    rv = obj->func_list->C_InitPIN(obj->session, (CK_UTF8CHAR_PTR)pin.bytes, (CK_ULONG)pin.len);
     PKCS11_ASSERT(rv, "C_InitPIN");
 
     return janet_wrap_abstract(obj);
@@ -342,13 +341,13 @@ JANET_FN(p11_set_pin,
     janet_fixarity(argc, 3);
 
     session_obj_t *obj = janet_getabstract(argv, 0, get_session_obj_type());
-    const char *old_pin = (const char *)janet_getstring(argv, 1);
-    const char *new_pin = (const char *)janet_getstring(argv, 2);
+    JanetByteView old_pin = janet_getbytes(argv, 1);
+    JanetByteView new_pin = janet_getbytes(argv, 2);
 
     CK_RV rv;
     rv = obj->func_list->C_SetPIN(obj->session,
-                                  (CK_UTF8CHAR_PTR)old_pin, (CK_ULONG)strlen(old_pin),
-                                  (CK_UTF8CHAR_PTR)new_pin, (CK_ULONG)strlen(new_pin));
+                                  (CK_UTF8CHAR_PTR)old_pin.bytes, (CK_ULONG)old_pin.len,
+                                  (CK_UTF8CHAR_PTR)new_pin.bytes, (CK_ULONG)new_pin.len);
     PKCS11_ASSERT(rv, "C_SetPIN");
 
     return janet_wrap_abstract(obj);

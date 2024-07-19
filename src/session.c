@@ -190,7 +190,7 @@ JANET_FN(p11_login,
 
     session_obj_t *obj = janet_getabstract(argv, 0, get_session_obj_type());
     const uint8_t *user_type_kw = janet_getkeyword(argv, 1);
-    const char *pin = (const char *)janet_getstring(argv, 2);
+    JanetByteView pin = janet_getbytes(argv, 2);
 
     CK_USER_TYPE user_type;
     if (!janet_cstrcmp(user_type_kw, "so")) {
@@ -204,7 +204,7 @@ JANET_FN(p11_login,
     }
 
     CK_RV rv;
-    rv = obj->func_list->C_Login(obj->session, user_type, (CK_UTF8CHAR_PTR)pin, (CK_ULONG)strlen(pin));
+    rv = obj->func_list->C_Login(obj->session, user_type, (CK_UTF8CHAR_PTR)pin.bytes, (CK_ULONG)pin.len);
     PKCS11_ASSERT(rv, "C_Login");
 
     return janet_wrap_abstract(obj);
