@@ -137,12 +137,40 @@ JANET_FN(p11_unwrap_key,
     return janet_wrap_number((double)key_handle);
 }
 
+JANET_FN(p11_derive_key,
+         "(derive-key session-obj mechanism base-key-handle template)",
+         "Derives a key from a base key, creating a new key object. "
+         "Returns a `key-handle`, if successful.")
+{
+    janet_fixarity(argc, 4);
+
+    session_obj_t *obj = janet_getabstract(argv, 0, get_session_obj_type());
+    JanetStruct mechanism = janet_getstruct(argv, 1);
+    CK_OBJECT_HANDLE base_key_handle = (CK_OBJECT_HANDLE)janet_getnumber(argv, 2);
+    JanetStruct template = janet_getstruct(argv, 2);
+
+    CK_MECHANISM_PTR p_mechanism = janet_struct_to_p11_mechanism(mechanism);
+    CK_ATTRIBUTE_PTR p_template = janet_struct_to_p11_template(template);
+    CK_ULONG count = (CK_ULONG)janet_struct_length(template);
+    CK_OBJECT_HANDLE key_handle = 0;
+
+    CK_RV rv;
+    rv = obj->func_list->C_DeriveKey(obj->session, p_mechanism,
+                                     base_key_handle,
+                                     p_template, count,
+                                     &key_handle);
+    PKCS11_ASSERT(rv, "C_DeriveKey");
+
+    return janet_wrap_number((double)key_handle);
+}
+
 void submod_key(JanetTable *env) {
     JanetRegExt cfuns[] = {
         JANET_REG("generate-key", p11_generate_key),
         JANET_REG("generate-key-pair", p11_generate_key_pair),
         JANET_REG("wrap-key", p11_wrap_key),
         JANET_REG("unwrap-key", p11_unwrap_key),
+        JANET_REG("derive-key", p11_derive_key),
         JANET_REG_END
     };
     janet_cfuns_ext(env, "", cfuns);
