@@ -107,11 +107,42 @@ JANET_FN(p11_wrap_key,
     return janet_wrap_string(janet_string(wrapped_key, wrapped_key_len));
 }
 
+JANET_FN(p11_unwrap_key,
+         "(unwrap-key session-obj mechanism unwrapping-key-handle wrapped-key template)",
+         "Unwraps (i.e. decrypts) a wrapped key, creating a new private key "
+         "or secret key object. Returns a `key-handle`, if successful.")
+{
+    janet_fixarity(argc, 5);
+
+    session_obj_t *obj = janet_getabstract(argv, 0, get_session_obj_type());
+    JanetStruct mechanism = janet_getstruct(argv, 1);
+    CK_OBJECT_HANDLE unwrapping_key_handle = (CK_OBJECT_HANDLE)janet_getnumber(argv, 2);
+    JanetByteView wrapped_key = janet_getbytes(argv, 3);
+    JanetStruct template = janet_getstruct(argv, 4);
+
+    CK_MECHANISM_PTR p_mechanism = janet_struct_to_p11_mechanism(mechanism);
+    CK_ATTRIBUTE_PTR p_template = janet_struct_to_p11_template(template);
+    CK_ULONG count = (CK_ULONG)janet_struct_length(template);
+    CK_OBJECT_HANDLE key_handle = 0;
+
+    CK_RV rv;
+    rv = obj->func_list->C_UnwrapKey(obj->session, p_mechanism,
+                                     unwrapping_key_handle,
+                                     (CK_BYTE_PTR)wrapped_key.bytes,
+                                     (CK_ULONG)wrapped_key.len,
+                                     p_template, count,
+                                     &key_handle);
+    PKCS11_ASSERT(rv, "C_UnwrapKey");
+
+    return janet_wrap_number((double)key_handle);
+}
+
 void submod_key(JanetTable *env) {
     JanetRegExt cfuns[] = {
         JANET_REG("generate-key", p11_generate_key),
         JANET_REG("generate-key-pair", p11_generate_key_pair),
         JANET_REG("wrap-key", p11_wrap_key),
+        JANET_REG("unwrap-key", p11_unwrap_key),
         JANET_REG_END
     };
     janet_cfuns_ext(env, "", cfuns);

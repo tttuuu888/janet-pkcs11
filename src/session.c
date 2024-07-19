@@ -41,6 +41,7 @@ static JanetMethod session_methods[] = {
     {"generate-key", p11_generate_key},
     {"generate-key-pair", p11_generate_key_pair},
     {"wrap-key", p11_wrap_key},
+    {"unwrap-key", p11_unwrap_key},
     {NULL, NULL},
 };
 

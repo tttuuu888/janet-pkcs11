@@ -132,11 +132,16 @@
                         :CKA_KEY_TYPE :CKK_AES
                         :CKA_TOKEN true
                         :CKA_VALUE_LEN 32
-                        :CKA_PRIVATE true
-                        :CKA_SENSITIVE false
-                        :CKA_WRAP true
                         :CKA_EXTRACTABLE true
+                        :CKA_WRAP true
                         :CKA_UNWRAP true}
+          unwrap-key-template {:CKA_CLASS :CKO_SECRET_KEY
+                               :CKA_KEY_TYPE :CKK_AES
+                               :CKA_TOKEN true
+                               :CKA_EXTRACTABLE true
+                               :CKA_WRAP false
+                               :CKA_UNWRAP false}
+
           wrap-key (assert (:generate-key session-rw
                                           {:mechanism :CKM_AES_KEY_GEN}
                                           wrap-key-template))
@@ -146,7 +151,13 @@
           wrapped-key (assert (:wrap-key session-rw
                                          {:mechanism :CKM_AES_KEY_WRAP_PAD}
                                          wrap-key
-                                         key))])
+                                         key))
+          unwrapped-key (assert (:unwrap-key session-rw
+                                             {:mechanism :CKM_AES_KEY_WRAP_PAD}
+                                             wrap-key
+                                             wrapped-key
+                                             unwrap-key-template))]
+      )
 
     ## Calling logout is not a mandatory. logout is called automatically when
     ## session-obj is out of scope.
