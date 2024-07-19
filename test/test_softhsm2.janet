@@ -99,8 +99,8 @@
       (assert (= 1 (length (assert (:find-objects session-rw 10)))))
       (assert (:find-objects-final session-rw)))
 
-    (let [key (assert (:generate-key session-rw {:mechanism :CKM_DES_KEY_GEN}))]
-      )
+    (assert (:generate-key session-rw {:mechanism :CKM_DES_KEY_GEN}))
+
     (let [pubkey-template {:CKA_ENCRYPT true
                            :CKA_VERIFY true
                            :CKA_MODULUS_BITS 768
@@ -112,13 +112,41 @@
                             :CKA_SENSITIVE true
                             :CKA_DECRYPT true
                             :CKA_SIGN true
-                            :CKA_UNWRAP true}
-          [pubkey privkey]
-          (:generate-key-pair session-rw
-                              {:mechanism :CKM_RSA_PKCS_KEY_PAIR_GEN}
-                              pubkey-template
-                              privkey-template)]
-      )
+                            :CKA_UNWRAP true}]
+      (assert (:generate-key-pair session-rw
+                                  {:mechanism :CKM_RSA_PKCS_KEY_PAIR_GEN}
+                                  pubkey-template
+                                  privkey-template)))
+
+    (let [wrap-key-template {:CKA_CLASS :CKO_SECRET_KEY
+                             :CKA_KEY_TYPE :CKK_AES
+                             :CKA_TOKEN true
+                             :CKA_VALUE_LEN 32
+                             :CKA_PRIVATE true
+                             :CKA_SENSITIVE false
+                             :CKA_WRAP true
+                             :CKA_EXTRACTABLE true
+                             :CKA_UNWRAP true
+                            }
+          key-template {:CKA_CLASS :CKO_SECRET_KEY
+                        :CKA_KEY_TYPE :CKK_AES
+                        :CKA_TOKEN true
+                        :CKA_VALUE_LEN 32
+                        :CKA_PRIVATE true
+                        :CKA_SENSITIVE false
+                        :CKA_WRAP true
+                        :CKA_EXTRACTABLE true
+                        :CKA_UNWRAP true}
+          wrap-key (assert (:generate-key session-rw
+                                          {:mechanism :CKM_AES_KEY_GEN}
+                                          wrap-key-template))
+          key (assert (:generate-key session-rw
+                                     {:mechanism :CKM_AES_KEY_GEN}
+                                     key-template))
+          wrapped-key (assert (:wrap-key session-rw
+                                         {:mechanism :CKM_AES_KEY_WRAP_PAD}
+                                         wrap-key
+                                         key))])
 
     ## Calling logout is not a mandatory. logout is called automatically when
     ## session-obj is out of scope.
