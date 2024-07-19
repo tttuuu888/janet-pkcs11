@@ -13,7 +13,16 @@
 (def test-user-pin2 "bcdefg")
 
 (var test-slot nil)
+(var test-serial-nubmer nil)
 
+(defn find-slot-with-serial-number (p11 serial-number)
+  (find
+   (fn [s] (= ((:get-token-info p11 s) :serial-number)
+              serial-number))
+   (:get-slot-list p11)))
+
+
+### slot-info, init-token tests
 (with [p11 (assert (new softhsm2-so-path))]
   (set test-slot (min ;(:get-slot-list p11)))
 
@@ -29,6 +38,11 @@
              p11 test-slot (tuple (first (:get-mechanism-list p11 test-slot)))))
   (assert (:init-token p11 test-slot test-so-pin test-token-label))
 
+  (set test-serial-nubmer ((:get-token-info p11 test-slot) :serial-number)))
+
+### session-info, pin, login tests
+(with [p11 (assert (new softhsm2-so-path))]
+  (set test-slot (find-slot-with-serial-number p11 test-serial-nubmer))
   (with [session-rw (assert (:open-session p11 test-slot))]
     (assert (= ((:get-session-info session-rw) :flags) 6))
     (assert (= ((:get-session-info session-rw) :state) 2))
@@ -39,6 +53,21 @@
     (assert (:init-pin session-rw test-user-pin))
     (assert (:logout session-rw))
     (assert (:set-pin session-rw test-user-pin test-user-pin2))
+    (assert (:login session-rw :user test-user-pin2))
+
+    ## Calling logout is not a mandatory. logout is called automatically when
+    ## session-obj is out of scope.
+    (assert (:logout session-rw)))
+
+  (with [session-ro (assert (:open-session p11 test-slot :read-only))]
+    (assert (= ((:get-session-info session-ro) :flags) 4))
+    (assert (= ((:get-session-info session-ro) :state) 0))
+    (assert (:login session-ro :user test-user-pin2))
+    (assert (:logout session-ro))))
+
+### objects, attribute tests
+(with [p11 (assert (new softhsm2-so-path))]
+  (with [session-rw (assert (:open-session p11 test-slot))]
     (assert (:login session-rw :user test-user-pin2))
 
     ## The template is a struct. PKCS11 attribute defines can be used here, but
@@ -98,8 +127,12 @@
 
       (assert (:find-objects-init session-rw))
       (assert (= 1 (length (assert (:find-objects session-rw 10)))))
-      (assert (:find-objects-final session-rw)))
+      (assert (:find-objects-final session-rw)))))
 
+### key tests
+(with [p11 (assert (new softhsm2-so-path))]
+  (with [session-rw (assert (:open-session p11 test-slot))]
+    (assert (:login session-rw :user test-user-pin2))
     (assert (:generate-key session-rw {:mechanism :CKM_DES_KEY_GEN}))
 
     (let [pubkey-template {:CKA_ENCRYPT true
@@ -158,28 +191,24 @@
                                              wrap-key
                                              wrapped-key
                                              unwrap-key-template))]
-      )
-
-    ## Calling logout is not a mandatory. logout is called automatically when
-    ## session-obj is out of scope.
-    (assert (:logout session-rw)))
-
-  (with [session-ro (assert (:open-session p11 test-slot :read-only))]
-    (assert (= ((:get-session-info session-ro) :flags) 4))
-    (assert (= ((:get-session-info session-ro) :state) 0))
-    (assert (:login session-ro :user test-user-pin2))
-    (assert (:logout session-ro))))
+      )))
 
 (assert (sh/exec "softhsm2-util" "--delete-token" "--token" test-token-label))
 
 ### `p11-obj` and `session-obj` should work within `let` binding as well
-(let [p11 (assert (new softhsm2-so-path))]
-  (let [test-slot (min ;(:get-slot-list p11))]
-    (assert (:init-token p11 test-slot test-so-pin test-token-label))
-    (let [session-ro (assert (:open-session p11 test-slot :read-only))]
-      (assert (= ((:get-session-info session-ro) :flags) 4))
-      (assert (= (:close-session session-ro) nil)))
-    (assert (= (:close-all-sessions p11 test-slot) nil))))
+(let [p11 (assert (new softhsm2-so-path))
+      test-slot (min ;(:get-slot-list p11))]
+  (assert (:init-token p11 test-slot test-so-pin test-token-label))
+  (let [session-ro (assert (:open-session p11 test-slot :read-only))]
+    (assert (= ((:get-session-info session-ro) :flags) 4))
+
+    ## `close-session` is not a mandatory. However, when using `let` binding,
+    ## `close-session` would be called by the garbage collector. Therefore, if
+    ## immediate session closing is required, it must be called explicitly.
+    (assert (= (:close-session session-ro) nil)))
+
+  ## `close-all-sessions` is not a mandatory either.
+  (assert (= (:close-all-sessions p11 test-slot) nil)))
 
 (assert (sh/exec "softhsm2-util" "--delete-token" "--token" test-token-label))
 
