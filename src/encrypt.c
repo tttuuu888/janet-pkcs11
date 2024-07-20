@@ -47,10 +47,6 @@ JANET_FN(p11_encrypt,
                                    enc_data, &enc_data_len);
     PKCS11_ASSERT(rv, "C_Encrypt");
 
-    if (enc_data_len == 0) {
-        return janet_wrap_string(janet_string(NULL, 0));
-    }
-
     enc_data = janet_smalloc(enc_data_len);
     rv = obj->func_list->C_Encrypt(obj->session, (CK_BYTE_PTR)data.bytes, (CK_ULONG)data.len,
                                    enc_data, &enc_data_len);
@@ -78,10 +74,6 @@ JANET_FN(p11_encrypt_update,
                                          enc_data, &enc_data_len);
     PKCS11_ASSERT(rv, "C_EncryptUpdate");
 
-    if (enc_data_len == 0) {
-        return janet_wrap_string(janet_string(NULL, 0));
-    }
-
     enc_data = janet_smalloc(enc_data_len);
     rv = obj->func_list->C_EncryptUpdate(obj->session,
                                          (CK_BYTE_PTR)data.bytes, (CK_ULONG)data.len,
@@ -106,10 +98,6 @@ JANET_FN(p11_encrypt_final,
     CK_RV rv;
     rv = obj->func_list->C_EncryptFinal(obj->session, enc_data, &enc_data_len);
     PKCS11_ASSERT(rv, "C_EncryptFinal");
-
-    if (enc_data_len == 0) {
-        return janet_wrap_string(janet_string(NULL, 0));
-    }
 
     enc_data = janet_smalloc(enc_data_len);
     rv = obj->func_list->C_EncryptFinal(obj->session, enc_data, &enc_data_len);

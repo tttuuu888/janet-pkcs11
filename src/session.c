@@ -180,10 +180,6 @@ JANET_FN(p11_get_operation_state,
     rv = obj->func_list->C_GetOperationState(obj->session, NULL_PTR, &state_len);
     PKCS11_ASSERT(rv, "C_GetOperationState");
 
-    if (state_len == 0) {
-        return janet_wrap_nil();
-    }
-
     JanetBuffer *state = janet_buffer(state_len);
     rv = obj->func_list->C_GetOperationState(obj->session, (CK_BYTE_PTR)state->data, &state_len);
     PKCS11_ASSERT(rv, "C_GetOperationState");
