@@ -147,7 +147,7 @@ JANET_FN(p11_derive_key,
     session_obj_t *obj = janet_getabstract(argv, 0, get_session_obj_type());
     JanetStruct mechanism = janet_getstruct(argv, 1);
     CK_OBJECT_HANDLE base_key_handle = (CK_OBJECT_HANDLE)janet_getnumber(argv, 2);
-    JanetStruct template = janet_getstruct(argv, 2);
+    JanetStruct template = janet_getstruct(argv, 3);
 
     CK_MECHANISM_PTR p_mechanism = janet_struct_to_p11_mechanism(mechanism);
     CK_ATTRIBUTE_PTR p_template = janet_struct_to_p11_template(template);

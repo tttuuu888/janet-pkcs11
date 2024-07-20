@@ -162,12 +162,11 @@ CK_MECHANISM_PTR janet_struct_to_p11_mechanism(JanetStruct st)
             CK_MECHANISM_TYPE value = get_type_value(janet_unwrap_keyword(val));
             p_mechanism->mechanism = value;
         } else if (!janet_cstrcmp(key, "parameter")) {
-            const uint8_t *jstr = janet_unwrap_string(val);
-            int slen = janet_string_length(jstr);
-            CK_BYTE_PTR *value = janet_smalloc(slen);
-            memcpy(value, jstr, slen);
+            JanetByteView param = janet_getbytes(&val, 0);
+            CK_BYTE_PTR *value = janet_smalloc(param.len);
+            memcpy(value, param.bytes, param.len);
             p_mechanism->pParameter = value;
-            p_mechanism->ulParameterLen = slen;
+            p_mechanism->ulParameterLen = param.len;
         }
 
         index++;
