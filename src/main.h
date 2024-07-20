@@ -74,6 +74,12 @@ Janet p11_encrypt(int32_t argc, Janet *argv);
 Janet p11_encrypt_update(int32_t argc, Janet *argv);
 Janet p11_encrypt_final(int32_t argc, Janet *argv);
 
+/* Decrypt functions */
+Janet p11_decrypt_init(int32_t argc, Janet *argv);
+Janet p11_decrypt(int32_t argc, Janet *argv);
+Janet p11_decrypt_update(int32_t argc, Janet *argv);
+Janet p11_decrypt_final(int32_t argc, Janet *argv);
+
 /* Random number generation functions */
 Janet p11_seed_random(int32_t argc, Janet *argv);
 Janet p11_generate_random(int32_t argc, Janet *argv);

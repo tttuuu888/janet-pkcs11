@@ -22,4 +22,5 @@
           "src/key.c"
           "src/random.c"
           "src/encrypt.c"
+          "src/decrypt.c"
          ])
