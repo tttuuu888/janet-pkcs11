@@ -74,9 +74,10 @@ Janet p11_generate_random(int32_t argc, Janet *argv);
 
 /* Sub modules */
 void submod_utils(JanetTable *env);
-void submod_types(JanetTable *env);
 void submod_slot_and_token(JanetTable *env);
 void submod_session(JanetTable *env);
-void submod_utils(JanetTable *env);
+void submod_object(JanetTable *env);
+void submod_key(JanetTable *env);
+void submod_random(JanetTable *env);
 
 #endif /* MAIN_H */

@@ -159,4 +159,7 @@ JANET_MODULE_ENTRY(JanetTable *env) {
     submod_general_purpose(env);
     submod_slot_and_token(env);
     submod_session(env);
+    submod_object(env);
+    submod_key(env);
+    submod_random(env);
 }
