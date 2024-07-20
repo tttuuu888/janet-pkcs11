@@ -29,6 +29,7 @@ static JanetMethod session_methods[] = {
     {"logout", p11_logout},
     {"init-pin", p11_init_pin},
     {"set-pin", p11_set_pin},
+
     {"create-object", p11_create_object},
     {"copy-object", p11_copy_object},
     {"destroy-object", p11_destroy_object},
@@ -38,11 +39,15 @@ static JanetMethod session_methods[] = {
     {"find-objects-init", p11_find_objects_init},
     {"find-objects", p11_find_objects},
     {"find-objects-final", p11_find_objects_final},
+
     {"generate-key", p11_generate_key},
     {"generate-key-pair", p11_generate_key_pair},
     {"wrap-key", p11_wrap_key},
     {"unwrap-key", p11_unwrap_key},
     {"derive-key", p11_derive_key},
+
+    {"seed-random", p11_seed_random},
+    {"generate-random", p11_generate_random},
     {NULL, NULL},
 };
 

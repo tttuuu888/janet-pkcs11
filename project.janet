@@ -20,4 +20,5 @@
           "src/object.c"
           "src/attribute.c"
           "src/key.c"
+          "src/random.c"
          ])

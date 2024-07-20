@@ -22,7 +22,7 @@
    (:get-slot-list p11)))
 
 
-### slot-info, init-token tests
+### Slot info, init token tests
 (with [p11 (assert (new softhsm2-so-path))]
   (set test-slot (min ;(:get-slot-list p11)))
 
@@ -40,7 +40,7 @@
 
   (set test-serial-nubmer ((:get-token-info p11 test-slot) :serial-number)))
 
-### session-info, pin, login tests
+### Session info, pin, login tests
 (with [p11 (assert (new softhsm2-so-path))]
   (set test-slot (find-slot-with-serial-number p11 test-serial-nubmer))
   (with [session-rw (assert (:open-session p11 test-slot))]
@@ -65,7 +65,7 @@
     (assert (:login session-ro :user test-user-pin2))
     (assert (:logout session-ro))))
 
-### objects, attribute tests
+### Objects, attribute tests
 (with [p11 (assert (new softhsm2-so-path))]
   (with [session-rw (assert (:open-session p11 test-slot))]
     (assert (:login session-rw :user test-user-pin2))
@@ -129,7 +129,7 @@
       (assert (= 1 (length (assert (:find-objects session-rw 10)))))
       (assert (:find-objects-final session-rw)))))
 
-### key tests
+### Key tests
 (with [p11 (assert (new softhsm2-so-path))]
   (with [session-rw (assert (:open-session p11 test-slot))]
     (assert (:login session-rw :user test-user-pin2))
@@ -252,6 +252,16 @@
 
       ## Check if secret keys match
       (assert (= sec1-bytes sec2-bytes)))))
+
+
+### Random number tests
+(with [p11 (assert (new softhsm2-so-path))]
+  (with [session-rw (assert (:open-session p11 test-slot))]
+    (assert (:login session-rw :user test-user-pin2))
+    (assert (:seed-random session-rw (os/cryptorand 32)))
+    (let [random1 (assert (:generate-random session-rw 32))
+          random2 (assert (:generate-random session-rw 32))]
+      (assert (not (= random1 random2))))))
 
 (assert (sh/exec "softhsm2-util" "--delete-token" "--token" test-token-label))
 
