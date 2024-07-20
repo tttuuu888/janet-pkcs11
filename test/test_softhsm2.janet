@@ -260,8 +260,8 @@
 ### Encrypt, decrypt tests
 (with [session-rw (assert (:open-session p11 test-slot))]
   (assert (:login session-rw :user test-user-pin2))
-  (let [iv (:generate-random session-rw 8)
-        key (:generate-key session-rw
+
+  (let [key (:generate-key session-rw
                            {:mechanism     :CKM_AES_KEY_GEN}
                            {:CKA_CLASS     :CKO_SECRET_KEY
                             :CKA_KEY_TYPE  :CKK_AES
@@ -273,7 +273,30 @@
                             :CKA_SENSITIVE true})
         plain (hex-decode "000102030405060708090a0b0c0d0e0f")]
     (assert (:encrypt-init session-rw {:mechanism :CKM_AES_ECB} key))
-    (assert (:encrypt session-rw plain))))
+    (assert (:encrypt session-rw plain)))
+
+  (let [iv (:generate-random session-rw 16)
+        plain1 (:generate-random session-rw 16)
+        plain2 (:generate-random session-rw 16)
+        plain3 (:generate-random session-rw 16)
+        key (:generate-key session-rw
+                           {:mechanism     :CKM_AES_KEY_GEN}
+                           {:CKA_CLASS     :CKO_SECRET_KEY
+                            :CKA_KEY_TYPE  :CKK_AES
+                            :CKA_VALUE_LEN 32
+                            :CKA_TOKEN     true
+                            :CKA_PRIVATE   true
+                            :CKA_ENCRYPT   true
+                            :CKA_DECRYPT   true
+                            :CKA_SENSITIVE true})]
+    (assert (:encrypt-init session-rw
+                           {:mechanism :CKM_AES_CBC
+                            :parameter iv}
+                           key))
+    (assert (:encrypt-update session-rw plain1))
+    (assert (:encrypt-update session-rw plain2))
+    (assert (:encrypt-update session-rw plain3))
+    (assert (:encrypt-final  session-rw))))
 
 
 ### Random number tests

@@ -42,6 +42,8 @@ static JanetMethod session_methods[] = {
 
     {"encrypt-init", p11_encrypt_init},
     {"encrypt", p11_encrypt},
+    {"encrypt-update", p11_encrypt_update},
+    {"encrypt-final", p11_encrypt_final},
 
     {"generate-key", p11_generate_key},
     {"generate-key-pair", p11_generate_key_pair},
