@@ -73,10 +73,10 @@
     ## The template is a struct. PKCS11 attribute defines can be used here, but
     ## only in Janet keyword format.
     (let [obj-handle1 (assert (:create-object session-rw
-                                              {:CKA_CLASS :CKO_DATA
-                                               :CKA_TOKEN true
+                                              {:CKA_CLASS       :CKO_DATA
+                                               :CKA_TOKEN       true
                                                :CKA_APPLICATION "My Application"
-                                               :CKA_VALUE ""}))
+                                               :CKA_VALUE       ""}))
           obj-handle2 (assert (:copy-object session-rw
                                             obj-handle1
                                             {:CKA_LABEL "copy object"}))]
@@ -138,47 +138,46 @@
     (assert (:generate-key session-rw {:mechanism :CKM_DES_KEY_GEN}))
 
     ## generate-key-pair
-    (let [pubkey-template {:CKA_ENCRYPT true
-                           :CKA_VERIFY true
-                           :CKA_MODULUS_BITS 768
+    (let [pubkey-template {:CKA_ENCRYPT         true
+                           :CKA_VERIFY          true
+                           :CKA_MODULUS_BITS    768
                            :CKA_PUBLIC_EXPONENT (string (buffer/from-bytes 0x01 0x00 0x01))}
-          privkey-template {:CKA_TOKEN true
-                            :CKA_PRIVATE true
-                            :CKA_SUBJECT "subject"
-                            :CKA_ID (string (buffer/from-bytes 1 2 3))
+          privkey-template {:CKA_TOKEN     true
+                            :CKA_PRIVATE   true
+                            :CKA_SUBJECT   "subject"
+                            :CKA_ID        (string (buffer/from-bytes 1 2 3))
                             :CKA_SENSITIVE true
-                            :CKA_DECRYPT true
-                            :CKA_SIGN true
-                            :CKA_UNWRAP true}]
+                            :CKA_DECRYPT   true
+                            :CKA_SIGN      true
+                            :CKA_UNWRAP    true}]
       (assert (:generate-key-pair session-rw
                                   {:mechanism :CKM_RSA_PKCS_KEY_PAIR_GEN}
                                   pubkey-template
                                   privkey-template)))
 
     ## wrap, unwrap key
-    (let [wrap-key-template {:CKA_CLASS :CKO_SECRET_KEY
-                             :CKA_KEY_TYPE :CKK_AES
-                             :CKA_TOKEN true
-                             :CKA_VALUE_LEN 32
-                             :CKA_PRIVATE true
-                             :CKA_SENSITIVE false
-                             :CKA_WRAP true
+    (let [wrap-key-template {:CKA_CLASS       :CKO_SECRET_KEY
+                             :CKA_KEY_TYPE    :CKK_AES
+                             :CKA_TOKEN       true
+                             :CKA_VALUE_LEN   32
+                             :CKA_PRIVATE     true
+                             :CKA_SENSITIVE   false
+                             :CKA_WRAP        true
                              :CKA_EXTRACTABLE true
-                             :CKA_UNWRAP true
-                            }
-          key-template {:CKA_CLASS :CKO_SECRET_KEY
-                        :CKA_KEY_TYPE :CKK_AES
-                        :CKA_TOKEN true
-                        :CKA_VALUE_LEN 32
+                             :CKA_UNWRAP      true}
+          key-template {:CKA_CLASS       :CKO_SECRET_KEY
+                        :CKA_KEY_TYPE    :CKK_AES
+                        :CKA_TOKEN       true
+                        :CKA_VALUE_LEN   32
                         :CKA_EXTRACTABLE true
-                        :CKA_WRAP true
-                        :CKA_UNWRAP true}
-          unwrap-key-template {:CKA_CLASS :CKO_SECRET_KEY
-                               :CKA_KEY_TYPE :CKK_AES
-                               :CKA_TOKEN true
+                        :CKA_WRAP        true
+                        :CKA_UNWRAP      true}
+          unwrap-key-template {:CKA_CLASS       :CKO_SECRET_KEY
+                               :CKA_KEY_TYPE    :CKK_AES
+                               :CKA_TOKEN       true
                                :CKA_EXTRACTABLE true
-                               :CKA_WRAP false
-                               :CKA_UNWRAP false}
+                               :CKA_WRAP        false
+                               :CKA_UNWRAP      false}
 
           wrap-key (assert (:generate-key session-rw
                                           {:mechanism :CKM_AES_KEY_GEN}
@@ -199,25 +198,25 @@
     ## derive key
     (let [base (hex-decode "02")
           prime (hex-decode "FFFFFFFFFFFFFFFFC90FDAA22168C234C4C6628B80DC1CD129024E088A67CC74020BBEA63B139B22514A08798E3404DDEF9519B3CD3A431B302B0A6DF25F14374FE1356D6D51C245E485B576625E7EC6F44C42E9A637ED6B0BFF5CB6F406B7EDEE386BFB5A899FA5AE9F24117C4B1FE649286651ECE45B3DC2007CB8A163BF0598DA48361C55D39A69163FA8FD24CF5F83655D23DCA3AD961C62F356208552BB9ED529077096966D670C354E4ABC9804F1746C08CA18217C32905E462E36CE3BE39E772C180E86039B2783A2EC07A28FB5C55DF06F4C52C9DE2BCBF6955817183995497CEA956AE515D2261898FA051015728E5A8AACAA68FFFFFFFFFFFFFFFF")
-          priv-tpl {:CKA_CLASS      :CKO_PRIVATE_KEY
-                    :CKA_KEY_TYPE   :CKK_DH
-                    :CKA_PRIVATE    true
-                    :CKA_TOKEN      false
-                    :CKA_DERIVE     true}
-          pub-tpl  {:CKA_CLASS      :CKO_PUBLIC_KEY
-                    :CKA_KEY_TYPE  :CKK_DH
-                    :CKA_PRIVATE    true
-                    :CKA_TOKEN      false
-                    :CKA_DERIVE     true
-                    :CKA_BASE       base
-                    :CKA_PRIME      prime}
-          derive-tpl {:CKA_CLASS          :CKO_SECRET_KEY
-                      :CKA_KEY_TYPE       :CKK_AES
-                      :CKA_VALUE_LEN      32
-                      :CKA_TOKEN          true
-                      :CKA_PRIVATE        true
-                      :CKA_SENSITIVE      false
-                      :CKA_EXTRACTABLE    true}
+          priv-tpl {:CKA_CLASS    :CKO_PRIVATE_KEY
+                    :CKA_KEY_TYPE :CKK_DH
+                    :CKA_PRIVATE  true
+                    :CKA_TOKEN    false
+                    :CKA_DERIVE   true}
+          pub-tpl  {:CKA_CLASS    :CKO_PUBLIC_KEY
+                    :CKA_KEY_TYPE :CKK_DH
+                    :CKA_PRIVATE  true
+                    :CKA_TOKEN    false
+                    :CKA_DERIVE   true
+                    :CKA_BASE     base
+                    :CKA_PRIME    prime}
+          derive-tpl {:CKA_CLASS       :CKO_SECRET_KEY
+                      :CKA_KEY_TYPE    :CKK_AES
+                      :CKA_VALUE_LEN   32
+                      :CKA_TOKEN       true
+                      :CKA_PRIVATE     true
+                      :CKA_SENSITIVE   false
+                      :CKA_EXTRACTABLE true}
 
           ## Generate 2 DH key pairs
           (pub1 priv1) (assert (:generate-key-pair session-rw
@@ -236,14 +235,14 @@
           ## Derive the first secret key
           sec1 (:derive-key session-rw
                             {:mechanism :CKM_DH_PKCS_DERIVE
-                               :parameter pub2-bytes}
+                             :parameter pub2-bytes}
                             priv1
                             derive-tpl)
 
           ## Derive the second secret key
           sec2 (:derive-key session-rw
                             {:mechanism :CKM_DH_PKCS_DERIVE
-                               :parameter pub1-bytes}
+                             :parameter pub1-bytes}
                             priv2
                             derive-tpl)
 
