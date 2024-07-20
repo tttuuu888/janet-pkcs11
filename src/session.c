@@ -40,6 +40,9 @@ static JanetMethod session_methods[] = {
     {"find-objects", p11_find_objects},
     {"find-objects-final", p11_find_objects_final},
 
+    {"encrypt-init", p11_encrypt_init},
+    {"encrypt", p11_encrypt},
+
     {"generate-key", p11_generate_key},
     {"generate-key-pair", p11_generate_key_pair},
     {"wrap-key", p11_wrap_key},

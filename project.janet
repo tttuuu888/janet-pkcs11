@@ -21,4 +21,5 @@
           "src/attribute.c"
           "src/key.c"
           "src/random.c"
+          "src/encrypt.c"
          ])

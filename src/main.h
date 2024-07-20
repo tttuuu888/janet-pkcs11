@@ -68,6 +68,10 @@ Janet p11_wrap_key(int32_t argc, Janet *argv);
 Janet p11_unwrap_key(int32_t argc, Janet *argv);
 Janet p11_derive_key(int32_t argc, Janet *argv);
 
+/* Encrypt functions */
+Janet p11_encrypt_init(int32_t argc, Janet *argv);
+Janet p11_encrypt(int32_t argc, Janet *argv);
+
 /* Random number generation functions */
 Janet p11_seed_random(int32_t argc, Janet *argv);
 Janet p11_generate_random(int32_t argc, Janet *argv);
