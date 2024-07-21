@@ -41,6 +41,7 @@ static void set_attribute(CK_ATTRIBUTE *attribute, const JanetKV *kv)
             attribute->ulValueLen = sizeof(CK_BBOOL);
             break;
         }
+        case JANET_BUFFER:
         case JANET_STRING: {
             JanetByteView param = janet_getbytes(&val, 0);
             CK_BYTE_PTR *value = janet_smalloc(param.len);
