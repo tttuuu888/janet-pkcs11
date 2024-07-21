@@ -9,7 +9,7 @@
 
 #include <stdbool.h>
 #include "janet.h"
-#include "cryptoki_compat/pkcs11.h"
+#include "pkcs11_header/pkcs11.h"
 
 typedef struct p11_obj {
     void *lib_handle;

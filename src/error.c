@@ -4,7 +4,7 @@
  * Janet-pkcs11 is released under the MIT License, see the LICENSE file.
  */
 
-#include "cryptoki_compat/pkcs11.h"
+#include "pkcs11_header/pkcs11.h"
 
 const char* get_pkcs11_error(int error) {
     switch(error) {

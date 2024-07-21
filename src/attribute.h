@@ -8,7 +8,7 @@
 #define ATTRIBUTE_H
 
 #include "janet.h"
-#include "cryptoki_compat/pkcs11.h"
+#include "pkcs11_header/pkcs11.h"
 
 JanetStruct p11_template_to_janet_struct(CK_ATTRIBUTE_PTR p_template, int count);
 CK_ATTRIBUTE_PTR janet_struct_to_p11_template(JanetStruct st);
