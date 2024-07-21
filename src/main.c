@@ -162,6 +162,7 @@ JANET_MODULE_ENTRY(JanetTable *env) {
     submod_object(env);
     submod_encrypt(env);
     submod_decrypt(env);
+    submod_digest(env);
     submod_key(env);
     submod_random(env);
 }

@@ -50,6 +50,8 @@ static JanetMethod session_methods[] = {
     {"decrypt-update", p11_decrypt_update},
     {"decrypt-final", p11_decrypt_final},
 
+    {"digest-init", p11_digest_init},
+
     {"generate-key", p11_generate_key},
     {"generate-key-pair", p11_generate_key_pair},
     {"wrap-key", p11_wrap_key},

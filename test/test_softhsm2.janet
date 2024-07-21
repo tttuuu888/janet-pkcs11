@@ -324,7 +324,11 @@
     ## check result
     (assert (= plain1 dec1))
     (assert (= plain2 dec2))
-    (assert (= plain3 dec3))))
+    (assert (= plain3 dec3)))
+
+  (let []
+    (assert (:digest-init session-rw {:mechanism :CKM_SHA256})))
+  )
 
 
 ### Random number tests

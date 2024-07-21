@@ -80,6 +80,9 @@ Janet p11_decrypt(int32_t argc, Janet *argv);
 Janet p11_decrypt_update(int32_t argc, Janet *argv);
 Janet p11_decrypt_final(int32_t argc, Janet *argv);
 
+/* Digest functions */
+Janet p11_digest_init(int32_t argc, Janet *argv);
+
 /* Random number generation functions */
 Janet p11_seed_random(int32_t argc, Janet *argv);
 Janet p11_generate_random(int32_t argc, Janet *argv);
@@ -91,6 +94,7 @@ void submod_session(JanetTable *env);
 void submod_object(JanetTable *env);
 void submod_encrypt(JanetTable *env);
 void submod_decrypt(JanetTable *env);
+void submod_digest(JanetTable *env);
 void submod_key(JanetTable *env);
 void submod_random(JanetTable *env);
 

@@ -23,4 +23,5 @@
           "src/random.c"
           "src/encrypt.c"
           "src/decrypt.c"
+          "src/digest.c"
          ])
