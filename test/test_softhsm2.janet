@@ -358,7 +358,55 @@
     (assert (:digest-key session-rw priv-key))
     (assert (:digest-final session-rw))))
 
+### Sign tests
+(with [session-rw (assert (:open-session p11 test-slot))]
+  (assert (:login session-rw :user test-user-pin2))
 
+  (let [pub-tpl {:CKA_VERIFY          true
+                 :CKA_MODULUS_BITS    768
+                 :CKA_PUBLIC_EXPONENT (buffer/from-bytes 0x01 0x00 0x01)}
+        priv-tpl {:CKA_TOKEN     true
+                  :CKA_PRIVATE   true
+                  :CKA_SENSITIVE true
+                  :CKA_SIGN      true}
+        (pub-key priv-key) (:generate-key-pair session-rw
+                                               {:mechanism :CKM_RSA_PKCS_KEY_PAIR_GEN}
+                                               pub-tpl
+                                               priv-tpl)
+        data  (:generate-random session-rw 16)]
+
+    ## sign
+    (assert (:sign-init session-rw {:mechanism :CKM_RSA_PKCS} priv-key))
+    (assert (:sign session-rw data))
+
+    ## NOTE: Some mechanisms (e.g., CKM_RSA_PKCS, CKM_RSA_X_509,
+    ## CKM_RSA_PKCS_PSS, CKM_ECDSA, CKM_DSA) only support C_Sign after
+    ## C_SignInit, not C_SignUpdate.
+
+    ## sign-init, update with CKM_RSA_PKCS
+    (assert (:sign-init session-rw {:mechanism :CKM_RSA_PKCS} priv-key))
+    (assert-error "sign-update is not supported" (:sign-update session-rw data))
+    )
+
+  (let [tpl {:CKA_CLASS     :CKO_SECRET_KEY
+             :CKA_KEY_TYPE  :CKK_GENERIC_SECRET
+             :CKA_VALUE_LEN 32
+             :CKA_SIGN      true
+             :CKA_VERIFY    true}
+        key (:generate-key session-rw
+                           {:mechanism :CKM_GENERIC_SECRET_KEY_GEN}
+                           tpl)
+        data (:generate-random session-rw 16)]
+
+    ## sign-init,update,final
+    (assert (:sign-init session-rw {:mechanism :CKM_SHA256_HMAC} key))
+    (assert (:sign-update session-rw data))
+    (assert (:sign-update session-rw data))
+    (assert (:sign-update session-rw data))
+    (def signature (assert (:sign-final session-rw)))
+
+    )
+  )
 
 ### Random number tests
 (with [session-rw (assert (:open-session p11 test-slot))]
