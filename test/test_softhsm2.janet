@@ -327,7 +327,17 @@
     (assert (= plain3 dec3)))
 
   (let []
-    (assert (:digest-init session-rw {:mechanism :CKM_SHA256})))
+
+    ## plain text digest
+    (assert (:digest-init session-rw {:mechanism :CKM_SHA256}))
+    (assert (= (:digest session-rw "abcd")
+               (hex-decode "88D4266FD4E6338D13B845FCF289579D209C897823B9217DA3E161936F031589")))
+
+    ## hex text digest
+    (assert (:digest-init session-rw {:mechanism :CKM_SHA256}))
+    (assert (= (:digest session-rw (hex-decode "01020304"))
+               (hex-decode "9F64A747E1B97F131FABB6B447296C9B6F0201E79FB3C5356E6C77E89B6A806A")))
+    )
   )
 
 
