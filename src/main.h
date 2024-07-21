@@ -87,6 +87,12 @@ Janet p11_digest_update(int32_t argc, Janet *argv);
 Janet p11_digest_key(int32_t argc, Janet *argv);
 Janet p11_digest_final(int32_t argc, Janet *argv);
 
+/* Signing and MACing functions */
+Janet p11_sign_init(int32_t argc, Janet *argv);
+Janet p11_sign(int32_t argc, Janet *argv);
+Janet p11_sign_update(int32_t argc, Janet *argv);
+Janet p11_sign_final(int32_t argc, Janet *argv);
+
 /* Random number generation functions */
 Janet p11_seed_random(int32_t argc, Janet *argv);
 Janet p11_generate_random(int32_t argc, Janet *argv);

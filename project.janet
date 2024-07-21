@@ -24,4 +24,5 @@
           "src/encrypt.c"
           "src/decrypt.c"
           "src/digest.c"
+          "src/sign.c"
          ])

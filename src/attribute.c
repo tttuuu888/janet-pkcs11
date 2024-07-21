@@ -42,13 +42,12 @@ static void set_attribute(CK_ATTRIBUTE *attribute, const JanetKV *kv)
             break;
         }
         case JANET_STRING: {
-            const uint8_t *jstr = janet_unwrap_string(val);
-            int slen = janet_string_length(jstr);
-            CK_BYTE_PTR *value = janet_smalloc(slen);
-            memcpy(value, jstr, slen);
+            JanetByteView param = janet_getbytes(&val, 0);
+            CK_BYTE_PTR *value = janet_smalloc(param.len);
+            memcpy(value, param.bytes, param.len);
 
             attribute->pValue = (void*)value;
-            attribute->ulValueLen = slen;
+            attribute->ulValueLen = param.len;
             break;
         }
         default:
