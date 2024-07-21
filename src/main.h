@@ -84,6 +84,7 @@ Janet p11_decrypt_final(int32_t argc, Janet *argv);
 Janet p11_digest_init(int32_t argc, Janet *argv);
 Janet p11_digest(int32_t argc, Janet *argv);
 Janet p11_digest_update(int32_t argc, Janet *argv);
+Janet p11_digest_key(int32_t argc, Janet *argv);
 Janet p11_digest_final(int32_t argc, Janet *argv);
 
 /* Random number generation functions */
