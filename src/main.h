@@ -89,6 +89,8 @@ void submod_utils(JanetTable *env);
 void submod_slot_and_token(JanetTable *env);
 void submod_session(JanetTable *env);
 void submod_object(JanetTable *env);
+void submod_encrypt(JanetTable *env);
+void submod_decrypt(JanetTable *env);
 void submod_key(JanetTable *env);
 void submod_random(JanetTable *env);
 
