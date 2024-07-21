@@ -52,6 +52,8 @@ static JanetMethod session_methods[] = {
 
     {"digest-init", p11_digest_init},
     {"digest", p11_digest},
+    {"digest-update", p11_digest_update},
+    {"digest-final", p11_digest_final},
 
     {"generate-key", p11_generate_key},
     {"generate-key-pair", p11_generate_key_pair},

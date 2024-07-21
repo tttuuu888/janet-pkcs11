@@ -337,6 +337,14 @@
     (assert (:digest-init session-rw {:mechanism :CKM_SHA256}))
     (assert (= (:digest session-rw (hex-decode "01020304"))
                (hex-decode "9F64A747E1B97F131FABB6B447296C9B6F0201E79FB3C5356E6C77E89B6A806A")))
+
+    ## digest-init,update,final
+    (assert (:digest-init session-rw {:mechanism :CKM_SHA256}))
+    (assert (:digest-update session-rw (hex-decode "01020304")))
+    (assert (:digest-update session-rw (hex-decode "05060708")))
+    (assert (= (:digest-final session-rw)
+               (hex-decode "66840DDA154E8A113C31DD0AD32F7F3A366A80E8136979D8F5A101D3D29D6F72")))
+
     )
   )
 
