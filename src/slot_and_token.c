@@ -37,7 +37,7 @@ JANET_FN(p11_get_slot_list,
 
     p11_obj_t *obj = janet_getabstract(argv, 0, get_p11_obj_type());
 
-    CK_BBOOL token_present = TRUE;
+    CK_BBOOL token_present = CK_TRUE;
     CK_SLOT_ID_PTR p_slot_list = NULL_PTR;
     CK_ULONG count = 0;
     CK_RV rv;
@@ -72,7 +72,7 @@ JANET_FN(p11_get_slot_info,
 
     p11_obj_t *obj = janet_getabstract(argv, 0, get_p11_obj_type());
 
-    CK_BBOOL token_present = TRUE;
+    CK_BBOOL token_present = CK_TRUE;
     CK_SLOT_ID_PTR p_slot_list = NULL_PTR;
     CK_ULONG count = 0;
     CK_RV rv;
