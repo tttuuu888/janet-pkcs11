@@ -358,7 +358,7 @@
     (assert (:digest-key session-rw priv-key))
     (assert (:digest-final session-rw))))
 
-### Sign tests
+### Sign and verify tests
 (with [session-rw (assert (:open-session p11 test-slot))]
   (assert (:login session-rw :user test-user-pin2))
 
@@ -377,16 +377,22 @@
 
     ## sign
     (assert (:sign-init session-rw {:mechanism :CKM_RSA_PKCS} priv-key))
-    (assert (:sign session-rw data))
+    (def sig (assert (:sign session-rw data)))
+
+    (assert (:verify-init session-rw {:mechanism :CKM_RSA_PKCS} pub-key))
+    (assert (= true (:verify session-rw data sig)))
 
     ## NOTE: Some mechanisms (e.g., CKM_RSA_PKCS, CKM_RSA_X_509,
     ## CKM_RSA_PKCS_PSS, CKM_ECDSA, CKM_DSA) only support C_Sign after
-    ## C_SignInit, not C_SignUpdate.
+    ## C_SignInit, not C_SignUpdate, and same for verification.
 
     ## sign-init, update with CKM_RSA_PKCS
     (assert (:sign-init session-rw {:mechanism :CKM_RSA_PKCS} priv-key))
     (assert-error "sign-update is not supported" (:sign-update session-rw data))
-    )
+
+    ## verify-init, update with CKM_RSA_PKCS
+    (assert (:verify-init session-rw {:mechanism :CKM_RSA_PKCS} pub-key))
+    (assert-error "verify-update is not supported" (:verify-update session-rw data)))
 
   (let [tpl {:CKA_CLASS     :CKO_SECRET_KEY
              :CKA_KEY_TYPE  :CKK_GENERIC_SECRET
@@ -403,11 +409,16 @@
     (assert (:sign-update session-rw data))
     (assert (:sign-update session-rw data))
     (assert (:sign-update session-rw data))
-    (def signature (assert (:sign-final session-rw)))
+    (def sig (assert (:sign-final session-rw)))
 
-    )
+    ## verify-init,update,final
+    (assert (:verify-init session-rw {:mechanism :CKM_SHA256_HMAC} key))
+    (assert (:verify-update session-rw data))
+    (assert (:verify-update session-rw data))
+    (assert (:verify-update session-rw data))
+    (assert (= true (assert (:verify-final session-rw sig)))))
 
-  ## sign-recover
+  ## sign-recover, verify-recover
   (let [pub-tpl {:CKA_ENCRYPT true
                  :CKA_VERIFY true
                  :CKA_MODULUS_BITS 2048
@@ -428,11 +439,17 @@
      "Softhsm2 does not support C_SignRecoverInit at the moment"
      (:sign-recover-init session-rw {:mechanism :CKM_RSA_9796} privk))
 
-    (assert
+    (assert-error
      "Softhsm2 does not support C_SignRecover at the moment"
      (:sign-recover session-rw data))
 
-    ))
+    (assert-error
+     "Softhsm2 does not support C_VerifyecoverInit at the moment"
+     (:verify-recover-init session-rw {:mechanism :CKM_RSA_9796} privk))
+
+    (assert-error
+     "Softhsm2 does not support C_Verifyecover at the moment"
+     (:verify-recover session-rw data ""))))
 
 ### Random number tests
 (with [session-rw (assert (:open-session p11 test-slot))]
