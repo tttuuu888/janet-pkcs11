@@ -95,6 +95,14 @@ Janet p11_sign_final(int32_t argc, Janet *argv);
 Janet p11_sign_recover_init(int32_t argc, Janet *argv);
 Janet p11_sign_recover(int32_t argc, Janet *argv);
 
+/* Verify signature and MAC functions */
+Janet p11_verify_init(int32_t argc, Janet *argv);
+Janet p11_verify(int32_t argc, Janet *argv);
+Janet p11_verify_update(int32_t argc, Janet *argv);
+Janet p11_verify_final(int32_t argc, Janet *argv);
+Janet p11_verify_recover_init(int32_t argc, Janet *argv);
+Janet p11_verify_recover(int32_t argc, Janet *argv);
+
 /* Random number generation functions */
 Janet p11_seed_random(int32_t argc, Janet *argv);
 Janet p11_generate_random(int32_t argc, Janet *argv);
@@ -107,6 +115,8 @@ void submod_object(JanetTable *env);
 void submod_encrypt(JanetTable *env);
 void submod_decrypt(JanetTable *env);
 void submod_digest(JanetTable *env);
+void submod_sign(JanetTable *env);
+void submod_verify(JanetTable *env);
 void submod_key(JanetTable *env);
 void submod_random(JanetTable *env);
 

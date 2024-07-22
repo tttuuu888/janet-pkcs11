@@ -25,4 +25,5 @@
           "src/decrypt.c"
           "src/digest.c"
           "src/sign.c"
+          "src/verify.c"
          ])
