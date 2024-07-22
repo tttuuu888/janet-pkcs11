@@ -406,7 +406,33 @@
     (def signature (assert (:sign-final session-rw)))
 
     )
-  )
+
+  ## sign-recover
+  (let [pub-tpl {:CKA_ENCRYPT true
+                 :CKA_VERIFY true
+                 :CKA_MODULUS_BITS 2048
+                 :CKA_PUBLIC_EXPONENT (buffer/from-bytes 0x01 0x00 0x01)}
+        priv-tpl {:CKA_TOKEN true
+                  :CKA_PRIVATE true
+                  :CKA_SENSITIVE true
+                  :CKA_DECRYPT true
+                  :CKA_SIGN true
+                  :CKA_EXTRACTABLE false}
+        (pubk privk) (:generate-key-pair session-rw
+                                         {:mechanism :CKM_RSA_PKCS_KEY_PAIR_GEN}
+                                         pub-tpl
+                                         priv-tpl)
+        data (:generate-random session-rw 16)]
+
+    (assert-error
+     "Softhsm2 does not support C_SignRecoverInit at the moment"
+     (:sign-recover-init session-rw {:mechanism :CKM_RSA_9796} privk))
+
+    (assert
+     "Softhsm2 does not support C_SignRecover at the moment"
+     (:sign-recover session-rw data))
+
+    ))
 
 ### Random number tests
 (with [session-rw (assert (:open-session p11 test-slot))]

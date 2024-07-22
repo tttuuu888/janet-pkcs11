@@ -60,6 +60,8 @@ static JanetMethod session_methods[] = {
     {"sign", p11_sign},
     {"sign-update", p11_sign_update},
     {"sign-final", p11_sign_final},
+    {"sign-recover-init", p11_sign_recover_init},
+    {"sign-recover", p11_sign_recover},
 
     {"generate-key", p11_generate_key},
     {"generate-key-pair", p11_generate_key_pair},

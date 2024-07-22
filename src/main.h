@@ -92,6 +92,8 @@ Janet p11_sign_init(int32_t argc, Janet *argv);
 Janet p11_sign(int32_t argc, Janet *argv);
 Janet p11_sign_update(int32_t argc, Janet *argv);
 Janet p11_sign_final(int32_t argc, Janet *argv);
+Janet p11_sign_recover_init(int32_t argc, Janet *argv);
+Janet p11_sign_recover(int32_t argc, Janet *argv);
 
 /* Random number generation functions */
 Janet p11_seed_random(int32_t argc, Janet *argv);
