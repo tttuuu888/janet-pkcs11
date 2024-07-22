@@ -366,5 +366,5 @@ void submod_slot_and_token(JanetTable *env) {
         JANET_REG("set-pin", p11_set_pin),
         JANET_REG_END
     };
-    janet_cfuns_ext(env, "", cfuns);
+    janet_cfuns_ext(env, "pkcs11", cfuns);
 }

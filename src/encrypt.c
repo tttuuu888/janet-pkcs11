@@ -115,5 +115,5 @@ void submod_encrypt(JanetTable *env) {
         JANET_REG("encrypt-final", p11_encrypt_final),
         JANET_REG_END
     };
-    janet_cfuns_ext(env, "", cfuns);
+    janet_cfuns_ext(env, "pkcs11", cfuns);
 }

@@ -156,5 +156,5 @@ void submod_sign(JanetTable *env) {
         JANET_REG("sign-recover", p11_sign_recover),
         JANET_REG_END
     };
-    janet_cfuns_ext(env, "", cfuns);
+    janet_cfuns_ext(env, "pkcs11", cfuns);
 }

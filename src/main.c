@@ -149,7 +149,7 @@ static void submod_general_purpose(JanetTable *env)
         JANET_REG("get-info", p11_get_info),
         JANET_REG_END
     };
-    janet_cfuns_ext(env, "", cfuns);
+    janet_cfuns_ext(env, "pkcs11", cfuns);
     janet_register_abstract_type(get_p11_obj_type());
 }
 

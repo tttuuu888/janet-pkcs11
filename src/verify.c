@@ -173,5 +173,5 @@ void submod_verify(JanetTable *env) {
         JANET_REG("verify-recover", p11_verify_recover),
         JANET_REG_END
     };
-    janet_cfuns_ext(env, "", cfuns);
+    janet_cfuns_ext(env, "pkcs11", cfuns);
 }

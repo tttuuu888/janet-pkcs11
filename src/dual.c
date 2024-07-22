@@ -131,5 +131,5 @@ void submod_dual(JanetTable *env) {
         JANET_REG("decrypt-verify-update", p11_decrypt_verify_update),
         JANET_REG_END
     };
-    janet_cfuns_ext(env, "", cfuns);
+    janet_cfuns_ext(env, "pkcs11", cfuns);
 }

@@ -272,6 +272,6 @@ void submod_session(JanetTable *env) {
         JANET_REG("logout", p11_logout),
         JANET_REG_END
     };
-    janet_cfuns_ext(env, "", cfuns);
+    janet_cfuns_ext(env, "pkcs11", cfuns);
     janet_register_abstract_type(get_session_obj_type());
 }

@@ -126,5 +126,5 @@ void submod_utils(JanetTable *env) {
         JANET_REG("hex-decode", cfun_hex_decode),
         JANET_REG_END
     };
-    janet_cfuns_ext(env, "", cfuns);
+    janet_cfuns_ext(env, "pkcs11", cfuns);
 }

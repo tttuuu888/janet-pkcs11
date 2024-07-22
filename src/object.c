@@ -213,5 +213,5 @@ void submod_object(JanetTable *env) {
         JANET_REG("find-objects-final", p11_find_objects_final),
         JANET_REG_END
     };
-    janet_cfuns_ext(env, "", cfuns);
+    janet_cfuns_ext(env, "pkcs11", cfuns);
 }

@@ -173,5 +173,5 @@ void submod_key(JanetTable *env) {
         JANET_REG("derive-key", p11_derive_key),
         JANET_REG_END
     };
-    janet_cfuns_ext(env, "", cfuns);
+    janet_cfuns_ext(env, "pkcs11", cfuns);
 }

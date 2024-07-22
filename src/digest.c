@@ -121,5 +121,5 @@ void submod_digest(JanetTable *env) {
         JANET_REG("digest-final", p11_digest_final),
         JANET_REG_END
     };
-    janet_cfuns_ext(env, "", cfuns);
+    janet_cfuns_ext(env, "pkcs11", cfuns);
 }

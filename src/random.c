@@ -48,5 +48,5 @@ void submod_random(JanetTable *env) {
         JANET_REG("generate-random", p11_generate_random),
         JANET_REG_END
     };
-    janet_cfuns_ext(env, "", cfuns);
+    janet_cfuns_ext(env, "pkcs11", cfuns);
 }
