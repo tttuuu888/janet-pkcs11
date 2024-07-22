@@ -48,7 +48,8 @@ JANET_FN(p11_encrypt,
     PKCS11_ASSERT(rv, "C_Encrypt");
 
     enc_data = janet_smalloc(enc_data_len);
-    rv = obj->func_list->C_Encrypt(obj->session, (CK_BYTE_PTR)data.bytes, (CK_ULONG)data.len,
+    rv = obj->func_list->C_Encrypt(obj->session,
+                                   (CK_BYTE_PTR)data.bytes, (CK_ULONG)data.len,
                                    enc_data, &enc_data_len);
     PKCS11_ASSERT(rv, "C_Encrypt");
 

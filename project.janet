@@ -26,4 +26,5 @@
           "src/digest.c"
           "src/sign.c"
           "src/verify.c"
+          "src/dual.c"
          ])

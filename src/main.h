@@ -61,13 +61,6 @@ Janet p11_find_objects_init(int32_t argc, Janet *argv);
 Janet p11_find_objects(int32_t argc, Janet *argv);
 Janet p11_find_objects_final(int32_t argc, Janet *argv);
 
-/* Key management functions */
-Janet p11_generate_key(int32_t argc, Janet *argv);
-Janet p11_generate_key_pair(int32_t argc, Janet *argv);
-Janet p11_wrap_key(int32_t argc, Janet *argv);
-Janet p11_unwrap_key(int32_t argc, Janet *argv);
-Janet p11_derive_key(int32_t argc, Janet *argv);
-
 /* Encrypt functions */
 Janet p11_encrypt_init(int32_t argc, Janet *argv);
 Janet p11_encrypt(int32_t argc, Janet *argv);
@@ -103,6 +96,19 @@ Janet p11_verify_final(int32_t argc, Janet *argv);
 Janet p11_verify_recover_init(int32_t argc, Janet *argv);
 Janet p11_verify_recover(int32_t argc, Janet *argv);
 
+/* Dual-purpose cryptographic functions */
+Janet p11_digest_encrypt_update(int32_t argc, Janet *argv);
+Janet p11_decrypt_digest_update(int32_t argc, Janet *argv);
+Janet p11_sign_encrypt_update(int32_t argc, Janet *argv);
+Janet p11_decrypt_verify_update(int32_t argc, Janet *argv);
+
+/* Key management functions */
+Janet p11_generate_key(int32_t argc, Janet *argv);
+Janet p11_generate_key_pair(int32_t argc, Janet *argv);
+Janet p11_wrap_key(int32_t argc, Janet *argv);
+Janet p11_unwrap_key(int32_t argc, Janet *argv);
+Janet p11_derive_key(int32_t argc, Janet *argv);
+
 /* Random number generation functions */
 Janet p11_seed_random(int32_t argc, Janet *argv);
 Janet p11_generate_random(int32_t argc, Janet *argv);
@@ -117,6 +123,7 @@ void submod_decrypt(JanetTable *env);
 void submod_digest(JanetTable *env);
 void submod_sign(JanetTable *env);
 void submod_verify(JanetTable *env);
+void submod_dual(JanetTable *env);
 void submod_key(JanetTable *env);
 void submod_random(JanetTable *env);
 
