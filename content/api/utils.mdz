@@ -1,6 +1,6 @@
 (import ./mdz-utils :as util)
 
-{:title "Utiltity functions"
+{:title "Utiltity API"
  :author "Seungki Kim"
  :license "MIT license"
  :template "mdzdoc/main.html"}

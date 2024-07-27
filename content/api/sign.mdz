@@ -1,6 +1,6 @@
 (import ./mdz-utils :as util)
 
-{:title "Signing and MACing functions"
+{:title "Signing and MACing API"
  :author "Seungki Kim"
  :license "MIT license"
  :template "mdzdoc/main.html"}
