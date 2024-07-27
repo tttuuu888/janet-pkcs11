@@ -15,6 +15,18 @@ Currently, Janet-pkcs11 is only tested on [SoftHSM version 2](https://github.com
 [sudo] jpm install https://github.com/tttuuu888/janet-pkcs11.git
 ```
 
+## Building
+
+```
+jpm build
+```
+
+## Testing
+
+```
+jpm test
+```
+
 ## License
 
 Janet-pkcs11 is licensed under the MIT License.
