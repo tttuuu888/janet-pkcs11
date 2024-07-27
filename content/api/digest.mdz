@@ -1,0 +1,16 @@
+(import ./mdz-utils :as util)
+
+{:title "Digest API"
+ :author "Seungki Kim"
+ :license "MIT license"
+ :template "mdzdoc/main.html"
+ :order 7}
+---
+
+## Index
+
+@util/api-index-group[/build/pkcs11][digest-init digest digest-update digest-key digest-final]
+
+## Reference
+
+@util/api-docs-group[/build/pkcs11][digest-init digest digest-update digest-key digest-final]
