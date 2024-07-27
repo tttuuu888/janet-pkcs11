@@ -24,7 +24,6 @@ jobs:
         cd $HOME/.config/softhsm2/
         echo "directories.tokendir = $PWD/tokens" > softhsm2.conf
         echo "objectstore.backend = file" >> softhsm2.conf
-        export SOFTHSM2_CONF=$HOME/lib/softhsm/softhsm2.conf
     - name: "Checkout repository"
       uses: actions/checkout@v4
       with:
