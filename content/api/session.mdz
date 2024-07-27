@@ -1,0 +1,15 @@
+(import ./mdz-utils :as util)
+
+{:title "Session management functions"
+ :author "Seungki Kim"
+ :license "MIT license"
+ :template "mdzdoc/main.html"}
+---
+
+## Index
+
+@util/api-index-group[/build/pkcs11][open-session close-session close-all-sessions get-session-info get-operation-state login logout]
+
+## Reference
+
+@util/api-docs-group[/build/pkcs11][open-session close-session close-all-sessions get-session-info get-operation-state login logout]

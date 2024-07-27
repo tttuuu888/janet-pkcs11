@@ -1,0 +1,15 @@
+(import ./mdz-utils :as util)
+
+{:title "Verify signature and MAC functions"
+ :author "Seungki Kim"
+ :license "MIT license"
+ :template "mdzdoc/main.html"}
+---
+
+## Index
+
+@util/api-index-group[/build/pkcs11][verify-init verify verify-update verify-final verify-recover-init verify-recover]
+
+## Reference
+
+@util/api-docs-group[/build/pkcs11][verify-init verify verify-update verify-final verify-recover-init verify-recover]

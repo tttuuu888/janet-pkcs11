@@ -1,0 +1,15 @@
+(import ./mdz-utils :as util)
+
+{:title "Signing and MACing functions"
+ :author "Seungki Kim"
+ :license "MIT license"
+ :template "mdzdoc/main.html"}
+---
+
+## Index
+
+@util/api-index-group[/build/pkcs11][sign-init sign sign-update sign-final sign-recover-init sign-recover]
+
+## Reference
+
+@util/api-docs-group[/build/pkcs11][sign-init sign sign-update sign-final sign-recover-init sign-recover]

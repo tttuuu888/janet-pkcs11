@@ -1,0 +1,15 @@
+(import ./mdz-utils :as util)
+
+{:title "Decrypt functions"
+ :author "Seungki Kim"
+ :license "MIT license"
+ :template "mdzdoc/main.html"}
+---
+
+## Index
+
+@util/api-index-group[/build/pkcs11][decrypt-init decrypt decrypt-update decrypt-final]
+
+## Reference
+
+@util/api-docs-group[/build/pkcs11][decrypt-init decrypt decrypt-update decrypt-final]

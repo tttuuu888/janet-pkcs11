@@ -1,0 +1,15 @@
+(import ./mdz-utils :as util)
+
+{:title "Object management functions"
+ :author "Seungki Kim"
+ :license "MIT license"
+ :template "mdzdoc/main.html"}
+---
+
+## Index
+
+@util/api-index-group[/build/pkcs11][create-object copy-object destroy-object get-object-size get-attribute-value set-attribute-value find-objects-init find-objects find-objects-final]
+
+## Reference
+
+@util/api-docs-group[/build/pkcs11][create-object copy-object destroy-object get-object-size get-attribute-value set-attribute-value find-objects-init find-objects find-objects-final]

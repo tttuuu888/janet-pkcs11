@@ -1,0 +1,15 @@
+(import ./mdz-utils :as util)
+
+{:title "Random number generation functions"
+ :author "Seungki Kim"
+ :license "MIT license"
+ :template "mdzdoc/main.html"}
+---
+
+## Index
+
+@util/api-index-group[/build/pkcs11][seed-random generate-random]
+
+## Reference
+
+@util/api-docs-group[/build/pkcs11][seed-random generate-random]
