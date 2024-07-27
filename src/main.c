@@ -165,6 +165,7 @@ JANET_MODULE_ENTRY(JanetTable *env) {
     submod_digest(env);
     submod_sign(env);
     submod_verify(env);
+    submod_dual(env);
     submod_key(env);
     submod_random(env);
 }
