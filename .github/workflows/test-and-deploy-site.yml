@@ -1,0 +1,62 @@
+name: Test and deploy site
+
+on:
+  push:
+    branches: [ master ]
+  pull_request_target:
+    branches: [ master ]
+
+jobs:
+  test-and-deploy-site:
+    name: Test and deploy site
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      repository-projects: write
+    steps:
+    - uses: ConorMacBride/install-package@v1
+      with:
+        apt: softhsm2
+    - name: "Setup softhsm2"
+      run: |
+        mkdir -p $HOME/.config/softhsm2/tokens
+        cd $HOME/.config/softhsm2/
+        echo "directories.tokendir = $PWD/tokens" > softhsm2.conf
+        echo "objectstore.backend = file" >> softhsm2.conf
+        export SOFTHSM2_CONF=$HOME/lib/softhsm/softhsm2.conf
+    - name: "Checkout repository"
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    - name: "Merge master to gh-pages"
+      uses: devmasx/merge-branch@1.4.0
+      with:
+        type: now
+        from_branch: master
+        target_branch: gh-pages
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+    - name: "Test project"
+      uses: pyrmont/action-janet-test@v5
+    - name: "Fetch all history"
+      run: |
+        git fetch --all
+    - name: "Install mendoza"
+      run: |
+        $PREFIX/bin/jpm install mendoza
+    - name: "Change branch to gh-pages"
+      run: |
+        git config user.name github-actions
+        git config user.email github-actions@github.com
+        git fetch origin gh-pages
+        git checkout -b gh-pages origin/gh-pages
+    - name: "Generate site"
+      run: |
+        mdz clean
+        mdz build docs
+    - name: "Commit and push changes"
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        git add ./docs && git commit -am "Auto-generate site" || echo "git add and commit."
+        git push https://${GITHUB_ACTOR}:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git gh-pages || echo "git push to origin gh-pages"
