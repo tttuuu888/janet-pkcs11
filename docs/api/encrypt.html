@@ -21,25 +21,25 @@
     <div class="twocol">
       <div class="toc toc-hidden">
         <ul>
-          <li><span><a href="../index.html">Janet-pkcs11</a></span></li><li class="caret"><span><a href="index.html">API</a></span><ul><li><span><a href="decrypt.html">Decrypt API</a></span></li><li><span><a href="dual.html">Dual-purpose cryptographic API</a></span></li><li><span class="selected"><a href="encrypt.html">Encrypt API</a></span></li><li><span><a href="general_purpose.html">General purpose API</a></span></li><li><span><a href="key.html">Key management API</a></span></li><li><span><a href="object.html">Object management API</a></span></li><li><span><a href="random.html">Random number generation API</a></span></li><li><span><a href="session.html">Session management API</a></span></li><li><span><a href="sign.html">Signing and MACing API</a></span></li><li><span><a href="slot_and_token.html">Slot and token management API</a></span></li><li><span><a href="utils.html">Utiltity API</a></span></li><li><span><a href="verify.html">Verify signature and MAC API</a></span></li></ul></li>
+          <li><span><a href="../index.html">Janet-pkcs11</a></span></li><li class="caret"><span><a href="index.html">API</a></span><ul><li><span><a href="general_purpose.html">General purpose API</a></span></li><li><span><a href="slot_and_token.html">Slot and token management API</a></span></li><li><span><a href="session.html">Session management API</a></span></li><li><span><a href="object.html">Object management API</a></span></li><li><span class="selected"><a href="encrypt.html">Encrypt API</a></span></li><li><span><a href="decrypt.html">Decrypt API</a></span></li><li><span><a href="digest.html">Digest API</a></span></li><li><span><a href="sign.html">Signing and MACing API</a></span></li><li><span><a href="verify.html">Verify signature and MAC API</a></span></li><li><span><a href="dual.html">Dual-purpose cryptographic API</a></span></li><li><span><a href="key.html">Key management API</a></span></li><li><span><a href="random.html">Random number generation API</a></span></li><li><span><a href="utils.html">Utiltity API</a></span></li></ul></li>
         </ul>
       </div>
       <div class="content-wrapper">
         <h1>Encrypt API</h1>
         <div class="prevnext-bar">
-          <span class="prev"><a href="dual.html"><span class="prevnext-text">Dual-purpose cryptographic API</span></a></span>
-          <span class="next"><a href="general_purpose.html"><span class="prevnext-text">General purpose API</span></a></span>
+          <span class="prev"><a href="object.html"><span class="prevnext-text">Object management API</span></a></span>
+          <span class="next"><a href="decrypt.html"><span class="prevnext-text">Decrypt API</span></a></span>
         </div>
         
 
-<h2 id="Index-1">Index
+<h2 id="Index-2">Index
 </h2>
-<p><a href="#encrypt">encrypt</a><span class="divider"> </span><a href="#encrypt-final">encrypt-final</a><span class="divider"> </span><a href="#encrypt-init">encrypt-init</a><span class="divider"> </span><a href="#encrypt-update">encrypt-update</a></p><h2 id="Reference-1">Reference
+<p><a href="#encrypt">encrypt</a><span class="divider"> </span><a href="#encrypt-final">encrypt-final</a><span class="divider"> </span><a href="#encrypt-init">encrypt-init</a><span class="divider"> </span><a href="#encrypt-update">encrypt-update</a></p><h2 id="Reference-2">Reference
 </h2>
 <div class="docstring"><div class="binding-wrap"><span class="binding"><a id="encrypt">encrypt</a></span><span class="binding-type">cfunction</span><div class="source-map">src/encrypt.c at line 31, column 1</div></div><pre class="mendoza-codeblock"><code data-language="janet">(<span class="mdzsyn-symbol">encrypt</span> <span class="mdzsyn-symbol">session-obj</span> <span class="mdzsyn-symbol">data</span>)</code></pre><p>Encrypts single-part data. Returns an encrypted data in string, if successful.</p></div><div class="docstring"><div class="binding-wrap"><span class="binding"><a id="encrypt-final">encrypt-final</a></span><span class="binding-type">cfunction</span><div class="source-map">src/encrypt.c at line 87, column 1</div></div><pre class="mendoza-codeblock"><code data-language="janet">(<span class="mdzsyn-symbol">encrypt-final</span> <span class="mdzsyn-symbol">session-obj</span>)</code></pre><p>Finishes a multiple-part encryption operation. Return the last encrypted data part in string, if successful.</p></div><div class="docstring"><div class="binding-wrap"><span class="binding"><a id="encrypt-init">encrypt-init</a></span><span class="binding-type">cfunction</span><div class="source-map">src/encrypt.c at line 11, column 1</div></div><pre class="mendoza-codeblock"><code data-language="janet">(<span class="mdzsyn-symbol">encrypt-init</span> <span class="mdzsyn-symbol">session-obj</span> <span class="mdzsyn-symbol">mechanism</span> <span class="mdzsyn-symbol">key-handle</span>)</code></pre><p>Initializes an encryption operation. Returns a `session-obj`, if successful.</p></div><div class="docstring"><div class="binding-wrap"><span class="binding"><a id="encrypt-update">encrypt-update</a></span><span class="binding-type">cfunction</span><div class="source-map">src/encrypt.c at line 59, column 1</div></div><pre class="mendoza-codeblock"><code data-language="janet">(<span class="mdzsyn-symbol">encrypt-update</span> <span class="mdzsyn-symbol">session-obj</span> <span class="mdzsyn-symbol">data</span>)</code></pre><p>Continues a multiple-part encryption operation, processing another `data` part. Return the encrypted data part in string, if successful.</p></div>
         <div class="prevnext-bar">
-          <span class="prev"><a href="dual.html"><span class="prevnext-text">Dual-purpose cryptographic API</span></a></span>
-          <span class="next"><a href="general_purpose.html"><span class="prevnext-text">General purpose API</span></a></span>
+          <span class="prev"><a href="object.html"><span class="prevnext-text">Object management API</span></a></span>
+          <span class="next"><a href="decrypt.html"><span class="prevnext-text">Decrypt API</span></a></span>
         </div>
       </div>
     </div>

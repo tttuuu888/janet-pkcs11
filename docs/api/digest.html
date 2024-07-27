@@ -1,0 +1,69 @@
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <link rel="stylesheet" href="../mdzdoc-css/main.css" type="text/css" charset="utf-8">
+    <title>Digest API</title>
+    <meta name="description" content="">
+  </head>
+  <body>
+    <!-- Toggles Navigation -->
+    <div id="toc-toggle" class="">
+      <div class="bar topbar"></div>
+      <div class="bar"></div>
+      <div class="bar botbar"></div>
+    </div>
+    <div class="twocol">
+      <div class="toc toc-hidden">
+        <ul>
+          <li><span><a href="../index.html">Janet-pkcs11</a></span></li><li class="caret"><span><a href="index.html">API</a></span><ul><li><span><a href="general_purpose.html">General purpose API</a></span></li><li><span><a href="slot_and_token.html">Slot and token management API</a></span></li><li><span><a href="session.html">Session management API</a></span></li><li><span><a href="object.html">Object management API</a></span></li><li><span><a href="encrypt.html">Encrypt API</a></span></li><li><span><a href="decrypt.html">Decrypt API</a></span></li><li><span class="selected"><a href="digest.html">Digest API</a></span></li><li><span><a href="sign.html">Signing and MACing API</a></span></li><li><span><a href="verify.html">Verify signature and MAC API</a></span></li><li><span><a href="dual.html">Dual-purpose cryptographic API</a></span></li><li><span><a href="key.html">Key management API</a></span></li><li><span><a href="random.html">Random number generation API</a></span></li><li><span><a href="utils.html">Utiltity API</a></span></li></ul></li>
+        </ul>
+      </div>
+      <div class="content-wrapper">
+        <h1>Digest API</h1>
+        <div class="prevnext-bar">
+          <span class="prev"><a href="decrypt.html"><span class="prevnext-text">Decrypt API</span></a></span>
+          <span class="next"><a href="sign.html"><span class="prevnext-text">Signing and MACing API</span></a></span>
+        </div>
+        
+
+<h2 id="Index-0">Index
+</h2>
+<p><a href="#digest">digest</a><span class="divider"> </span><a href="#digest-final">digest-final</a><span class="divider"> </span><a href="#digest-init">digest-init</a><span class="divider"> </span><a href="#digest-key">digest-key</a><span class="divider"> </span><a href="#digest-update">digest-update</a></p><h2 id="Reference-0">Reference
+</h2>
+<div class="docstring"><div class="binding-wrap"><span class="binding"><a id="digest">digest</a></span><span class="binding-type">cfunction</span><div class="source-map">src/digest.c at line 30, column 1</div></div><pre class="mendoza-codeblock"><code data-language="janet">(<span class="mdzsyn-symbol">digest</span> <span class="mdzsyn-symbol">session-obj</span> <span class="mdzsyn-symbol">data</span>)</code></pre><p>Digests data in a single part. Returns an message digest in string, if successful.</p></div><div class="docstring"><div class="binding-wrap"><span class="binding"><a id="digest-final">digest-final</a></span><span class="binding-type">cfunction</span><div class="source-map">src/digest.c at line 92, column 1</div></div><pre class="mendoza-codeblock"><code data-language="janet">(<span class="mdzsyn-symbol">digest-final</span> <span class="mdzsyn-symbol">session-obj</span>)</code></pre><p>Finishes a multiple-part message-digesting operation. Return the message digest in string, if successful.</p></div><div class="docstring"><div class="binding-wrap"><span class="binding"><a id="digest-init">digest-init</a></span><span class="binding-type">cfunction</span><div class="source-map">src/digest.c at line 11, column 1</div></div><pre class="mendoza-codeblock"><code data-language="janet">(<span class="mdzsyn-symbol">digest-init</span> <span class="mdzsyn-symbol">session-obj</span> <span class="mdzsyn-symbol">mechanism</span>)</code></pre><p>Initializes  a message-digesting operation. Returns a `session-obj`, if successful.</p></div><div class="docstring"><div class="binding-wrap"><span class="binding"><a id="digest-key">digest-key</a></span><span class="binding-type">cfunction</span><div class="source-map">src/digest.c at line 75, column 1</div></div><pre class="mendoza-codeblock"><code data-language="janet">(<span class="mdzsyn-symbol">digest-key</span> <span class="mdzsyn-symbol">session-obj</span> <span class="mdzsyn-symbol">key-handle</span>)</code></pre><p>Continues a multiple-part message-digesting operation by digesting the value of a secret key. Returns a `session-obj`, if successful.</p></div><div class="docstring"><div class="binding-wrap"><span class="binding"><a id="digest-update">digest-update</a></span><span class="binding-type">cfunction</span><div class="source-map">src/digest.c at line 57, column 1</div></div><pre class="mendoza-codeblock"><code data-language="janet">(<span class="mdzsyn-symbol">digest-update</span> <span class="mdzsyn-symbol">session-obj</span> <span class="mdzsyn-symbol">data</span>)</code></pre><p>Continues a multiple-part message-digesting operation, processing another `data` part. Returns a `session-obj`, if successful.</p></div>
+        <div class="prevnext-bar">
+          <span class="prev"><a href="decrypt.html"><span class="prevnext-text">Decrypt API</span></a></span>
+          <span class="next"><a href="sign.html"><span class="prevnext-text">Signing and MACing API</span></a></span>
+        </div>
+      </div>
+    </div>
+    <script charset="utf-8">
+      function toggleToc() {
+        var toggler = document.getElementById('toc-toggle');
+        var wrapper = document.querySelector('.toc');
+        wrapper.classList.toggle('toc-hidden');
+        toggler.classList.toggle('open');
+        window.localStorage.setItem('show-toc', toggler.classList.contains('open'));
+      }
+      function addTocToggle() {
+        var el = document.getElementById('toc-toggle');
+        el.addEventListener('click', toggleToc);
+      }
+      window.addEventListener('DOMContentLoaded', addTocToggle);
+      if (window.localStorage.getItem('show-toc') === 'true') {
+        toggleToc()
+      }
+    </script>
+    <footer>
+      <div class="content-wrapper">
+        Copyright &copy; Seungki Kim 2024
+      </div>
+    </footer>
+  </body>
+</html>
