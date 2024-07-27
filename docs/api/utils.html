@@ -1,0 +1,69 @@
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <link rel="stylesheet" href="../mdzdoc-css/main.css" type="text/css" charset="utf-8">
+    <title>Utiltity functions</title>
+    <meta name="description" content="">
+  </head>
+  <body>
+    <!-- Toggles Navigation -->
+    <div id="toc-toggle" class="">
+      <div class="bar topbar"></div>
+      <div class="bar"></div>
+      <div class="bar botbar"></div>
+    </div>
+    <div class="twocol">
+      <div class="toc toc-hidden">
+        <ul>
+          <li><span><a href="../index.html">Janet-pkcs11</a></span></li><li class="caret"><span><a href="index.html">API</a></span><ul><li><span><a href="decrypt.html">Decrypt functions</a></span></li><li><span><a href="dual.html">Dual-purpose cryptographic functions</a></span></li><li><span><a href="encrypt.html">Encrypt functions</a></span></li><li><span><a href="general_purpose.html">General purpose functions</a></span></li><li><span><a href="key.html">Key management functions</a></span></li><li><span><a href="object.html">Object management functions</a></span></li><li><span><a href="random.html">Random number generation functions</a></span></li><li><span><a href="session.html">Session management functions</a></span></li><li><span><a href="sign.html">Signing and MACing functions</a></span></li><li><span><a href="slot_and_token.html">Slot and token management functions</a></span></li><li><span class="selected"><a href="utils.html">Utiltity functions</a></span></li><li><span><a href="verify.html">Verify signature and MAC functions</a></span></li></ul></li>
+        </ul>
+      </div>
+      <div class="content-wrapper">
+        <h1>Utiltity functions</h1>
+        <div class="prevnext-bar">
+          <span class="prev"><a href="slot_and_token.html"><span class="prevnext-text">Slot and token management functions</span></a></span>
+          <span class="next"><a href="verify.html"><span class="prevnext-text">Verify signature and MAC functions</span></a></span>
+        </div>
+        
+
+<h2 id="Index-10">Index
+</h2>
+<p><a href="#bit-and">bit-and</a><span class="divider"> </span><a href="#bit-lshift">bit-lshift</a><span class="divider"> </span><a href="#bit-or">bit-or</a><span class="divider"> </span><a href="#bit-rshift">bit-rshift</a><span class="divider"> </span><a href="#hex-decode">hex-decode</a><span class="divider"> </span><a href="#hex-encode">hex-encode</a></p><h2 id="Reference-10">Reference
+</h2>
+<div class="docstring"><div class="binding-wrap"><span class="binding"><a id="bit-and">bit-and</a></span><span class="binding-type">cfunction</span><div class="source-map">src/utils.c at line 11, column 1</div></div><pre class="mendoza-codeblock"><code data-language="janet">(<span class="mdzsyn-symbol">bit-and</span> <span class="mdzsyn-symbol">&amp;</span> <span class="mdzsyn-symbol">xs</span>)</code></pre><p>Returns the bit-wise and of 64 bit integer xs.</p></div><div class="docstring"><div class="binding-wrap"><span class="binding"><a id="bit-lshift">bit-lshift</a></span><span class="binding-type">cfunction</span><div class="source-map">src/utils.c at line 41, column 1</div></div><pre class="mendoza-codeblock"><code data-language="janet">(<span class="mdzsyn-symbol">bit-lshift</span> <span class="mdzsyn-symbol">x</span> <span class="mdzsyn-symbol">shift</span>)</code></pre><p>Returns the value of `x` bit shifted left by `shift`. Each elements are 64 bit integers.</p></div><div class="docstring"><div class="binding-wrap"><span class="binding"><a id="bit-or">bit-or</a></span><span class="binding-type">cfunction</span><div class="source-map">src/utils.c at line 26, column 1</div></div><pre class="mendoza-codeblock"><code data-language="janet">(<span class="mdzsyn-symbol">bit-or</span> <span class="mdzsyn-symbol">&amp;</span> <span class="mdzsyn-symbol">xs</span>)</code></pre><p>Returns the bit-wise or of 64 bit integer xs.</p></div><div class="docstring"><div class="binding-wrap"><span class="binding"><a id="bit-rshift">bit-rshift</a></span><span class="binding-type">cfunction</span><div class="source-map">src/utils.c at line 54, column 1</div></div><pre class="mendoza-codeblock"><code data-language="janet">(<span class="mdzsyn-symbol">bit-rshift</span> <span class="mdzsyn-symbol">x</span> <span class="mdzsyn-symbol">shift</span>)</code></pre><p>Returns the value of `x` bit shifted right by `shift`. Each elements are 64 bit integers.</p></div><div class="docstring"><div class="binding-wrap"><span class="binding"><a id="hex-decode">hex-decode</a></span><span class="binding-type">cfunction</span><div class="source-map">src/utils.c at line 87, column 1</div></div><pre class="mendoza-codeblock"><code data-language="janet">(<span class="mdzsyn-symbol">hex-decode</span> <span class="mdzsyn-symbol">str</span>)</code></pre><p>Performs hex decoding of string data in `str`. Returns the string.</p></div><div class="docstring"><div class="binding-wrap"><span class="binding"><a id="hex-encode">hex-encode</a></span><span class="binding-type">cfunction</span><div class="source-map">src/utils.c at line 67, column 1</div></div><pre class="mendoza-codeblock"><code data-language="janet">(<span class="mdzsyn-symbol">hex-encode</span> <span class="mdzsyn-symbol">bin</span>)</code></pre><p>Performs hex encoding of binary data in `bin`. Returns the string.</p></div>
+        <div class="prevnext-bar">
+          <span class="prev"><a href="slot_and_token.html"><span class="prevnext-text">Slot and token management functions</span></a></span>
+          <span class="next"><a href="verify.html"><span class="prevnext-text">Verify signature and MAC functions</span></a></span>
+        </div>
+      </div>
+    </div>
+    <script charset="utf-8">
+      function toggleToc() {
+        var toggler = document.getElementById('toc-toggle');
+        var wrapper = document.querySelector('.toc');
+        wrapper.classList.toggle('toc-hidden');
+        toggler.classList.toggle('open');
+        window.localStorage.setItem('show-toc', toggler.classList.contains('open'));
+      }
+      function addTocToggle() {
+        var el = document.getElementById('toc-toggle');
+        el.addEventListener('click', toggleToc);
+      }
+      window.addEventListener('DOMContentLoaded', addTocToggle);
+      if (window.localStorage.getItem('show-toc') === 'true') {
+        toggleToc()
+      }
+    </script>
+    <footer>
+      <div class="content-wrapper">
+        Copyright &copy; Seungki Kim 2024
+      </div>
+    </footer>
+  </body>
+</html>

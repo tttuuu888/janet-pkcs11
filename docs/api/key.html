@@ -1,0 +1,69 @@
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <link rel="stylesheet" href="../mdzdoc-css/main.css" type="text/css" charset="utf-8">
+    <title>Key management functions</title>
+    <meta name="description" content="">
+  </head>
+  <body>
+    <!-- Toggles Navigation -->
+    <div id="toc-toggle" class="">
+      <div class="bar topbar"></div>
+      <div class="bar"></div>
+      <div class="bar botbar"></div>
+    </div>
+    <div class="twocol">
+      <div class="toc toc-hidden">
+        <ul>
+          <li><span><a href="../index.html">Janet-pkcs11</a></span></li><li class="caret"><span><a href="index.html">API</a></span><ul><li><span><a href="decrypt.html">Decrypt functions</a></span></li><li><span><a href="dual.html">Dual-purpose cryptographic functions</a></span></li><li><span><a href="encrypt.html">Encrypt functions</a></span></li><li><span><a href="general_purpose.html">General purpose functions</a></span></li><li><span class="selected"><a href="key.html">Key management functions</a></span></li><li><span><a href="object.html">Object management functions</a></span></li><li><span><a href="random.html">Random number generation functions</a></span></li><li><span><a href="session.html">Session management functions</a></span></li><li><span><a href="sign.html">Signing and MACing functions</a></span></li><li><span><a href="slot_and_token.html">Slot and token management functions</a></span></li><li><span><a href="utils.html">Utiltity functions</a></span></li><li><span><a href="verify.html">Verify signature and MAC functions</a></span></li></ul></li>
+        </ul>
+      </div>
+      <div class="content-wrapper">
+        <h1>Key management functions</h1>
+        <div class="prevnext-bar">
+          <span class="prev"><a href="general_purpose.html"><span class="prevnext-text">General purpose functions</span></a></span>
+          <span class="next"><a href="object.html"><span class="prevnext-text">Object management functions</span></a></span>
+        </div>
+        
+
+<h2 id="Index-4">Index
+</h2>
+<p><a href="#derive-key">derive-key</a><span class="divider"> </span><a href="#generate-key">generate-key</a><span class="divider"> </span><a href="#generate-key-pair">generate-key-pair</a><span class="divider"> </span><a href="#unwrap-key">unwrap-key</a><span class="divider"> </span><a href="#wrap-key">wrap-key</a></p><h2 id="Reference-4">Reference
+</h2>
+<div class="docstring"><div class="binding-wrap"><span class="binding"><a id="derive-key">derive-key</a></span><span class="binding-type">cfunction</span><div class="source-map">src/key.c at line 140, column 1</div></div><pre class="mendoza-codeblock"><code data-language="janet">(<span class="mdzsyn-symbol">derive-key</span> <span class="mdzsyn-symbol">session-obj</span> <span class="mdzsyn-symbol">mechanism</span> <span class="mdzsyn-symbol">base-key-handle</span> <span class="mdzsyn-symbol">template</span>)</code></pre><p>Derives a key from a base key, creating a new key object. Returns a `key-handle`, if successful.</p></div><div class="docstring"><div class="binding-wrap"><span class="binding"><a id="generate-key">generate-key</a></span><span class="binding-type">cfunction</span><div class="source-map">src/key.c at line 12, column 1</div></div><pre class="mendoza-codeblock"><code data-language="janet">(<span class="mdzsyn-symbol">generate-key</span> <span class="mdzsyn-symbol">session-obj</span> <span class="mdzsyn-symbol">mechanism</span> <span class="mdzsyn-symbol">&amp;opt</span> <span class="mdzsyn-symbol">template</span>)</code></pre><p>Generates a secret key or set of domain parameters, creating a new key object. Returns a `key-handle`, if successful.</p></div><div class="docstring"><div class="binding-wrap"><span class="binding"><a id="generate-key-pair">generate-key-pair</a></span><span class="binding-type">cfunction</span><div class="source-map">src/key.c at line 41, column 1</div></div><pre class="mendoza-codeblock"><code data-language="janet">(<span class="mdzsyn-symbol">generate-key-pair</span> <span class="mdzsyn-symbol">session-obj</span> <span class="mdzsyn-symbol">mechanism</span> <span class="mdzsyn-symbol">pubkey-template</span> <span class="mdzsyn-symbol">privkey-template</span>)</code></pre><p>Generates a public/private key pair, creating new key objects. Returns a list of [pubkey-handle privkey-handle], if successful.</p></div><div class="docstring"><div class="binding-wrap"><span class="binding"><a id="unwrap-key">unwrap-key</a></span><span class="binding-type">cfunction</span><div class="source-map">src/key.c at line 110, column 1</div></div><pre class="mendoza-codeblock"><code data-language="janet">(<span class="mdzsyn-symbol">unwrap-key</span> <span class="mdzsyn-symbol">session-obj</span> <span class="mdzsyn-symbol">mechanism</span> <span class="mdzsyn-symbol">unwrapping-key-handle</span> <span class="mdzsyn-symbol">wrapped-key</span> <span class="mdzsyn-symbol">template</span>)</code></pre><p>Unwraps (i.e. decrypts) a wrapped key, creating a new private key or secret key object. Returns a `key-handle`, if successful.</p></div><div class="docstring"><div class="binding-wrap"><span class="binding"><a id="wrap-key">wrap-key</a></span><span class="binding-type">cfunction</span><div class="source-map">src/key.c at line 78, column 1</div></div><pre class="mendoza-codeblock"><code data-language="janet">(<span class="mdzsyn-symbol">wrap-key</span> <span class="mdzsyn-symbol">session-obj</span> <span class="mdzsyn-symbol">mechanism</span> <span class="mdzsyn-symbol">wrapping-key-handle</span> <span class="mdzsyn-symbol">key-handle</span>)</code></pre><p>Wraps (i.e., encrypts) a private or secret key.Returns a wrapped key in string, if successful.</p></div>
+        <div class="prevnext-bar">
+          <span class="prev"><a href="general_purpose.html"><span class="prevnext-text">General purpose functions</span></a></span>
+          <span class="next"><a href="object.html"><span class="prevnext-text">Object management functions</span></a></span>
+        </div>
+      </div>
+    </div>
+    <script charset="utf-8">
+      function toggleToc() {
+        var toggler = document.getElementById('toc-toggle');
+        var wrapper = document.querySelector('.toc');
+        wrapper.classList.toggle('toc-hidden');
+        toggler.classList.toggle('open');
+        window.localStorage.setItem('show-toc', toggler.classList.contains('open'));
+      }
+      function addTocToggle() {
+        var el = document.getElementById('toc-toggle');
+        el.addEventListener('click', toggleToc);
+      }
+      window.addEventListener('DOMContentLoaded', addTocToggle);
+      if (window.localStorage.getItem('show-toc') === 'true') {
+        toggleToc()
+      }
+    </script>
+    <footer>
+      <div class="content-wrapper">
+        Copyright &copy; Seungki Kim 2024
+      </div>
+    </footer>
+  </body>
+</html>

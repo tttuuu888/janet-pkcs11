@@ -1,0 +1,69 @@
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <link rel="stylesheet" href="../mdzdoc-css/main.css" type="text/css" charset="utf-8">
+    <title>Encrypt functions</title>
+    <meta name="description" content="">
+  </head>
+  <body>
+    <!-- Toggles Navigation -->
+    <div id="toc-toggle" class="">
+      <div class="bar topbar"></div>
+      <div class="bar"></div>
+      <div class="bar botbar"></div>
+    </div>
+    <div class="twocol">
+      <div class="toc toc-hidden">
+        <ul>
+          <li><span><a href="../index.html">Janet-pkcs11</a></span></li><li class="caret"><span><a href="index.html">API</a></span><ul><li><span><a href="decrypt.html">Decrypt functions</a></span></li><li><span><a href="dual.html">Dual-purpose cryptographic functions</a></span></li><li><span class="selected"><a href="encrypt.html">Encrypt functions</a></span></li><li><span><a href="general_purpose.html">General purpose functions</a></span></li><li><span><a href="key.html">Key management functions</a></span></li><li><span><a href="object.html">Object management functions</a></span></li><li><span><a href="random.html">Random number generation functions</a></span></li><li><span><a href="session.html">Session management functions</a></span></li><li><span><a href="sign.html">Signing and MACing functions</a></span></li><li><span><a href="slot_and_token.html">Slot and token management functions</a></span></li><li><span><a href="utils.html">Utiltity functions</a></span></li><li><span><a href="verify.html">Verify signature and MAC functions</a></span></li></ul></li>
+        </ul>
+      </div>
+      <div class="content-wrapper">
+        <h1>Encrypt functions</h1>
+        <div class="prevnext-bar">
+          <span class="prev"><a href="dual.html"><span class="prevnext-text">Dual-purpose cryptographic functions</span></a></span>
+          <span class="next"><a href="general_purpose.html"><span class="prevnext-text">General purpose functions</span></a></span>
+        </div>
+        
+
+<h2 id="Index-1">Index
+</h2>
+<p><a href="#encrypt">encrypt</a><span class="divider"> </span><a href="#encrypt-final">encrypt-final</a><span class="divider"> </span><a href="#encrypt-init">encrypt-init</a><span class="divider"> </span><a href="#encrypt-update">encrypt-update</a></p><h2 id="Reference-1">Reference
+</h2>
+<div class="docstring"><div class="binding-wrap"><span class="binding"><a id="encrypt">encrypt</a></span><span class="binding-type">cfunction</span><div class="source-map">src/encrypt.c at line 31, column 1</div></div><pre class="mendoza-codeblock"><code data-language="janet">(<span class="mdzsyn-symbol">encrypt</span> <span class="mdzsyn-symbol">session-obj</span> <span class="mdzsyn-symbol">data</span>)</code></pre><p>Encrypts single-part data. Returns an encrypted data in string, if successful.</p></div><div class="docstring"><div class="binding-wrap"><span class="binding"><a id="encrypt-final">encrypt-final</a></span><span class="binding-type">cfunction</span><div class="source-map">src/encrypt.c at line 87, column 1</div></div><pre class="mendoza-codeblock"><code data-language="janet">(<span class="mdzsyn-symbol">encrypt-final</span> <span class="mdzsyn-symbol">session-obj</span>)</code></pre><p>Finishes a multiple-part encryption operation. Return the last encrypted data part in string, if successful.</p></div><div class="docstring"><div class="binding-wrap"><span class="binding"><a id="encrypt-init">encrypt-init</a></span><span class="binding-type">cfunction</span><div class="source-map">src/encrypt.c at line 11, column 1</div></div><pre class="mendoza-codeblock"><code data-language="janet">(<span class="mdzsyn-symbol">encrypt-init</span> <span class="mdzsyn-symbol">session-obj</span> <span class="mdzsyn-symbol">mechanism</span> <span class="mdzsyn-symbol">key-handle</span>)</code></pre><p>Initializes an encryption operation. Returns a `session-obj`, if successful.</p></div><div class="docstring"><div class="binding-wrap"><span class="binding"><a id="encrypt-update">encrypt-update</a></span><span class="binding-type">cfunction</span><div class="source-map">src/encrypt.c at line 59, column 1</div></div><pre class="mendoza-codeblock"><code data-language="janet">(<span class="mdzsyn-symbol">encrypt-update</span> <span class="mdzsyn-symbol">session-obj</span> <span class="mdzsyn-symbol">data</span>)</code></pre><p>Continues a multiple-part encryption operation, processing another `data` part. Return the encrypted data part in string, if successful.</p></div>
+        <div class="prevnext-bar">
+          <span class="prev"><a href="dual.html"><span class="prevnext-text">Dual-purpose cryptographic functions</span></a></span>
+          <span class="next"><a href="general_purpose.html"><span class="prevnext-text">General purpose functions</span></a></span>
+        </div>
+      </div>
+    </div>
+    <script charset="utf-8">
+      function toggleToc() {
+        var toggler = document.getElementById('toc-toggle');
+        var wrapper = document.querySelector('.toc');
+        wrapper.classList.toggle('toc-hidden');
+        toggler.classList.toggle('open');
+        window.localStorage.setItem('show-toc', toggler.classList.contains('open'));
+      }
+      function addTocToggle() {
+        var el = document.getElementById('toc-toggle');
+        el.addEventListener('click', toggleToc);
+      }
+      window.addEventListener('DOMContentLoaded', addTocToggle);
+      if (window.localStorage.getItem('show-toc') === 'true') {
+        toggleToc()
+      }
+    </script>
+    <footer>
+      <div class="content-wrapper">
+        Copyright &copy; Seungki Kim 2024
+      </div>
+    </footer>
+  </body>
+</html>

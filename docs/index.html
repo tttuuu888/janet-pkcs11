@@ -1,0 +1,104 @@
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <link rel="stylesheet" href="mdzdoc-css/main.css" type="text/css" charset="utf-8">
+    <title>Janet-pkcs11</title>
+    <meta name="description" content="">
+  </head>
+  <body>
+    <!-- Toggles Navigation -->
+    <div id="toc-toggle" class="">
+      <div class="bar topbar"></div>
+      <div class="bar"></div>
+      <div class="bar botbar"></div>
+    </div>
+    <div class="twocol">
+      <div class="toc toc-hidden">
+        <ul>
+          <li><span class="selected"><a href="index.html">Janet-pkcs11</a></span></li><li class="caret"><span><a href="api/index.html">API</a></span><ul><li><span><a href="api/decrypt.html">Decrypt functions</a></span></li><li><span><a href="api/dual.html">Dual-purpose cryptographic functions</a></span></li><li><span><a href="api/encrypt.html">Encrypt functions</a></span></li><li><span><a href="api/general_purpose.html">General purpose functions</a></span></li><li><span><a href="api/key.html">Key management functions</a></span></li><li><span><a href="api/object.html">Object management functions</a></span></li><li><span><a href="api/random.html">Random number generation functions</a></span></li><li><span><a href="api/session.html">Session management functions</a></span></li><li><span><a href="api/sign.html">Signing and MACing functions</a></span></li><li><span><a href="api/slot_and_token.html">Slot and token management functions</a></span></li><li><span><a href="api/utils.html">Utiltity functions</a></span></li><li><span><a href="api/verify.html">Verify signature and MAC functions</a></span></li></ul></li>
+        </ul>
+      </div>
+      <div class="content-wrapper">
+        <h1>Janet-pkcs11</h1>
+        <div class="prevnext-bar">
+          <span class="prev"><a href="api/verify.html"><span class="prevnext-text">Verify signature and MAC functions</span></a></span>
+          <span class="next"><a href="api/index.html"><span class="prevnext-text">API</span></a></span>
+        </div>
+        
+
+<p>Janet-pkcs11 is a <a href="https://janet-lang.org">Janet</a> wrapper for PKCS #11 API.
+</p>
+<h2 id="Source-code">Source code
+</h2>
+<p><a href="https://github.com/tttuuu888/janet-pkcs11">https://github.com/tttuuu888/janet-pkcs11</a></p><h2 id="Install">Install
+</h2>
+<pre class="mendoza-codeblock"><code>[sudo] jpm install https://github.com/tttuuu888/janet-pkcs11.git</code></pre><h2 id="Example">Example
+</h2>
+<p>The following is an example of the process using Janet-pkcs11, including session opening, login, AES key generation, encryption, and decryption.  
+</p>
+<p>In this example, libsofthsm2.so is used for module initialization, and it is assumed that slot 0 has already been initialized and the user PIN is set to 123456.
+</p>
+<pre class="mendoza-codeblock"><code data-language="janet">(<span class="mdzsyn-coresym">use</span> <span class="mdzsyn-symbol">pkcs11</span>)
+
+(<span class="mdzsyn-coresym">def</span> <span class="mdzsyn-symbol">p11</span> (<span class="mdzsyn-symbol">new</span> <span class="mdzsyn-string">"/usr/lib/softhsm/libsofthsm2.so"</span>))
+
+(<span class="mdzsyn-coresym">with</span> [<span class="mdzsyn-symbol">session</span> (<span class="mdzsyn-keyword">:open-session</span> <span class="mdzsyn-symbol">p11</span> <span class="mdzsyn-number">0</span>)]
+  (<span class="mdzsyn-keyword">:login</span> <span class="mdzsyn-symbol">session</span> <span class="mdzsyn-keyword">:user</span> <span class="mdzsyn-string">"123456"</span>)
+
+  (<span class="mdzsyn-coresym">let</span> [<span class="mdzsyn-symbol">key</span> (<span class="mdzsyn-keyword">:generate-key</span> <span class="mdzsyn-symbol">session</span>
+                           {<span class="mdzsyn-keyword">:mechanism</span>     <span class="mdzsyn-keyword">:CKM_AES_KEY_GEN</span>}
+                           {<span class="mdzsyn-keyword">:CKA_KEY_TYPE</span>  <span class="mdzsyn-keyword">:CKK_AES</span>
+                            <span class="mdzsyn-keyword">:CKA_VALUE_LEN</span> <span class="mdzsyn-number">32</span>
+                            <span class="mdzsyn-keyword">:CKA_ENCRYPT</span>   <span class="mdzsyn-constant">true</span>
+                            <span class="mdzsyn-keyword">:CKA_DECRYPT</span>   <span class="mdzsyn-constant">true</span>})
+        <span class="mdzsyn-symbol">plain</span> (<span class="mdzsyn-symbol">hex-decode</span> <span class="mdzsyn-string">"000102030405060708090a0b0c0d0e0f"</span>)]
+
+    <span class="mdzsyn-comment">## encrypt</span>
+    (<span class="mdzsyn-keyword">:encrypt-init</span> <span class="mdzsyn-symbol">session</span> {<span class="mdzsyn-keyword">:mechanism</span> <span class="mdzsyn-keyword">:CKM_AES_ECB</span>} <span class="mdzsyn-symbol">key</span>)
+    (<span class="mdzsyn-coresym">def</span> <span class="mdzsyn-symbol">encrypted</span> (<span class="mdzsyn-keyword">:encrypt</span> <span class="mdzsyn-symbol">session</span> <span class="mdzsyn-symbol">plain</span>))
+
+    <span class="mdzsyn-comment">## decrypt</span>
+    (<span class="mdzsyn-keyword">:decrypt-init</span> <span class="mdzsyn-symbol">session</span> {<span class="mdzsyn-keyword">:mechanism</span> <span class="mdzsyn-keyword">:CKM_AES_ECB</span>} <span class="mdzsyn-symbol">key</span>)
+    (<span class="mdzsyn-coresym">def</span> <span class="mdzsyn-symbol">decrypted</span> (<span class="mdzsyn-keyword">:decrypt</span> <span class="mdzsyn-symbol">session</span> <span class="mdzsyn-symbol">encrypted</span>))
+
+    <span class="mdzsyn-comment">## check result</span>
+    (<span class="mdzsyn-coresym">assert</span> (<span class="mdzsyn-coresym">=</span> <span class="mdzsyn-symbol">plain</span> <span class="mdzsyn-symbol">decrypted</span>))))
+
+(<span class="mdzsyn-keyword">:close</span> <span class="mdzsyn-symbol">p11</span>)</code></pre><p>More examples can be found in the test.
+</p>
+        <div class="prevnext-bar">
+          <span class="prev"><a href="api/verify.html"><span class="prevnext-text">Verify signature and MAC functions</span></a></span>
+          <span class="next"><a href="api/index.html"><span class="prevnext-text">API</span></a></span>
+        </div>
+      </div>
+    </div>
+    <script charset="utf-8">
+      function toggleToc() {
+        var toggler = document.getElementById('toc-toggle');
+        var wrapper = document.querySelector('.toc');
+        wrapper.classList.toggle('toc-hidden');
+        toggler.classList.toggle('open');
+        window.localStorage.setItem('show-toc', toggler.classList.contains('open'));
+      }
+      function addTocToggle() {
+        var el = document.getElementById('toc-toggle');
+        el.addEventListener('click', toggleToc);
+      }
+      window.addEventListener('DOMContentLoaded', addTocToggle);
+      if (window.localStorage.getItem('show-toc') === 'true') {
+        toggleToc()
+      }
+    </script>
+    <footer>
+      <div class="content-wrapper">
+        Copyright &copy; Seungki Kim 2024
+      </div>
+    </footer>
+  </body>
+</html>

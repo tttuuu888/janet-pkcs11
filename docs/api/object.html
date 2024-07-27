@@ -1,0 +1,69 @@
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <link rel="stylesheet" href="../mdzdoc-css/main.css" type="text/css" charset="utf-8">
+    <title>Object management functions</title>
+    <meta name="description" content="">
+  </head>
+  <body>
+    <!-- Toggles Navigation -->
+    <div id="toc-toggle" class="">
+      <div class="bar topbar"></div>
+      <div class="bar"></div>
+      <div class="bar botbar"></div>
+    </div>
+    <div class="twocol">
+      <div class="toc toc-hidden">
+        <ul>
+          <li><span><a href="../index.html">Janet-pkcs11</a></span></li><li class="caret"><span><a href="index.html">API</a></span><ul><li><span><a href="decrypt.html">Decrypt functions</a></span></li><li><span><a href="dual.html">Dual-purpose cryptographic functions</a></span></li><li><span><a href="encrypt.html">Encrypt functions</a></span></li><li><span><a href="general_purpose.html">General purpose functions</a></span></li><li><span><a href="key.html">Key management functions</a></span></li><li><span class="selected"><a href="object.html">Object management functions</a></span></li><li><span><a href="random.html">Random number generation functions</a></span></li><li><span><a href="session.html">Session management functions</a></span></li><li><span><a href="sign.html">Signing and MACing functions</a></span></li><li><span><a href="slot_and_token.html">Slot and token management functions</a></span></li><li><span><a href="utils.html">Utiltity functions</a></span></li><li><span><a href="verify.html">Verify signature and MAC functions</a></span></li></ul></li>
+        </ul>
+      </div>
+      <div class="content-wrapper">
+        <h1>Object management functions</h1>
+        <div class="prevnext-bar">
+          <span class="prev"><a href="key.html"><span class="prevnext-text">Key management functions</span></a></span>
+          <span class="next"><a href="random.html"><span class="prevnext-text">Random number generation functions</span></a></span>
+        </div>
+        
+
+<h2 id="Index-5">Index
+</h2>
+<p><a href="#copy-object">copy-object</a><span class="divider"> </span><a href="#create-object">create-object</a><span class="divider"> </span><a href="#destroy-object">destroy-object</a><span class="divider"> </span><a href="#find-objects">find-objects</a><span class="divider"> </span><a href="#find-objects-final">find-objects-final</a><span class="divider"> </span><a href="#find-objects-init">find-objects-init</a><span class="divider"> </span><a href="#get-attribute-value">get-attribute-value</a><span class="divider"> </span><a href="#get-object-size">get-object-size</a><span class="divider"> </span><a href="#set-attribute-value">set-attribute-value</a></p><h2 id="Reference-5">Reference
+</h2>
+<div class="docstring"><div class="binding-wrap"><span class="binding"><a id="copy-object">copy-object</a></span><span class="binding-type">cfunction</span><div class="source-map">src/object.c at line 31, column 1</div></div><pre class="mendoza-codeblock"><code data-language="janet">(<span class="mdzsyn-symbol">copy-object</span> <span class="mdzsyn-symbol">session-obj</span> <span class="mdzsyn-symbol">obj-handle</span> <span class="mdzsyn-symbol">template</span>)</code></pre><p>Copies an object. Returns new `obj-handle`(number), if successful.</p></div><div class="docstring"><div class="binding-wrap"><span class="binding"><a id="create-object">create-object</a></span><span class="binding-type">cfunction</span><div class="source-map">src/object.c at line 11, column 1</div></div><pre class="mendoza-codeblock"><code data-language="janet">(<span class="mdzsyn-symbol">create-object</span> <span class="mdzsyn-symbol">session-obj</span> <span class="mdzsyn-symbol">template</span>)</code></pre><p>Creates a new object. Returns `obj-handle`(number), if successful.</p></div><div class="docstring"><div class="binding-wrap"><span class="binding"><a id="destroy-object">destroy-object</a></span><span class="binding-type">cfunction</span><div class="source-map">src/object.c at line 52, column 1</div></div><pre class="mendoza-codeblock"><code data-language="janet">(<span class="mdzsyn-symbol">destory-object</span> <span class="mdzsyn-symbol">session-obj</span> <span class="mdzsyn-symbol">obj-handle</span>)</code></pre><p>Destroys an object.</p></div><div class="docstring"><div class="binding-wrap"><span class="binding"><a id="find-objects">find-objects</a></span><span class="binding-type">cfunction</span><div class="source-map">src/object.c at line 162, column 1</div></div><pre class="mendoza-codeblock"><code data-language="janet">(<span class="mdzsyn-symbol">find-objects</span> <span class="mdzsyn-symbol">session-obj</span> <span class="mdzsyn-symbol">max-obj-count</span>)</code></pre><p>Continues a search for token and session objects that match a `template`. Returns a list of `obj-handle`, if successful.</p></div><div class="docstring"><div class="binding-wrap"><span class="binding"><a id="find-objects-final">find-objects-final</a></span><span class="binding-type">cfunction</span><div class="source-map">src/object.c at line 188, column 1</div></div><pre class="mendoza-codeblock"><code data-language="janet">(<span class="mdzsyn-symbol">find-objects-final</span> <span class="mdzsyn-symbol">session-obj</span>)</code></pre><p>Terminates a search for token and session objects. Returns a `session-obj`, if successful.</p></div><div class="docstring"><div class="binding-wrap"><span class="binding"><a id="find-objects-init">find-objects-init</a></span><span class="binding-type">cfunction</span><div class="source-map">src/object.c at line 135, column 1</div></div><pre class="mendoza-codeblock"><code data-language="janet">(<span class="mdzsyn-symbol">find-objects-init</span> <span class="mdzsyn-symbol">session-obj</span> <span class="mdzsyn-symbol">&amp;opt</span> <span class="mdzsyn-symbol">template</span>)</code></pre><p>Initializes a search for token and session objects that match a `template`. Find all objects if `template` is not provided. Returns a `session-obj`, if successful.</p></div><div class="docstring"><div class="binding-wrap"><span class="binding"><a id="get-attribute-value">get-attribute-value</a></span><span class="binding-type">cfunction</span><div class="source-map">src/object.c at line 85, column 1</div></div><pre class="mendoza-codeblock"><code data-language="janet">(<span class="mdzsyn-symbol">get-attribute-value</span> <span class="mdzsyn-symbol">session-obj</span> <span class="mdzsyn-symbol">obj-handle</span> <span class="mdzsyn-symbol">attr-list</span>)</code></pre><p>Obtains the value of one or more attributes of an object. Returns a template struct, if successful.</p></div><div class="docstring"><div class="binding-wrap"><span class="binding"><a id="get-object-size">get-object-size</a></span><span class="binding-type">cfunction</span><div class="source-map">src/object.c at line 68, column 1</div></div><pre class="mendoza-codeblock"><code data-language="janet">(<span class="mdzsyn-symbol">get-object-size</span> <span class="mdzsyn-symbol">session-obj</span> <span class="mdzsyn-symbol">obj-handle</span>)</code></pre><p>Returns the size of an object in bytes</p></div><div class="docstring"><div class="binding-wrap"><span class="binding"><a id="set-attribute-value">set-attribute-value</a></span><span class="binding-type">cfunction</span><div class="source-map">src/object.c at line 114, column 1</div></div><pre class="mendoza-codeblock"><code data-language="janet">(<span class="mdzsyn-symbol">set-attribute-value</span> <span class="mdzsyn-symbol">session-obj</span> <span class="mdzsyn-symbol">obj-handle</span> <span class="mdzsyn-symbol">template</span>)</code></pre><p>Modifies the value of one or more attributes of an object. Returns a `session-obj`, if successful.</p></div>
+        <div class="prevnext-bar">
+          <span class="prev"><a href="key.html"><span class="prevnext-text">Key management functions</span></a></span>
+          <span class="next"><a href="random.html"><span class="prevnext-text">Random number generation functions</span></a></span>
+        </div>
+      </div>
+    </div>
+    <script charset="utf-8">
+      function toggleToc() {
+        var toggler = document.getElementById('toc-toggle');
+        var wrapper = document.querySelector('.toc');
+        wrapper.classList.toggle('toc-hidden');
+        toggler.classList.toggle('open');
+        window.localStorage.setItem('show-toc', toggler.classList.contains('open'));
+      }
+      function addTocToggle() {
+        var el = document.getElementById('toc-toggle');
+        el.addEventListener('click', toggleToc);
+      }
+      window.addEventListener('DOMContentLoaded', addTocToggle);
+      if (window.localStorage.getItem('show-toc') === 'true') {
+        toggleToc()
+      }
+    </script>
+    <footer>
+      <div class="content-wrapper">
+        Copyright &copy; Seungki Kim 2024
+      </div>
+    </footer>
+  </body>
+</html>
