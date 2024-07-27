@@ -8,7 +8,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width">
     <link rel="stylesheet" href="../mdzdoc-css/main.css" type="text/css" charset="utf-8">
-    <title>Random number generation functions</title>
+    <title>Random number generation API</title>
     <meta name="description" content="">
   </head>
   <body>
@@ -21,14 +21,14 @@
     <div class="twocol">
       <div class="toc toc-hidden">
         <ul>
-          <li><span><a href="../index.html">Janet-pkcs11</a></span></li><li class="caret"><span><a href="index.html">API</a></span><ul><li><span><a href="decrypt.html">Decrypt functions</a></span></li><li><span><a href="dual.html">Dual-purpose cryptographic functions</a></span></li><li><span><a href="encrypt.html">Encrypt functions</a></span></li><li><span><a href="general_purpose.html">General purpose functions</a></span></li><li><span><a href="key.html">Key management functions</a></span></li><li><span><a href="object.html">Object management functions</a></span></li><li><span class="selected"><a href="random.html">Random number generation functions</a></span></li><li><span><a href="session.html">Session management functions</a></span></li><li><span><a href="sign.html">Signing and MACing functions</a></span></li><li><span><a href="slot_and_token.html">Slot and token management functions</a></span></li><li><span><a href="utils.html">Utiltity functions</a></span></li><li><span><a href="verify.html">Verify signature and MAC functions</a></span></li></ul></li>
+          <li><span><a href="../index.html">Janet-pkcs11</a></span></li><li class="caret"><span><a href="index.html">API</a></span><ul><li><span><a href="decrypt.html">Decrypt API</a></span></li><li><span><a href="dual.html">Dual-purpose cryptographic API</a></span></li><li><span><a href="encrypt.html">Encrypt API</a></span></li><li><span><a href="general_purpose.html">General purpose API</a></span></li><li><span><a href="key.html">Key management API</a></span></li><li><span><a href="object.html">Object management API</a></span></li><li><span class="selected"><a href="random.html">Random number generation API</a></span></li><li><span><a href="session.html">Session management API</a></span></li><li><span><a href="sign.html">Signing and MACing API</a></span></li><li><span><a href="slot_and_token.html">Slot and token management API</a></span></li><li><span><a href="utils.html">Utiltity API</a></span></li><li><span><a href="verify.html">Verify signature and MAC API</a></span></li></ul></li>
         </ul>
       </div>
       <div class="content-wrapper">
-        <h1>Random number generation functions</h1>
+        <h1>Random number generation API</h1>
         <div class="prevnext-bar">
-          <span class="prev"><a href="object.html"><span class="prevnext-text">Object management functions</span></a></span>
-          <span class="next"><a href="session.html"><span class="prevnext-text">Session management functions</span></a></span>
+          <span class="prev"><a href="object.html"><span class="prevnext-text">Object management API</span></a></span>
+          <span class="next"><a href="session.html"><span class="prevnext-text">Session management API</span></a></span>
         </div>
         
 
@@ -38,8 +38,8 @@
 </h2>
 <div class="docstring"><div class="binding-wrap"><span class="binding"><a id="generate-random">generate-random</a></span><span class="binding-type">cfunction</span><div class="source-map">src/random.c at line 27, column 1</div></div><pre class="mendoza-codeblock"><code data-language="janet">(<span class="mdzsyn-symbol">generate-random</span> <span class="mdzsyn-symbol">session-obj</span> <span class="mdzsyn-coresym">length</span>)</code></pre><p>Generates random or pseudo-random data. Returns the `length` bytes of random data in string format, if successful.</p></div><div class="docstring"><div class="binding-wrap"><span class="binding"><a id="seed-random">seed-random</a></span><span class="binding-type">cfunction</span><div class="source-map">src/random.c at line 10, column 1</div></div><pre class="mendoza-codeblock"><code data-language="janet">(<span class="mdzsyn-symbol">seed-random</span> <span class="mdzsyn-symbol">session-obj</span> <span class="mdzsyn-symbol">seed</span>)</code></pre><p>Mixes additional seed material into the token’s random number generator.Returns a `session-obj`, if successful.</p></div>
         <div class="prevnext-bar">
-          <span class="prev"><a href="object.html"><span class="prevnext-text">Object management functions</span></a></span>
-          <span class="next"><a href="session.html"><span class="prevnext-text">Session management functions</span></a></span>
+          <span class="prev"><a href="object.html"><span class="prevnext-text">Object management API</span></a></span>
+          <span class="next"><a href="session.html"><span class="prevnext-text">Session management API</span></a></span>
         </div>
       </div>
     </div>

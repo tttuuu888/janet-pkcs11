@@ -8,7 +8,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width">
     <link rel="stylesheet" href="../mdzdoc-css/main.css" type="text/css" charset="utf-8">
-    <title>Decrypt functions</title>
+    <title>Decrypt API</title>
     <meta name="description" content="">
   </head>
   <body>
@@ -21,14 +21,14 @@
     <div class="twocol">
       <div class="toc toc-hidden">
         <ul>
-          <li><span><a href="../index.html">Janet-pkcs11</a></span></li><li class="caret"><span><a href="index.html">API</a></span><ul><li><span class="selected"><a href="decrypt.html">Decrypt functions</a></span></li><li><span><a href="dual.html">Dual-purpose cryptographic functions</a></span></li><li><span><a href="encrypt.html">Encrypt functions</a></span></li><li><span><a href="general_purpose.html">General purpose functions</a></span></li><li><span><a href="key.html">Key management functions</a></span></li><li><span><a href="object.html">Object management functions</a></span></li><li><span><a href="random.html">Random number generation functions</a></span></li><li><span><a href="session.html">Session management functions</a></span></li><li><span><a href="sign.html">Signing and MACing functions</a></span></li><li><span><a href="slot_and_token.html">Slot and token management functions</a></span></li><li><span><a href="utils.html">Utiltity functions</a></span></li><li><span><a href="verify.html">Verify signature and MAC functions</a></span></li></ul></li>
+          <li><span><a href="../index.html">Janet-pkcs11</a></span></li><li class="caret"><span><a href="index.html">API</a></span><ul><li><span class="selected"><a href="decrypt.html">Decrypt API</a></span></li><li><span><a href="dual.html">Dual-purpose cryptographic API</a></span></li><li><span><a href="encrypt.html">Encrypt API</a></span></li><li><span><a href="general_purpose.html">General purpose API</a></span></li><li><span><a href="key.html">Key management API</a></span></li><li><span><a href="object.html">Object management API</a></span></li><li><span><a href="random.html">Random number generation API</a></span></li><li><span><a href="session.html">Session management API</a></span></li><li><span><a href="sign.html">Signing and MACing API</a></span></li><li><span><a href="slot_and_token.html">Slot and token management API</a></span></li><li><span><a href="utils.html">Utiltity API</a></span></li><li><span><a href="verify.html">Verify signature and MAC API</a></span></li></ul></li>
         </ul>
       </div>
       <div class="content-wrapper">
-        <h1>Decrypt functions</h1>
+        <h1>Decrypt API</h1>
         <div class="prevnext-bar">
           <span class="prev"><a href="index.html"><span class="prevnext-text">API</span></a></span>
-          <span class="next"><a href="dual.html"><span class="prevnext-text">Dual-purpose cryptographic functions</span></a></span>
+          <span class="next"><a href="dual.html"><span class="prevnext-text">Dual-purpose cryptographic API</span></a></span>
         </div>
         
 
@@ -39,7 +39,7 @@
 <div class="docstring"><div class="binding-wrap"><span class="binding"><a id="decrypt">decrypt</a></span><span class="binding-type">cfunction</span><div class="source-map">src/decrypt.c at line 31, column 1</div></div><pre class="mendoza-codeblock"><code data-language="janet">(<span class="mdzsyn-symbol">decrypt</span> <span class="mdzsyn-symbol">session-obj</span> <span class="mdzsyn-symbol">data</span>)</code></pre><p>Decrypts encrypted data in a single part. Returns an decrypted data in string, if successful.</p></div><div class="docstring"><div class="binding-wrap"><span class="binding"><a id="decrypt-final">decrypt-final</a></span><span class="binding-type">cfunction</span><div class="source-map">src/decrypt.c at line 87, column 1</div></div><pre class="mendoza-codeblock"><code data-language="janet">(<span class="mdzsyn-symbol">decrypt-final</span> <span class="mdzsyn-symbol">session-obj</span>)</code></pre><p>Finishes a multiple-part decryption operation. Return the last recovered data part in string, if successful.</p></div><div class="docstring"><div class="binding-wrap"><span class="binding"><a id="decrypt-init">decrypt-init</a></span><span class="binding-type">cfunction</span><div class="source-map">src/decrypt.c at line 11, column 1</div></div><pre class="mendoza-codeblock"><code data-language="janet">(<span class="mdzsyn-symbol">decrypt-init</span> <span class="mdzsyn-symbol">session-obj</span> <span class="mdzsyn-symbol">mechanism</span> <span class="mdzsyn-symbol">key-handle</span>)</code></pre><p>Initializes an decryption operation. Returns a `session-obj`, if successful.</p></div><div class="docstring"><div class="binding-wrap"><span class="binding"><a id="decrypt-update">decrypt-update</a></span><span class="binding-type">cfunction</span><div class="source-map">src/decrypt.c at line 58, column 1</div></div><pre class="mendoza-codeblock"><code data-language="janet">(<span class="mdzsyn-symbol">decrypt-update</span> <span class="mdzsyn-symbol">session-obj</span> <span class="mdzsyn-symbol">data</span>)</code></pre><p>Continues a multiple-part decryption operation, processing another encrypted `data` part. Return the decrypted data part in string, if successful.</p></div>
         <div class="prevnext-bar">
           <span class="prev"><a href="index.html"><span class="prevnext-text">API</span></a></span>
-          <span class="next"><a href="dual.html"><span class="prevnext-text">Dual-purpose cryptographic functions</span></a></span>
+          <span class="next"><a href="dual.html"><span class="prevnext-text">Dual-purpose cryptographic API</span></a></span>
         </div>
       </div>
     </div>
