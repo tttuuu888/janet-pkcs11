@@ -379,6 +379,7 @@
     (assert (:sign-init session-rw {:mechanism :CKM_RSA_PKCS} priv-key))
     (def sig (assert (:sign session-rw data)))
 
+    ## verify
     (assert (:verify-init session-rw {:mechanism :CKM_RSA_PKCS} pub-key))
     (assert (= true (:verify session-rw data sig)))
 
