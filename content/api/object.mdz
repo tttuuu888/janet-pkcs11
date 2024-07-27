@@ -1,6 +1,6 @@
 (import ./mdz-utils :as util)
 
-{:title "Object management functions"
+{:title "Object management API"
  :author "Seungki Kim"
  :license "MIT license"
  :template "mdzdoc/main.html"}

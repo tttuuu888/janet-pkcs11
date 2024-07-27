@@ -1,6 +1,6 @@
 (import ./mdz-utils :as util)
 
-{:title "Slot and token management functions"
+{:title "Slot and token management API"
  :author "Seungki Kim"
  :license "MIT license"
  :template "mdzdoc/main.html"}

@@ -53,6 +53,7 @@ jobs:
       run: |
         mdz clean
         mdz build docs
+        sed -i '/^\.content-wrapper {/a\    width: 100%;' docs/mdzdoc-css/main.css
     - name: "Commit and push changes"
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

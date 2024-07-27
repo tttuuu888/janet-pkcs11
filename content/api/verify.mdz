@@ -1,6 +1,6 @@
 (import ./mdz-utils :as util)
 
-{:title "Verify signature and MAC functions"
+{:title "Verify signature and MAC API"
  :author "Seungki Kim"
  :license "MIT license"
  :template "mdzdoc/main.html"}
