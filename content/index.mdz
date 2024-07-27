@@ -16,3 +16,41 @@ Janet-pkcs11 is a @link[https://janet-lang.org]{Janet} wrapper for PKCS #11 API.
 @codeblock```
 [sudo] jpm install https://github.com/tttuuu888/janet-pkcs11.git
 ```
+
+## Example
+
+The following is an example of the process using Janet-pkcs11, including session opening, login, AES key generation, encryption, and decryption.  
+
+In this example, libsofthsm2.so is used for module initialization, and it is assumed that slot 0 has already been initialized and the user PIN is set to 123456.
+
+@codeblock[janet]```
+(use pkcs11)
+
+(def p11 (new "/usr/lib/softhsm/libsofthsm2.so"))
+
+(with [session (:open-session p11 0)]
+  (:login session :user "123456")
+
+  (let [key (:generate-key session
+                           {:mechanism     :CKM_AES_KEY_GEN}
+                           {:CKA_KEY_TYPE  :CKK_AES
+                            :CKA_VALUE_LEN 32
+                            :CKA_ENCRYPT   true
+                            :CKA_DECRYPT   true})
+        plain (hex-decode "000102030405060708090a0b0c0d0e0f")]
+
+    ## encrypt
+    (:encrypt-init session {:mechanism :CKM_AES_ECB} key)
+    (def encrypted (:encrypt session plain))
+
+    ## decrypt
+    (:decrypt-init session {:mechanism :CKM_AES_ECB} key)
+    (def decrypted (:decrypt session encrypted))
+
+    ## check result
+    (assert (= plain decrypted))))
+
+(:close p11)
+```
+
+More examples can be found in the test.
