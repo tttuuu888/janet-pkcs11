@@ -47,8 +47,8 @@ body {
 }
 
 .content-wrapper {
-    width: 100%;
     margin: 20px auto;
+    width: 100%;
     max-width: 800px;
 }
 
@@ -450,4 +450,68 @@ footer {
 
 .next .prevnext-text::after {
     content: " >";
+}
+
+/* Syntax highlighting */
+pre {
+    font-family: 'Inconsolata', monospace;
+    white-space: pre-wrap;
+}
+
+code {
+    font-family: 'Inconsolata', monospace;
+}
+
+.mendoza-code {
+    padding: 0 5px;
+    background: #eee;
+    white-space: nowrap;
+}
+
+.mendoza-codeblock {
+    color: white;
+    padding: 14px;
+    background: #333;
+    border-radius: 5px;
+    margin: 15px;
+    line-height: 1.2;
+}
+
+@media (prefers-color-scheme: dark) {
+    body {
+        background-color: #222;
+        color: #eee;
+    }
+
+    h1, h2, h3, h4 {
+        color: #f8f8f2;
+    }
+
+    h3 {
+        color: #e3e0e0;
+    }
+
+    h4 {
+        color: #cccccc;
+    }
+
+    a {
+        color: #09a5b8;
+    }
+
+    table tr {
+        background: #222;
+    }
+
+    .mendoza-code {
+        background: #333;
+    }
+
+    .mendoza-codeblock {
+        background: #333;
+    }
+
+    .toc {
+        background: #333;
+    }
 }
