@@ -3,7 +3,7 @@
 {:title "Key management API"
  :author "Seungki Kim"
  :license "MIT license"
- :template "mdzdoc/main.html"
+ :template "docpage.html"
  :order 11}
 ---
 

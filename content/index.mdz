@@ -1,7 +1,7 @@
 {:title "Janet-pkcs11"
  :author "Seungki Kim"
  :license "MIT license"
- :template "mdzdoc/main.html"
+ :template "docpage.html"
  :order 0}
 ---
 
