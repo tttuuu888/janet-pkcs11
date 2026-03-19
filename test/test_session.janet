@@ -11,13 +11,13 @@
 (var test-serial-nubmer nil)
 
 ## Initialize a token for session tests
-(with [p11 (assert (new softhsm2-so-path))]
+(with [p11 (assert (new hsm-so-path))]
   (set test-slot (min ;(:get-slot-list p11)))
   (assert (:init-token p11 test-slot test-so-pin test-token-label))
   (set test-serial-nubmer ((:get-token-info p11 test-slot) :serial-number)))
 
 ### Session info, pin, login tests
-(with [p11 (assert (new softhsm2-so-path))]
+(with [p11 (assert (new hsm-so-path))]
 
   ## Find the slot initialized from the above
   (set test-slot (find-slot-with-serial-number p11 test-serial-nubmer))

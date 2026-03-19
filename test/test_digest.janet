@@ -4,7 +4,7 @@
 
 (start-suite)
 
-(def p11 (assert (new softhsm2-so-path)))
+(def p11 (assert (new hsm-so-path)))
 (def [test-slot token-label] (init-test-token p11))
 
 ### Digest tests

@@ -1,7 +1,7 @@
 (use ../build/pkcs11)
 (import spork/sh)
 
-(def softhsm2-so-path "/usr/lib/softhsm/libsofthsm2.so")
+(def hsm-so-path "/usr/lib/softhsm/libsofthsm2.so")
 (def test-so-pin  "012345")
 (def test-so-pin2 "abcdef")
 (def test-user-pin  "123456")

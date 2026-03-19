@@ -8,7 +8,7 @@
                               ;(string/bytes (os/cryptorand 4))))
 
 ### Slot info, init token tests
-(with [p11 (assert (new softhsm2-so-path))]
+(with [p11 (assert (new hsm-so-path))]
 
   ## Find uninitialized slot
   (def test-slot (min ;(:get-slot-list p11)))
