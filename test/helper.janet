@@ -13,10 +13,10 @@
               serial-number))
    (:get-slot-list p11)))
 
-(defn init-test-token [p11]
-  "Initialize a test token with user PIN set up. Returns [slot token-label]."
-  (def token-label (string "janet-pkcs11-test"
-                           ;(string/bytes (os/cryptorand 4))))
+(defn init-test-token
+  "Initialize a test token labeled `token-label` with user PIN set up.
+  Returns its slot."
+  [p11 token-label]
   (def slot (min ;(:get-slot-list p11)))
   (:init-token p11 slot test-so-pin token-label)
   (def serial-number ((:get-token-info p11 slot) :serial-number))
@@ -25,7 +25,9 @@
     (:init-pin session test-user-pin)
     (:logout session)
     (:set-pin session test-user-pin test-user-pin2))
-  [(find-slot-with-serial-number p11 serial-number) token-label])
+  (find-slot-with-serial-number p11 serial-number))
 
-(defn cleanup-token [token-label]
-  (sh/exec "softhsm2-util" "--delete-token" "--token" token-label))
+(defn cleanup-token
+  "Delete the test token. Returns true on success."
+  [token-label]
+  (zero? (sh/exec "softhsm2-util" "--delete-token" "--token" token-label)))

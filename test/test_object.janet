@@ -4,73 +4,75 @@
 
 (start-suite)
 
-(def p11 (assert (new hsm-so-path)))
-(def [test-slot token-label] (init-test-token p11))
+(def token-label (string "janet-pkcs11-test" ;(string/bytes (os/cryptorand 4))))
 
-### Objects, attribute tests
-(with [session-rw (assert (:open-session p11 test-slot))]
-  (assert (:login session-rw :user test-user-pin2))
+## Always delete the test token, even if a test raises an error.
+(defer (assert (cleanup-token token-label))
 
-  ## The template is a struct. PKCS11 attribute defines can be used here, but
-  ## only in Janet keyword format.
-  (let [obj-handle1 (assert (:create-object session-rw
-                                            {:CKA_CLASS       :CKO_DATA
-                                             :CKA_TOKEN       true
-                                             :CKA_APPLICATION "My Application"
-                                             :CKA_VALUE       ""}))
-        obj-handle2 (assert (:copy-object session-rw
-                                          obj-handle1
-                                          {:CKA_LABEL "copy object"}))]
-    (assert (:get-object-size session-rw obj-handle1))
+  (with [p11 (assert (new hsm-so-path))]
+    (def test-slot (init-test-token p11 token-label))
 
-    (let [attr (assert (:get-attribute-value session-rw
-                                             obj-handle1
-                                             [:CKA_TOKEN
-                                              :CKA_CLASS
-                                              :CKA_VALUE
-                                              :CKA_APPLICATION]))]
-      (assert (= 0 (attr :CKA_CLASS)))
-      (assert (= true (attr :CKA_TOKEN)))
-      (assert (= "My Application" (attr :CKA_APPLICATION)))
-      (assert (= "" (attr :CKA_VALUE))))
+    ### Objects, attribute tests
+    (with [session-rw (assert (:open-session p11 test-slot))]
+      (assert (:login session-rw :user test-user-pin2))
 
-    (assert (:set-attribute-value session-rw
-                                  obj-handle1
-                                  {:CKA_LABEL "Label 1"}))
-    (let [attr (assert (:get-attribute-value session-rw
-                                             obj-handle1
-                                             [:CKA_TOKEN
-                                              :CKA_CLASS
-                                              :CKA_VALUE
-                                              :CKA_APPLICATION
-                                              :CKA_LABEL]))]
-      (assert (= "Label 1" (attr :CKA_LABEL))))
+      ## The template is a struct. PKCS11 attribute defines can be used here, but
+      ## only in Janet keyword format.
+      (let [obj-handle1 (assert (:create-object session-rw
+                                                {:CKA_CLASS       :CKO_DATA
+                                                 :CKA_TOKEN       true
+                                                 :CKA_APPLICATION "My Application"
+                                                 :CKA_VALUE       ""}))
+            obj-handle2 (assert (:copy-object session-rw
+                                              obj-handle1
+                                              {:CKA_LABEL "copy object"}))]
+        (assert (:get-object-size session-rw obj-handle1))
 
-    (assert (:set-attribute-value session-rw
-                                  obj-handle1
-                                  {:CKA_LABEL "Label 2"}))
-    (let [attr (assert (:get-attribute-value session-rw
-                                             obj-handle1
-                                             [:CKA_TOKEN
-                                              :CKA_CLASS
-                                              :CKA_VALUE
-                                              :CKA_APPLICATION
-                                              :CKA_LABEL]))]
-      (assert (= "Label 2" (attr :CKA_LABEL))))
+        (let [attr (assert (:get-attribute-value session-rw
+                                                 obj-handle1
+                                                 [:CKA_TOKEN
+                                                  :CKA_CLASS
+                                                  :CKA_VALUE
+                                                  :CKA_APPLICATION]))]
+          (assert (= 0 (attr :CKA_CLASS)))
+          (assert (= true (attr :CKA_TOKEN)))
+          (assert (= "My Application" (attr :CKA_APPLICATION)))
+          (assert (= "" (attr :CKA_VALUE))))
 
-    (assert (:find-objects-init session-rw))
-    (assert (= 2 (length (assert (:find-objects session-rw 10)))))
-    (assert (:find-objects-final session-rw))
+        (assert (:set-attribute-value session-rw
+                                      obj-handle1
+                                      {:CKA_LABEL "Label 1"}))
+        (let [attr (assert (:get-attribute-value session-rw
+                                                 obj-handle1
+                                                 [:CKA_TOKEN
+                                                  :CKA_CLASS
+                                                  :CKA_VALUE
+                                                  :CKA_APPLICATION
+                                                  :CKA_LABEL]))]
+          (assert (= "Label 1" (attr :CKA_LABEL))))
 
-    ## Calling destroy-object between find-objects-init and find-objects-final
-    ## cause an abnormal behavior.
-    (assert (= nil (:destroy-object session-rw obj-handle2)))
+        (assert (:set-attribute-value session-rw
+                                      obj-handle1
+                                      {:CKA_LABEL "Label 2"}))
+        (let [attr (assert (:get-attribute-value session-rw
+                                                 obj-handle1
+                                                 [:CKA_TOKEN
+                                                  :CKA_CLASS
+                                                  :CKA_VALUE
+                                                  :CKA_APPLICATION
+                                                  :CKA_LABEL]))]
+          (assert (= "Label 2" (attr :CKA_LABEL))))
 
-    (assert (:find-objects-init session-rw))
-    (assert (= 1 (length (assert (:find-objects session-rw 10)))))
-    (assert (:find-objects-final session-rw))))
+        (assert (:find-objects-init session-rw))
+        (assert (= 2 (length (assert (:find-objects session-rw 10)))))
+        (assert (:find-objects-final session-rw))
 
-(:close p11)
-(assert (cleanup-token token-label))
+        ## Calling destroy-object between find-objects-init and find-objects-final
+        ## cause an abnormal behavior.
+        (assert (= nil (:destroy-object session-rw obj-handle2)))
+
+        (assert (:find-objects-init session-rw))
+        (assert (= 1 (length (assert (:find-objects session-rw 10)))))
+        (assert (:find-objects-final session-rw))))))
 
 (end-suite)
