@@ -97,7 +97,7 @@ JanetStruct p11_template_to_janet_struct(CK_ATTRIBUTE_PTR p_template, int count)
                 break;
             }
             default: {
-                janet_panicf("0x%d Attribute type is not found", attr_type);
+                janet_panicf("0x%lx attribute type is not found", p_template[i].type);
             }
         }
 

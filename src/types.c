@@ -1131,7 +1131,7 @@ p11_attr_type_t get_attribute_type(CK_ATTRIBUTE_TYPE type) {
             return P11_ATTR_STRING;
 
         default:
-            janet_panicf("0x%0x type is not supported", type);
+            janet_panicf("0x%lx type is not supported", type);
     }
 
     return P11_ATTR_STRING;
