@@ -8,6 +8,16 @@
 (def test-user-pin  "123456")
 (def test-user-pin2 "bcdefg")
 
+(def CKF_TOKEN_INITIALIZED 0x400)
+
+(defn find-uninitialized-slot
+  "Return the first slot whose token is not initialized. Errors if none."
+  [p11]
+  (or (find (fn [s] (zero? (bit-and ((:get-token-info p11 s) :flags)
+                                    CKF_TOKEN_INITIALIZED)))
+            (:get-slot-list p11))
+      (error "no uninitialized slot")))
+
 (defn find-slot-with-serial-number [p11 serial-number]
   (find
    (fn [s] (= ((:get-token-info p11 s) :serial-number)
@@ -18,7 +28,7 @@
   "Initialize a test token labeled `token-label` with user PIN set up.
   Returns its slot."
   [p11 token-label]
-  (def slot (min ;(:get-slot-list p11)))
+  (def slot (find-uninitialized-slot p11))
   (:init-token p11 slot test-so-pin token-label)
   (def serial-number ((:get-token-info p11 slot) :serial-number))
   (with [session (:open-session p11 slot)]

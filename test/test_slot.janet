@@ -16,8 +16,7 @@
   ### Slot info, init token tests
   (with [p11 (assert (new hsm-so-path))]
 
-    ## Find uninitialized slot
-    (def test-slot (min ;(:get-slot-list p11)))
+    (def test-slot (find-uninitialized-slot p11))
 
     (let [info (:get-info p11)]
       # cryptoki-version follows the PKCS#11 header the HSM library was built
