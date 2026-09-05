@@ -22,7 +22,7 @@ JANET_FN(p11_digest_init,
 
     CK_RV rv;
     rv = obj->func_list->C_DigestInit(obj->session, p_mechanism);
-    PKCS11_ASSERT(rv, "C_DigestInit");
+    PKCS11_ASSERT(rv);
 
     return janet_wrap_abstract(obj);
 }
@@ -44,12 +44,12 @@ JANET_FN(p11_digest,
     rv = obj->func_list->C_Digest(obj->session,
                                   (CK_BYTE_PTR)data.bytes, (CK_ULONG)data.len,
                                   digest_data, &digest_data_len);
-    PKCS11_ASSERT(rv, "C_Digest");
+    PKCS11_ASSERT(rv);
 
     digest_data = janet_smalloc(digest_data_len);
     rv = obj->func_list->C_Digest(obj->session, (CK_BYTE_PTR)data.bytes, (CK_ULONG)data.len,
                                   digest_data, &digest_data_len);
-    PKCS11_ASSERT(rv, "C_Digest");
+    PKCS11_ASSERT(rv);
 
     return janet_wrap_string(janet_string(digest_data, digest_data_len));
 }
@@ -67,7 +67,7 @@ JANET_FN(p11_digest_update,
     CK_RV rv;
     rv = obj->func_list->C_DigestUpdate(obj->session,
                                         (CK_BYTE_PTR)data.bytes, (CK_ULONG)data.len);
-    PKCS11_ASSERT(rv, "C_DigestUpdate");
+    PKCS11_ASSERT(rv);
 
     return janet_wrap_abstract(obj);
 }
@@ -84,7 +84,7 @@ JANET_FN(p11_digest_key,
 
     CK_RV rv;
     rv = obj->func_list->C_DigestKey(obj->session, key_handle);
-    PKCS11_ASSERT(rv, "C_DigestKey");
+    PKCS11_ASSERT(rv);
 
     return janet_wrap_abstract(obj);
 }
@@ -103,11 +103,11 @@ JANET_FN(p11_digest_final,
 
     CK_RV rv;
     rv = obj->func_list->C_DigestFinal(obj->session, digest_data, &digest_data_len);
-    PKCS11_ASSERT(rv, "C_DigestFinal");
+    PKCS11_ASSERT(rv);
 
     digest_data = janet_smalloc(digest_data_len);
     rv = obj->func_list->C_DigestFinal(obj->session, digest_data, &digest_data_len);
-    PKCS11_ASSERT(rv, "C_DigestFinal");
+    PKCS11_ASSERT(rv);
 
     return janet_wrap_string(janet_string(digest_data, digest_data_len));
 }

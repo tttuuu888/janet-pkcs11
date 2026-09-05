@@ -42,7 +42,7 @@ JANET_FN(p11_get_slot_list,
     CK_ULONG count = 0;
     CK_RV rv;
     rv = obj->func_list->C_GetSlotList(token_present, p_slot_list, &count);
-    PKCS11_ASSERT(rv, "C_GetSlotList");
+    PKCS11_ASSERT(rv);
 
     if (count == 0) {
         return janet_wrap_nil();
@@ -50,7 +50,7 @@ JANET_FN(p11_get_slot_list,
 
     p_slot_list = janet_smalloc(count * sizeof(CK_SLOT_ID));
     rv = obj->func_list->C_GetSlotList(token_present, p_slot_list, &count);
-    PKCS11_ASSERT(rv, "C_GetSlotList");
+    PKCS11_ASSERT(rv);
 
     Janet *tup = janet_tuple_begin(count);
     for (int i=0; i<count; i++) {
@@ -77,7 +77,7 @@ JANET_FN(p11_get_slot_info,
     CK_ULONG count = 0;
     CK_RV rv;
     rv = obj->func_list->C_GetSlotList(token_present, p_slot_list, &count);
-    PKCS11_ASSERT(rv, "C_GetSlotList");
+    PKCS11_ASSERT(rv);
 
     if (count == 0) {
         return janet_wrap_nil();
@@ -85,7 +85,7 @@ JANET_FN(p11_get_slot_info,
 
     p_slot_list = janet_smalloc(count * sizeof(CK_SLOT_ID));
     rv = obj->func_list->C_GetSlotList(token_present, p_slot_list, &count);
-    PKCS11_ASSERT(rv, "C_GetSlotList");
+    PKCS11_ASSERT(rv);
 
     if (argc == 2) {
         /* Return slot info corresponding to `slot-id` */
@@ -105,7 +105,7 @@ JANET_FN(p11_get_slot_info,
         CK_SLOT_INFO info;
         memset(&info, 0, sizeof(info));
         rv = obj->func_list->C_GetSlotInfo(slot_id, &info);
-        PKCS11_ASSERT(rv, "C_GetSlotInfo");
+        PKCS11_ASSERT(rv);
 
         JanetStruct slot_info = slot_info_to_struct(&info, slot_id);
         return janet_wrap_struct(slot_info);
@@ -117,7 +117,7 @@ JANET_FN(p11_get_slot_info,
         CK_SLOT_INFO info;
         memset(&info, 0, sizeof(info));
         rv = obj->func_list->C_GetSlotInfo(p_slot_list[i], &info);
-        PKCS11_ASSERT(rv, "C_GetSlotInfo");
+        PKCS11_ASSERT(rv);
 
         JanetStruct slot_info = slot_info_to_struct(&info, p_slot_list[i]);
         tup[i] = janet_wrap_struct(slot_info);
@@ -139,7 +139,7 @@ JANET_FN(p11_get_token_info,
     CK_RV rv;
     memset(&info, 0, sizeof(info));
     rv = obj->func_list->C_GetTokenInfo(slot_id, &info);
-    PKCS11_ASSERT(rv, "C_GetTokenInfo");
+    PKCS11_ASSERT(rv);
 
     JanetTable *ret = janet_table(18);
     JanetTable *hw_ver = janet_table(2);
@@ -189,7 +189,7 @@ JANET_FN(p11_wait_for_slot_event,
             break;
         }
 
-        PKCS11_ASSERT(rv, "C_WaitForSlotEvent");
+        PKCS11_ASSERT(rv);
         slot_ids[i] = slot_id;
         event_slots += 1;
     }
@@ -219,7 +219,7 @@ JANET_FN(p11_get_mechanism_list,
     CK_ULONG count = 0;
     CK_RV rv;
     rv = obj->func_list->C_GetMechanismList(slot_id, p_mechanism_list, &count);
-    PKCS11_ASSERT(rv, "C_GetMechanismList");
+    PKCS11_ASSERT(rv);
 
     if (count == 0) {
         return janet_wrap_nil();
@@ -227,7 +227,7 @@ JANET_FN(p11_get_mechanism_list,
 
     p_mechanism_list = janet_smalloc(count * sizeof(CK_MECHANISM_TYPE));
     rv = obj->func_list->C_GetMechanismList(slot_id, p_mechanism_list, &count);
-    PKCS11_ASSERT(rv, "C_GetMechanismList");
+    PKCS11_ASSERT(rv);
 
     Janet *tup = janet_tuple_begin(count);
     for (int i=0; i<count; i++) {
@@ -253,7 +253,7 @@ JANET_FN(p11_get_mechanism_info,
 
     if (argc == 2) {
         rv = obj->func_list->C_GetMechanismList(slot_id, p_mechanism_list, &count);
-        PKCS11_ASSERT(rv, "C_GetMechanismList");
+        PKCS11_ASSERT(rv);
 
         if (count == 0) {
             return janet_wrap_nil();
@@ -261,7 +261,7 @@ JANET_FN(p11_get_mechanism_info,
 
         p_mechanism_list = janet_smalloc(count * sizeof(CK_MECHANISM_TYPE));
         rv = obj->func_list->C_GetMechanismList(slot_id, p_mechanism_list, &count);
-        PKCS11_ASSERT(rv, "C_GetMechanismList");
+        PKCS11_ASSERT(rv);
     } else {
         JanetTuple tup = janet_gettuple(argv, 2);
         count = (CK_ULONG)janet_tuple_length(tup);
@@ -275,7 +275,7 @@ JANET_FN(p11_get_mechanism_info,
     for (int i=0; i<count; i++) {
         CK_MECHANISM_INFO info;
         rv = obj->func_list->C_GetMechanismInfo(slot_id, p_mechanism_list[i], &info);
-        PKCS11_ASSERT(rv, "C_GetMechanismInfo");
+        PKCS11_ASSERT(rv);
 
         JanetTable *jinfo = janet_table(4);
         janet_table_put(jinfo, janet_ckeywordv("type"), janet_wrap_number(p_mechanism_list[i]));
@@ -310,7 +310,7 @@ JANET_FN(p11_init_token,
     memcpy(label, jlabel.bytes, jlabel.len);
 
     rv = obj->func_list->C_InitToken(slot_id, (CK_UTF8CHAR_PTR)pin.bytes, (CK_ULONG)pin.len, label);
-    PKCS11_ASSERT(rv, "C_InitToken");
+    PKCS11_ASSERT(rv);
 
     return janet_wrap_abstract(obj);
 }
@@ -327,7 +327,7 @@ JANET_FN(p11_init_pin,
 
     CK_RV rv;
     rv = obj->func_list->C_InitPIN(obj->session, (CK_UTF8CHAR_PTR)pin.bytes, (CK_ULONG)pin.len);
-    PKCS11_ASSERT(rv, "C_InitPIN");
+    PKCS11_ASSERT(rv);
 
     return janet_wrap_abstract(obj);
 }
@@ -348,7 +348,7 @@ JANET_FN(p11_set_pin,
     rv = obj->func_list->C_SetPIN(obj->session,
                                   (CK_UTF8CHAR_PTR)old_pin.bytes, (CK_ULONG)old_pin.len,
                                   (CK_UTF8CHAR_PTR)new_pin.bytes, (CK_ULONG)new_pin.len);
-    PKCS11_ASSERT(rv, "C_SetPIN");
+    PKCS11_ASSERT(rv);
 
     return janet_wrap_abstract(obj);
 }

@@ -90,7 +90,7 @@ static void session_close(session_obj_t *obj) {
     if (obj->is_session_open) {
         CK_RV rv;
         rv = obj->func_list->C_CloseSession(obj->session);
-        PKCS11_ASSERT(rv, "C_CloseSession");
+        PKCS11_ASSERT(rv);
         obj->is_session_open = false;
     }
 }
@@ -136,7 +136,7 @@ JANET_FN(p11_open_session,
 
     CK_RV rv;
     rv = obj->func_list->C_OpenSession(slot_id, flags, NULL_PTR, NULL_PTR, &session);
-    PKCS11_ASSERT(rv, "C_OpenSession");
+    PKCS11_ASSERT(rv);
 
     session_obj_t *session_obj = janet_abstract(get_session_obj_type(), sizeof(session_obj_t));
     memset(session_obj, 0, sizeof(session_obj_t));
@@ -170,7 +170,7 @@ JANET_FN(p11_close_all_sessions,
 
     CK_RV rv;
     rv = obj->func_list->C_CloseAllSessions(slot_id);
-    PKCS11_ASSERT(rv, "C_CloseAllSessions");
+    PKCS11_ASSERT(rv);
 
     return janet_wrap_nil();
 }
@@ -186,7 +186,7 @@ JANET_FN(p11_get_session_info,
     CK_SESSION_INFO info;
     CK_RV rv;
     rv = obj->func_list->C_GetSessionInfo(obj->session, &info);
-    PKCS11_ASSERT(rv, "C_GetSessionInfo");
+    PKCS11_ASSERT(rv);
 
     JanetTable *ret = janet_table(4);
     janet_table_put(ret, janet_ckeywordv("slot-id"), janet_wrap_number(info.slotID));
@@ -208,11 +208,11 @@ JANET_FN(p11_get_operation_state,
     CK_ULONG state_len;
     CK_RV rv;
     rv = obj->func_list->C_GetOperationState(obj->session, NULL_PTR, &state_len);
-    PKCS11_ASSERT(rv, "C_GetOperationState");
+    PKCS11_ASSERT(rv);
 
     JanetBuffer *state = janet_buffer(state_len);
     rv = obj->func_list->C_GetOperationState(obj->session, (CK_BYTE_PTR)state->data, &state_len);
-    PKCS11_ASSERT(rv, "C_GetOperationState");
+    PKCS11_ASSERT(rv);
 
     return janet_wrap_string(janet_string(state->data, state_len));
 }
@@ -242,7 +242,7 @@ JANET_FN(p11_login,
 
     CK_RV rv;
     rv = obj->func_list->C_Login(obj->session, user_type, (CK_UTF8CHAR_PTR)pin.bytes, (CK_ULONG)pin.len);
-    PKCS11_ASSERT(rv, "C_Login");
+    PKCS11_ASSERT(rv);
 
     return janet_wrap_abstract(obj);
 }
@@ -256,7 +256,7 @@ JANET_FN(p11_logout,
     session_obj_t *obj = janet_getabstract(argv, 0, get_session_obj_type());
     CK_RV rv;
     rv = obj->func_list->C_Logout(obj->session);
-    PKCS11_ASSERT(rv, "C_Logout");
+    PKCS11_ASSERT(rv);
 
     return janet_wrap_abstract(obj);
 }

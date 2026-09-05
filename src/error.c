@@ -4,9 +4,12 @@
  * Janet-pkcs11 is released under the MIT License, see the LICENSE file.
  */
 
+#include <stdio.h>
+#include "janet.h"
 #include "pkcs11_header/pkcs11.h"
+#include "error.h"
 
-const char* get_pkcs11_error(int error) {
+const char* get_pkcs11_error(CK_RV error) {
     switch(error) {
         case CKR_OK:
             return "CKR_OK";
@@ -181,6 +184,16 @@ const char* get_pkcs11_error(int error) {
         case CKR_VENDOR_DEFINED:
             return "CKR_VENDOR_DEFINED";
         default:
-            return "CKR UNKOWN ERROR";
+            return NULL;
     }
+}
+
+JANET_NO_RETURN void pkcs11_panic_rv(CK_RV rv) {
+    const char *name = get_pkcs11_error(rv);
+    if (name != NULL) {
+        janet_panicv(janet_ckeywordv(name));
+    }
+    char buf[32];
+    snprintf(buf, sizeof(buf), "CKR_UNKNOWN_0x%lx", (unsigned long)rv);
+    janet_panicv(janet_ckeywordv(buf));
 }

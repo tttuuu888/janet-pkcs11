@@ -23,7 +23,7 @@ JANET_FN(p11_decrypt_init,
 
     CK_RV rv;
     rv = obj->func_list->C_DecryptInit(obj->session, p_mechanism, key_handle);
-    PKCS11_ASSERT(rv, "C_DecryptInit");
+    PKCS11_ASSERT(rv);
 
     return janet_wrap_abstract(obj);
 }
@@ -45,12 +45,12 @@ JANET_FN(p11_decrypt,
     rv = obj->func_list->C_Decrypt(obj->session,
                                    (CK_BYTE_PTR)data.bytes, (CK_ULONG)data.len,
                                    dec_data, &dec_data_len);
-    PKCS11_ASSERT(rv, "C_Decrypt");
+    PKCS11_ASSERT(rv);
 
     dec_data = janet_smalloc(dec_data_len);
     rv = obj->func_list->C_Decrypt(obj->session, (CK_BYTE_PTR)data.bytes, (CK_ULONG)data.len,
                                    dec_data, &dec_data_len);
-    PKCS11_ASSERT(rv, "C_Decrypt");
+    PKCS11_ASSERT(rv);
 
     return janet_wrap_string(janet_string(dec_data, dec_data_len));
 }
@@ -73,13 +73,13 @@ JANET_FN(p11_decrypt_update,
     rv = obj->func_list->C_DecryptUpdate(obj->session,
                                          (CK_BYTE_PTR)data.bytes, (CK_ULONG)data.len,
                                          dec_data, &dec_data_len);
-    PKCS11_ASSERT(rv, "C_DecryptUpdate");
+    PKCS11_ASSERT(rv);
 
     dec_data = janet_smalloc(dec_data_len);
     rv = obj->func_list->C_DecryptUpdate(obj->session,
                                          (CK_BYTE_PTR)data.bytes, (CK_ULONG)data.len,
                                          dec_data, &dec_data_len);
-    PKCS11_ASSERT(rv, "C_DecryptUpdate");
+    PKCS11_ASSERT(rv);
 
     return janet_wrap_string(janet_string(dec_data, dec_data_len));
 }
@@ -98,11 +98,11 @@ JANET_FN(p11_decrypt_final,
 
     CK_RV rv;
     rv = obj->func_list->C_DecryptFinal(obj->session, dec_data, &dec_data_len);
-    PKCS11_ASSERT(rv, "C_DecryptFinal");
+    PKCS11_ASSERT(rv);
 
     dec_data = janet_smalloc(dec_data_len);
     rv = obj->func_list->C_DecryptFinal(obj->session, dec_data, &dec_data_len);
-    PKCS11_ASSERT(rv, "C_DecryptFinal");
+    PKCS11_ASSERT(rv);
 
     return janet_wrap_string(janet_string(dec_data, dec_data_len));
 }

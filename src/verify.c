@@ -23,7 +23,7 @@ JANET_FN(p11_verify_init,
 
     CK_RV rv;
     rv = obj->func_list->C_VerifyInit(obj->session, p_mechanism, key_handle);
-    PKCS11_ASSERT(rv, "C_VerifyInit");
+    PKCS11_ASSERT(rv);
 
     return janet_wrap_abstract(obj);
 }
@@ -49,7 +49,7 @@ JANET_FN(p11_verify,
     } else if (rv == CKR_SIGNATURE_INVALID) {
         ret = false;
     } else {
-        PKCS11_ASSERT(rv, "C_Verify");
+        PKCS11_ASSERT(rv);
     }
 
     return janet_wrap_boolean(ret);
@@ -68,7 +68,7 @@ JANET_FN(p11_verify_update,
     CK_RV rv;
     rv = obj->func_list->C_VerifyUpdate(obj->session,
                                         (CK_BYTE_PTR)data.bytes, (CK_ULONG)data.len);
-    PKCS11_ASSERT(rv, "C_VerifyUpdate");
+    PKCS11_ASSERT(rv);
 
     return janet_wrap_abstract(obj);
 }
@@ -92,7 +92,7 @@ JANET_FN(p11_verify_final,
     } else if (rv == CKR_SIGNATURE_INVALID) {
         ret = false;
     } else {
-        PKCS11_ASSERT(rv, "C_VerifyFinal");
+        PKCS11_ASSERT(rv);
     }
 
     return janet_wrap_boolean(ret);
@@ -113,7 +113,7 @@ JANET_FN(p11_verify_recover_init,
 
     CK_RV rv;
     rv = obj->func_list->C_VerifyRecoverInit(obj->session, p_mechanism, key_handle);
-    PKCS11_ASSERT(rv, "C_VerifyRecoverInit");
+    PKCS11_ASSERT(rv);
 
     return janet_wrap_abstract(obj);
 }
@@ -137,7 +137,7 @@ JANET_FN(p11_verify_recover,
     rv = obj->func_list->C_VerifyRecover(obj->session,
                                          (CK_BYTE_PTR)sig.bytes, (CK_ULONG)sig.len,
                                          recover_data, &recover_data_len);
-    PKCS11_ASSERT(rv, "C_VerifyRecover");
+    PKCS11_ASSERT(rv);
 
     /*
      * NOTE: Even if the signature is invalid, C_VerifyRecover must return
@@ -153,7 +153,7 @@ JANET_FN(p11_verify_recover,
     } else if (rv == CKR_SIGNATURE_INVALID) {
         ret = false;
     } else {
-        PKCS11_ASSERT(rv, "C_VerifyRecover");
+        PKCS11_ASSERT(rv);
     }
 
     Janet *tup = janet_tuple_begin(2);

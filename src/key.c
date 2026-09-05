@@ -33,7 +33,7 @@ JANET_FN(p11_generate_key,
 
     CK_RV rv;
     rv = obj->func_list->C_GenerateKey(obj->session, p_mechanism, p_template, count, &key_handle);
-    PKCS11_ASSERT(rv, "C_GenerateKey");
+    PKCS11_ASSERT(rv);
 
     return janet_wrap_number((double)key_handle);
 }
@@ -66,7 +66,7 @@ JANET_FN(p11_generate_key_pair,
                                            p_pub_template, pub_template_count,
                                            p_priv_template, priv_template_count,
                                            &pub_handle, &priv_handle);
-    PKCS11_ASSERT(rv, "C_GenerateKeyPair");
+    PKCS11_ASSERT(rv);
 
     Janet *tup = janet_tuple_begin(2);
     tup[0] = janet_wrap_number(pub_handle);
@@ -95,14 +95,14 @@ JANET_FN(p11_wrap_key,
     rv = obj->func_list->C_WrapKey(obj->session, p_mechanism,
                                    wrapping_key_handle, key_handle,
                                    wrapped_key, &wrapped_key_len);
-    PKCS11_ASSERT(rv, "C_WrapKey");
+    PKCS11_ASSERT(rv);
 
     wrapped_key = janet_smalloc(wrapped_key_len);
 
     rv = obj->func_list->C_WrapKey(obj->session, p_mechanism,
                                    wrapping_key_handle, key_handle,
                                    wrapped_key, &wrapped_key_len);
-    PKCS11_ASSERT(rv, "C_WrapKey");
+    PKCS11_ASSERT(rv);
 
     return janet_wrap_string(janet_string(wrapped_key, wrapped_key_len));
 }
@@ -132,7 +132,7 @@ JANET_FN(p11_unwrap_key,
                                      (CK_ULONG)wrapped_key.len,
                                      p_template, count,
                                      &key_handle);
-    PKCS11_ASSERT(rv, "C_UnwrapKey");
+    PKCS11_ASSERT(rv);
 
     return janet_wrap_number((double)key_handle);
 }
@@ -159,7 +159,7 @@ JANET_FN(p11_derive_key,
                                      base_key_handle,
                                      p_template, count,
                                      &key_handle);
-    PKCS11_ASSERT(rv, "C_DeriveKey");
+    PKCS11_ASSERT(rv);
 
     return janet_wrap_number((double)key_handle);
 }

@@ -23,7 +23,7 @@ JANET_FN(p11_sign_init,
 
     CK_RV rv;
     rv = obj->func_list->C_SignInit(obj->session, p_mechanism, key_handle);
-    PKCS11_ASSERT(rv, "C_SignInit");
+    PKCS11_ASSERT(rv);
 
     return janet_wrap_abstract(obj);
 }
@@ -45,13 +45,13 @@ JANET_FN(p11_sign,
     rv = obj->func_list->C_Sign(obj->session,
                                 (CK_BYTE_PTR)data.bytes, (CK_ULONG)data.len,
                                 sign_data, &sign_data_len);
-    PKCS11_ASSERT(rv, "C_Sign");
+    PKCS11_ASSERT(rv);
 
     sign_data = janet_smalloc(sign_data_len);
     rv = obj->func_list->C_Sign(obj->session,
                                 (CK_BYTE_PTR)data.bytes, (CK_ULONG)data.len,
                                 sign_data, &sign_data_len);
-    PKCS11_ASSERT(rv, "C_Sign");
+    PKCS11_ASSERT(rv);
 
     return janet_wrap_string(janet_string(sign_data, sign_data_len));
 }
@@ -69,7 +69,7 @@ JANET_FN(p11_sign_update,
     CK_RV rv;
     rv = obj->func_list->C_SignUpdate(obj->session,
                                       (CK_BYTE_PTR)data.bytes, (CK_ULONG)data.len);
-    PKCS11_ASSERT(rv, "C_SignUpdate");
+    PKCS11_ASSERT(rv);
 
     return janet_wrap_abstract(obj);
 }
@@ -88,11 +88,11 @@ JANET_FN(p11_sign_final,
 
     CK_RV rv;
     rv = obj->func_list->C_SignFinal(obj->session, sign_data, &sign_data_len);
-    PKCS11_ASSERT(rv, "C_SignFinal");
+    PKCS11_ASSERT(rv);
 
     sign_data = janet_smalloc(sign_data_len);
     rv = obj->func_list->C_SignFinal(obj->session, sign_data, &sign_data_len);
-    PKCS11_ASSERT(rv, "C_SignFinal");
+    PKCS11_ASSERT(rv);
 
     return janet_wrap_string(janet_string(sign_data, sign_data_len));
 }
@@ -112,7 +112,7 @@ JANET_FN(p11_sign_recover_init,
 
     CK_RV rv;
     rv = obj->func_list->C_SignRecoverInit(obj->session, p_mechanism, key_handle);
-    PKCS11_ASSERT(rv, "C_SignRecoverInit");
+    PKCS11_ASSERT(rv);
 
     return janet_wrap_abstract(obj);
 }
@@ -135,13 +135,13 @@ JANET_FN(p11_sign_recover,
     rv = obj->func_list->C_SignRecover(obj->session,
                                        (CK_BYTE_PTR)data.bytes, (CK_ULONG)data.len,
                                        sign_data, &sign_data_len);
-    PKCS11_ASSERT(rv, "C_SignRecover");
+    PKCS11_ASSERT(rv);
 
     sign_data = janet_smalloc(sign_data_len);
     rv = obj->func_list->C_SignRecover(obj->session,
                                        (CK_BYTE_PTR)data.bytes, (CK_ULONG)data.len,
                                        sign_data, &sign_data_len);
-    PKCS11_ASSERT(rv, "C_SignRecover");
+    PKCS11_ASSERT(rv);
 
     return janet_wrap_string(janet_string(sign_data, sign_data_len));
 }

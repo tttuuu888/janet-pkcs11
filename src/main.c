@@ -98,10 +98,10 @@ JANET_FN(p11_new,
 
     CK_RV rv;
     rv = (*get_func_list)(&obj->func_list);
-    PKCS11_ASSERT(rv, "C_GetFunctionList");
+    PKCS11_ASSERT(rv);
 
     rv = obj->func_list->C_Initialize(NULL_PTR);
-    PKCS11_ASSERT(rv, "C_Initialize");
+    PKCS11_ASSERT(rv);
 
     obj->is_p11_open = true;
 
@@ -121,7 +121,7 @@ JANET_FN(p11_get_info,
 
     CK_RV rv;
     rv = obj->func_list->C_GetInfo(&info);
-    PKCS11_ASSERT(rv, "C_GetInfo");
+    PKCS11_ASSERT(rv);
 
     JanetTable *ret = janet_table(5);
     JanetTable *ck_ver = janet_table(2);

@@ -19,7 +19,7 @@ JANET_FN(p11_seed_random,
 
     CK_RV rv;
     rv = obj->func_list->C_SeedRandom(obj->session, (CK_BYTE_PTR)seed.bytes, (CK_ULONG)seed.len);
-    PKCS11_ASSERT(rv, "C_SeedRandom");
+    PKCS11_ASSERT(rv);
 
     return janet_wrap_abstract(obj);
 }
@@ -37,7 +37,7 @@ JANET_FN(p11_generate_random,
 
     CK_RV rv;
     rv = obj->func_list->C_GenerateRandom(obj->session, random_data, length);
-    PKCS11_ASSERT(rv, "C_GenerateRandom");
+    PKCS11_ASSERT(rv);
 
     return janet_wrap_string(janet_string(random_data, length));
 }

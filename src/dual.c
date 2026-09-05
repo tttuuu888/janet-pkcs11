@@ -25,13 +25,13 @@ JANET_FN(p11_digest_encrypt_update,
     rv = obj->func_list->C_DigestEncryptUpdate(obj->session,
                                                (CK_BYTE_PTR)data.bytes, (CK_ULONG)data.len,
                                                enc_data, &enc_data_len);
-    PKCS11_ASSERT(rv, "C_DigestEncryptUpdate");
+    PKCS11_ASSERT(rv);
 
     enc_data = janet_smalloc(enc_data_len);
     rv = obj->func_list->C_DigestEncryptUpdate(obj->session,
                                                (CK_BYTE_PTR)data.bytes, (CK_ULONG)data.len,
                                                enc_data, &enc_data_len);
-    PKCS11_ASSERT(rv, "C_DigestEncryptUpdate");
+    PKCS11_ASSERT(rv);
 
     return janet_wrap_string(janet_string(enc_data, enc_data_len));
 }
@@ -54,13 +54,13 @@ JANET_FN(p11_decrypt_digest_update,
     rv = obj->func_list->C_DecryptDigestUpdate(obj->session,
                                                (CK_BYTE_PTR)data.bytes, (CK_ULONG)data.len,
                                                dec_data, &dec_data_len);
-    PKCS11_ASSERT(rv, "C_DecryptDigestUpdate");
+    PKCS11_ASSERT(rv);
 
     dec_data = janet_smalloc(dec_data_len);
     rv = obj->func_list->C_DecryptDigestUpdate(obj->session,
                                                (CK_BYTE_PTR)data.bytes, (CK_ULONG)data.len,
                                                dec_data, &dec_data_len);
-    PKCS11_ASSERT(rv, "C_DecryptDigestUpdate");
+    PKCS11_ASSERT(rv);
 
     return janet_wrap_string(janet_string(dec_data, dec_data_len));
 }
@@ -83,13 +83,13 @@ JANET_FN(p11_sign_encrypt_update,
     rv = obj->func_list->C_SignEncryptUpdate(obj->session,
                                              (CK_BYTE_PTR)data.bytes, (CK_ULONG)data.len,
                                              enc_data, &enc_data_len);
-    PKCS11_ASSERT(rv, "C_SignEncryptUpdate");
+    PKCS11_ASSERT(rv);
 
     enc_data = janet_smalloc(enc_data_len);
     rv = obj->func_list->C_SignEncryptUpdate(obj->session,
                                              (CK_BYTE_PTR)data.bytes, (CK_ULONG)data.len,
                                              enc_data, &enc_data_len);
-    PKCS11_ASSERT(rv, "C_SignEncryptUpdate");
+    PKCS11_ASSERT(rv);
 
     return janet_wrap_string(janet_string(enc_data, enc_data_len));
 }
@@ -112,13 +112,13 @@ JANET_FN(p11_decrypt_verify_update,
     rv = obj->func_list->C_DecryptVerifyUpdate(obj->session,
                                                (CK_BYTE_PTR)data.bytes, (CK_ULONG)data.len,
                                                dec_data, &dec_data_len);
-    PKCS11_ASSERT(rv, "C_DecryptVerifyUpdate");
+    PKCS11_ASSERT(rv);
 
     dec_data = janet_smalloc(dec_data_len);
     rv = obj->func_list->C_DecryptVerifyUpdate(obj->session,
                                                (CK_BYTE_PTR)data.bytes, (CK_ULONG)data.len,
                                                dec_data, &dec_data_len);
-    PKCS11_ASSERT(rv, "C_DecryptVerifyUpdate");
+    PKCS11_ASSERT(rv);
 
     return janet_wrap_string(janet_string(dec_data, dec_data_len));
 }

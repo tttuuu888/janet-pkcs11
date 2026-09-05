@@ -23,7 +23,7 @@ JANET_FN(p11_create_object,
 
     CK_RV rv;
     rv = obj->func_list->C_CreateObject(obj->session, p_template, count, &obj_handle);
-    PKCS11_ASSERT(rv, "C_CreateObject");
+    PKCS11_ASSERT(rv);
 
     return janet_wrap_number((double)obj_handle);
 }
@@ -44,7 +44,7 @@ JANET_FN(p11_copy_object,
 
     CK_RV rv;
     rv = obj->func_list->C_CopyObject(obj->session, obj_handle1, p_template, count, &obj_handle2);
-    PKCS11_ASSERT(rv, "C_CopyObject");
+    PKCS11_ASSERT(rv);
 
     return janet_wrap_number((double)obj_handle2);
 }
@@ -60,7 +60,7 @@ JANET_FN(p11_destroy_object,
 
     CK_RV rv;
     rv = obj->func_list->C_DestroyObject(obj->session, obj_handle);
-    PKCS11_ASSERT(rv, "C_DestroyObject");
+    PKCS11_ASSERT(rv);
 
     return janet_wrap_nil();
 }
@@ -77,7 +77,7 @@ JANET_FN(p11_get_object_size,
     CK_ULONG size = 0;
     CK_RV rv;
     rv = obj->func_list->C_GetObjectSize(obj->session, obj_handle, &size);
-    PKCS11_ASSERT(rv, "C_GetObjectSize");
+    PKCS11_ASSERT(rv);
 
     return janet_wrap_number((double)size);
 }
@@ -97,14 +97,14 @@ JANET_FN(p11_get_attribute_value,
 
     CK_RV rv;
     rv = obj->func_list->C_GetAttributeValue(obj->session, obj_handle, p_template, count);
-    PKCS11_ASSERT(rv, "C_GetAttributeValue");
+    PKCS11_ASSERT(rv);
 
     for (int i=0; i<count; i++) {
         p_template[i].pValue = janet_smalloc(p_template[i].ulValueLen);
     }
 
     rv = obj->func_list->C_GetAttributeValue(obj->session, obj_handle, p_template, count);
-    PKCS11_ASSERT(rv, "C_GetAttributeValue");
+    PKCS11_ASSERT(rv);
 
     JanetStruct st = p11_template_to_janet_struct(p_template, count);
 
@@ -127,7 +127,7 @@ JANET_FN(p11_set_attribute_value,
 
     CK_RV rv;
     rv = obj->func_list->C_SetAttributeValue(obj->session, obj_handle, p_template, count);
-    PKCS11_ASSERT(rv, "C_SetAttributeValue");
+    PKCS11_ASSERT(rv);
 
     return janet_wrap_abstract(obj);
 }
@@ -154,7 +154,7 @@ JANET_FN(p11_find_objects_init,
 
     CK_RV rv;
     rv = obj->func_list->C_FindObjectsInit(obj->session, p_template, count);
-    PKCS11_ASSERT(rv, "C_FindObjectsInit");
+    PKCS11_ASSERT(rv);
 
     return janet_wrap_abstract(obj);
 }
@@ -173,7 +173,7 @@ JANET_FN(p11_find_objects,
     CK_OBJECT_HANDLE_PTR obj_list = janet_smalloc(max_obj_count * sizeof(CK_OBJECT_HANDLE));
     CK_RV rv;
     rv = obj->func_list->C_FindObjects(obj->session, obj_list, max_obj_count, &count);
-    PKCS11_ASSERT(rv, "C_FindObjects");
+    PKCS11_ASSERT(rv);
 
     Janet *tup = janet_tuple_begin(count);
     for (int i=0; i<count; i++) {
@@ -195,7 +195,7 @@ JANET_FN(p11_find_objects_final,
     session_obj_t *obj = janet_getabstract(argv, 0, get_session_obj_type());
     CK_RV rv;
     rv = obj->func_list->C_FindObjectsFinal(obj->session);
-    PKCS11_ASSERT(rv, "C_FindObjectsFinal");
+    PKCS11_ASSERT(rv);
 
     return janet_wrap_abstract(obj);
 }

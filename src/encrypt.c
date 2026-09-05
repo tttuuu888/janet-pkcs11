@@ -23,7 +23,7 @@ JANET_FN(p11_encrypt_init,
 
     CK_RV rv;
     rv = obj->func_list->C_EncryptInit(obj->session, p_mechanism, key_handle);
-    PKCS11_ASSERT(rv, "C_EncryptInit");
+    PKCS11_ASSERT(rv);
 
     return janet_wrap_abstract(obj);
 }
@@ -45,13 +45,13 @@ JANET_FN(p11_encrypt,
     rv = obj->func_list->C_Encrypt(obj->session,
                                    (CK_BYTE_PTR)data.bytes, (CK_ULONG)data.len,
                                    enc_data, &enc_data_len);
-    PKCS11_ASSERT(rv, "C_Encrypt");
+    PKCS11_ASSERT(rv);
 
     enc_data = janet_smalloc(enc_data_len);
     rv = obj->func_list->C_Encrypt(obj->session,
                                    (CK_BYTE_PTR)data.bytes, (CK_ULONG)data.len,
                                    enc_data, &enc_data_len);
-    PKCS11_ASSERT(rv, "C_Encrypt");
+    PKCS11_ASSERT(rv);
 
     return janet_wrap_string(janet_string(enc_data, enc_data_len));
 }
@@ -73,13 +73,13 @@ JANET_FN(p11_encrypt_update,
     rv = obj->func_list->C_EncryptUpdate(obj->session,
                                          (CK_BYTE_PTR)data.bytes, (CK_ULONG)data.len,
                                          enc_data, &enc_data_len);
-    PKCS11_ASSERT(rv, "C_EncryptUpdate");
+    PKCS11_ASSERT(rv);
 
     enc_data = janet_smalloc(enc_data_len);
     rv = obj->func_list->C_EncryptUpdate(obj->session,
                                          (CK_BYTE_PTR)data.bytes, (CK_ULONG)data.len,
                                          enc_data, &enc_data_len);
-    PKCS11_ASSERT(rv, "C_EncryptUpdate");
+    PKCS11_ASSERT(rv);
 
     return janet_wrap_string(janet_string(enc_data, enc_data_len));
 }
@@ -98,11 +98,11 @@ JANET_FN(p11_encrypt_final,
 
     CK_RV rv;
     rv = obj->func_list->C_EncryptFinal(obj->session, enc_data, &enc_data_len);
-    PKCS11_ASSERT(rv, "C_EncryptFinal");
+    PKCS11_ASSERT(rv);
 
     enc_data = janet_smalloc(enc_data_len);
     rv = obj->func_list->C_EncryptFinal(obj->session, enc_data, &enc_data_len);
-    PKCS11_ASSERT(rv, "C_EncryptFinal");
+    PKCS11_ASSERT(rv);
 
     return janet_wrap_string(janet_string(enc_data, enc_data_len));
 }
