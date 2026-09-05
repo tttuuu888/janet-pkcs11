@@ -31,8 +31,9 @@
     (with [session-rw (assert (:open-session p11 test-slot))]
       (assert (= ((:get-session-info session-rw) :flags) 6))
       (assert (= ((:get-session-info session-rw) :state) 2))
-      (assert-error "softhsm2 does not support C_GetOperationState"
-                    (:get-operation-state session-rw))
+      ## SoftHSM2 does not implement get-operation-state.
+      (assert (= :CKR_FUNCTION_NOT_SUPPORTED
+                 (try (:get-operation-state session-rw) ([e] e))))
       (assert (:login session-rw :so test-so-pin))
       (assert (:set-pin session-rw test-so-pin test-so-pin2))
       (assert (:init-pin session-rw test-user-pin))

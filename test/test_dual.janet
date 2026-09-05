@@ -26,16 +26,14 @@
             priv-key (:generate-key session-rw {:mechanism :CKM_AES_KEY_GEN} priv-tpl)]
         (assert (:digest-init session-rw {:mechanism :CKM_SHA256}))
 
-        (assert-error "Softhsm2 does not support C_DigestEncryptUpdate at the moment"
-                      (:digest-encrypt-update session-rw "abcd"))
-
-        (assert-error "Softhsm2 does not support C_DecryptDigestUpdate at the moment"
-                      (:decrypt-digest-update session-rw "abcd"))
-
-        (assert-error "Softhsm2 does not support C_SignEncryptUpdate at the moment"
-                      (:sign-encrypt-update session-rw "abcd"))
-
-        (assert-error "Softhsm2 does not support C_DecryptVerifyUpdate at the moment"
-                      (:decrypt-verify-update session-rw "abcd"))))))
+        ## SoftHSM2 does not implement the dual-function operations.
+        (assert (= :CKR_FUNCTION_NOT_SUPPORTED
+                   (try (:digest-encrypt-update session-rw "abcd") ([e] e))))
+        (assert (= :CKR_FUNCTION_NOT_SUPPORTED
+                   (try (:decrypt-digest-update session-rw "abcd") ([e] e))))
+        (assert (= :CKR_FUNCTION_NOT_SUPPORTED
+                   (try (:sign-encrypt-update session-rw "abcd") ([e] e))))
+        (assert (= :CKR_FUNCTION_NOT_SUPPORTED
+                   (try (:decrypt-verify-update session-rw "abcd") ([e] e))))))))
 
 (end-suite)

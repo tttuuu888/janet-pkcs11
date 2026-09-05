@@ -46,11 +46,13 @@
 
         ## sign-init, update with CKM_RSA_PKCS
         (assert (:sign-init session-rw {:mechanism :CKM_RSA_PKCS} priv-key))
-        (assert-error "sign-update is not supported" (:sign-update session-rw data))
+        (assert (= :CKR_OPERATION_NOT_INITIALIZED
+                   (try (:sign-update session-rw data) ([e] e))))
 
         ## verify-init, update with CKM_RSA_PKCS
         (assert (:verify-init session-rw {:mechanism :CKM_RSA_PKCS} pub-key))
-        (assert-error "verify-update is not supported" (:verify-update session-rw data)))
+        (assert (= :CKR_OPERATION_NOT_INITIALIZED
+                   (try (:verify-update session-rw data) ([e] e)))))
 
       (let [tpl {:CKA_CLASS     :CKO_SECRET_KEY
                  :CKA_KEY_TYPE  :CKK_GENERIC_SECRET
@@ -93,16 +95,16 @@
                                              priv-tpl)
             data (:generate-random session-rw 16)]
 
-        (assert-error "Softhsm2 does not support C_SignRecoverInit at the moment"
-                      (:sign-recover-init session-rw {:mechanism :CKM_RSA_9796} privk))
-
-        (assert-error "Softhsm2 does not support C_SignRecover at the moment"
-                      (:sign-recover session-rw data))
-
-        (assert-error "Softhsm2 does not support C_VerifyecoverInit at the moment"
-                      (:verify-recover-init session-rw {:mechanism :CKM_RSA_9796} privk))
-
-        (assert-error "Softhsm2 does not support C_Verifyecover at the moment"
-                      (:verify-recover session-rw data))))))
+        ## SoftHSM2 does not implement sign-recover and verify-recover.
+        (assert (= :CKR_FUNCTION_NOT_SUPPORTED
+                   (try (:sign-recover-init session-rw {:mechanism :CKM_RSA_9796} privk)
+                     ([e] e))))
+        (assert (= :CKR_FUNCTION_NOT_SUPPORTED
+                   (try (:sign-recover session-rw data) ([e] e))))
+        (assert (= :CKR_FUNCTION_NOT_SUPPORTED
+                   (try (:verify-recover-init session-rw {:mechanism :CKM_RSA_9796} privk)
+                     ([e] e))))
+        (assert (= :CKR_FUNCTION_NOT_SUPPORTED
+                   (try (:verify-recover session-rw data) ([e] e))))))))
 
 (end-suite)
