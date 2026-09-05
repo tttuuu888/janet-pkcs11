@@ -21,6 +21,8 @@
       (assert (:seed-random session-rw (os/cryptorand 32)))
       (let [random1 (assert (:generate-random session-rw 32))
             random2 (assert (:generate-random session-rw 32))]
-        (assert (not (= random1 random2)))))))
+        (assert (not (= random1 random2))))
+
+      (assert-error "Error expected" (:generate-random session-rw -1)))))
 
 (end-suite)

@@ -32,7 +32,7 @@ JANET_FN(p11_generate_random,
     janet_fixarity(argc, 2);
 
     session_obj_t *obj = janet_getabstract(argv, 0, get_session_obj_type());
-    CK_ULONG length = (CK_ULONG)janet_getnumber(argv, 1);
+    CK_ULONG length = (CK_ULONG)janet_getsize(argv, 1);
     CK_BYTE_PTR random_data = (CK_BYTE_PTR)janet_smalloc(length);
 
     CK_RV rv;
