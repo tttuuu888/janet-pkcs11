@@ -25,6 +25,10 @@
                       :CKA_TOKEN     true}
             priv-key (:generate-key session-rw {:mechanism :CKM_AES_KEY_GEN} priv-tpl)]
 
+        ## A mechanism struct must provide :mechanism
+        (assert-error "Error expected" (:digest-init session-rw {:parameter ""}))
+        (assert-error "Error expected" (:digest-init session-rw {:mech :CKM_SHA256}))
+
         ## plain text digest
         (assert (:digest-init session-rw {:mechanism :CKM_SHA256}))
         (assert (= (:digest session-rw "abcd")

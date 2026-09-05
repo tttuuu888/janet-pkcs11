@@ -153,6 +153,7 @@ CK_MECHANISM_PTR janet_struct_to_p11_mechanism(JanetStruct st)
 
     memset(p_mechanism, 0, count * sizeof(CK_MECHANISM));
 
+    bool has_mechanism_ = false;
     for (int i=0; i<capacity; i++) {
         const JanetKV *kv = st + i;
 
@@ -165,13 +166,20 @@ CK_MECHANISM_PTR janet_struct_to_p11_mechanism(JanetStruct st)
         if (!janet_cstrcmp(key, "mechanism")) {
             CK_MECHANISM_TYPE value = get_type_value(janet_unwrap_keyword(val));
             p_mechanism->mechanism = value;
+            has_mechanism_ = true;
         } else if (!janet_cstrcmp(key, "parameter")) {
             JanetByteView param = janet_getbytes(&val, 0);
             CK_BYTE_PTR *value = janet_smalloc(param.len);
             memcpy(value, param.bytes, param.len);
             p_mechanism->pParameter = value;
             p_mechanism->ulParameterLen = param.len;
+        } else {
+            janet_panicf("unknown mechanism key :%s", (const char *)key);
         }
+    }
+
+    if (!has_mechanism_) {
+        janet_panic("mechanism struct requires a :mechanism key");
     }
 
     return p_mechanism;
