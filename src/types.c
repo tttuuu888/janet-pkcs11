@@ -1228,7 +1228,7 @@ const char *p11_attr_type_to_string(CK_ATTRIBUTE_TYPE type) {
         case CKA_START_DATE: return "CKA_START_DATE";
         case CKA_SUBJECT: return "CKA_SUBJECT";
         case CKA_SUBPRIME: return "CKA_SUBPRIME";
-        case CKA_SUB_PRIME_BITS: return "CKA_SUB_PRIME_BITS";
+        case CKA_SUBPRIME_BITS: return "CKA_SUBPRIME_BITS";
         case CKA_SUPPORTED_CMS_ATTRIBUTES: return "CKA_SUPPORTED_CMS_ATTRIBUTES";
         case CKA_TOKEN: return "CKA_TOKEN";
         case CKA_TRUSTED: return "CKA_TRUSTED";
