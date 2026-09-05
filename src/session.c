@@ -234,10 +234,10 @@ JANET_FN(p11_login,
         user_type = CKU_SO;
     } else if (!janet_cstrcmp(user_type_kw, "user")) {
         user_type = CKU_USER;
-    } else if (!janet_cstrcmp(user_type_kw, "context-speicifc")) {
+    } else if (!janet_cstrcmp(user_type_kw, "context-specific")) {
         user_type = CKU_CONTEXT_SPECIFIC;
     } else {
-        janet_panicf("expected one of :so, :user, :context-speicifc, got %v", argv[1]);
+        janet_panicf("expected one of :so, :user, :context-specific, got %v", argv[1]);
     }
 
     CK_RV rv;

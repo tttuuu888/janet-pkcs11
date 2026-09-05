@@ -34,6 +34,9 @@
       ## SoftHSM2 does not implement get-operation-state.
       (assert (= :CKR_FUNCTION_NOT_SUPPORTED
                  (try (:get-operation-state session-rw) ([e] e))))
+      ## :context-specific login without an active operation is rejected.
+      (assert (= :CKR_OPERATION_NOT_INITIALIZED
+                 (try (:login session-rw :context-specific test-user-pin) ([e] e))))
       (assert (:login session-rw :so test-so-pin))
       (assert (:set-pin session-rw test-so-pin test-so-pin2))
       (assert (:init-pin session-rw test-user-pin))
