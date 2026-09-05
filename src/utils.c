@@ -84,6 +84,13 @@ JANET_FN(cfun_hex_encode,
     return janet_wrap_string(janet_string(str, str_len));
 }
 
+static int hex_digit_value(char c) {
+    if (c >= '0' && c <= '9') return c - '0';
+    if (c >= 'a' && c <= 'f') return c - 'a' + 10;
+    if (c >= 'A' && c <= 'F') return c - 'A' + 10;
+    return -1;
+}
+
 JANET_FN(cfun_hex_decode,
          "(hex-decode str)",
          "Performs hex decoding of string data in `str`. Returns the string.")
@@ -100,15 +107,12 @@ JANET_FN(cfun_hex_decode,
     unsigned char *bin = janet_smalloc(bin_len);
 
     for (int i = 0; i < bin_len; i++) {
-        char high_n = str.bytes[i*2];
-        char low_n = str.bytes[i*2 + 1];
+        int high = hex_digit_value(str.bytes[i*2]);
+        int low = hex_digit_value(str.bytes[i*2 + 1]);
 
-        int high = (high_n >= 'a') ? (high_n - 'a' + 10) :
-                   (high_n >= 'A') ? (high_n - 'A' + 10) :
-                   (high_n - '0');
-        int low = (low_n >= 'a') ? (low_n - 'a' + 10) :
-                  (low_n >= 'A') ? (low_n - 'A' + 10) :
-                  (low_n - '0');
+        if (high < 0 || low < 0) {
+            janet_panicf("invalid hex string %v", argv[0]);
+        }
 
         bin[i] = (high << 4) | low;
     }
