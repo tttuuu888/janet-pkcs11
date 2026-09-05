@@ -21,6 +21,7 @@ typedef struct session_obj {
     CK_SESSION_HANDLE session;
     CK_FUNCTION_LIST_PTR func_list;
     bool is_session_open;
+    Janet p11;
 } session_obj_t;
 
 JanetAbstractType *get_p11_obj_type(void);

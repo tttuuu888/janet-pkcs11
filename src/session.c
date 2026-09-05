@@ -10,12 +10,13 @@
 
 /* Abstract Object functions */
 static int session_gc_fn(void *data, size_t len);
+static int session_mark_fn(void *data, size_t len);
 static int session_get_fn(void *data, Janet key, Janet *out);
 
 static JanetAbstractType session_obj_type = {
     "session",
     session_gc_fn,
-    NULL,
+    session_mark_fn,
     session_get_fn,
     JANET_ATEND_GET
 };
@@ -103,6 +104,14 @@ static int session_gc_fn(void *data, size_t len) {
     return 0;
 }
 
+static int session_mark_fn(void *data, size_t len) {
+    (void)len;
+    session_obj_t *obj = (session_obj_t *)data;
+    janet_mark(obj->p11);
+
+    return 0;
+}
+
 static int session_get_fn(void *data, Janet key, Janet *out) {
     (void)data;
     if (!janet_checktype(key, JANET_KEYWORD)) {
@@ -143,6 +152,7 @@ JANET_FN(p11_open_session,
     session_obj->session = session;
     session_obj->func_list = obj->func_list;
     session_obj->is_session_open = true;
+    session_obj->p11 = argv[0];
 
     return janet_wrap_abstract(session_obj);
 }
