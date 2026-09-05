@@ -4,10 +4,13 @@
 
 (start-suite)
 
+(def test-env (setup-test-env))
 (def token-label (string "janet-pkcs11-test" ;(string/bytes (os/cryptorand 4))))
 
-## Always delete the test token, even if a test raises an error.
-(defer (assert (cleanup-token token-label))
+## Always delete the test token and the test environment, even if a test
+## raises an error.
+(defer (do (assert (cleanup-token token-label))
+           (assert (cleanup-test-env test-env)))
 
   (with [p11 (assert (new hsm-so-path))]
     (def test-slot (init-test-token p11 token-label))

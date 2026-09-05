@@ -4,13 +4,17 @@
 
 (start-suite)
 
+(def test-env (setup-test-env))
 (def test-token-label (string "janet-pkcs11-test"
                               ;(string/bytes (os/cryptorand 4))))
 
 (var test-slot nil)
 (var test-serial-nubmer nil)
 
-(defer (assert (cleanup-token test-token-label))
+## Always delete the test token and the test environment, even if a test
+## raises an error.
+(defer (do (assert (cleanup-token test-token-label))
+           (assert (cleanup-test-env test-env)))
 
   ## Initialize a token for session tests
   (with [p11 (assert (new hsm-so-path))]
