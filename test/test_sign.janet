@@ -103,6 +103,6 @@
                       (:verify-recover-init session-rw {:mechanism :CKM_RSA_9796} privk))
 
         (assert-error "Softhsm2 does not support C_Verifyecover at the moment"
-                      (:verify-recover session-rw data ""))))))
+                      (:verify-recover session-rw data))))))
 
 (end-suite)
