@@ -1014,6 +1014,8 @@ p11_attr_type_t get_attribute_type(CK_ATTRIBUTE_TYPE type) {
         case CKA_HAS_RESET:
         case CKA_COLOR:
         case CKA_OTP_USER_FRIENDLY_MODE:
+        case CKA_X2RATCHET_BOBS1STMSG:
+        case CKA_X2RATCHET_ISALICE:
             return P11_ATTR_BOOL;
 
         /* CK_ULONG attributes */
@@ -1042,6 +1044,14 @@ p11_attr_type_t get_attribute_type(CK_ATTRIBUTE_TYPE type) {
         case CKA_OTP_COUNTER_REQUIREMENT:
         case CKA_OTP_PIN_REQUIREMENT:
         case CKA_HW_FEATURE_TYPE:
+        case CKA_HSS_LEVELS:
+        case CKA_HSS_LMS_TYPE:
+        case CKA_HSS_LMOTS_TYPE:
+        case CKA_HSS_KEYS_REMAINING:
+        case CKA_X2RATCHET_BAGSIZE:
+        case CKA_X2RATCHET_NR:
+        case CKA_X2RATCHET_NS:
+        case CKA_X2RATCHET_PNS:
             return P11_ATTR_ULONG;
 
         /* Date attributes */
@@ -1088,6 +1098,19 @@ p11_attr_type_t get_attribute_type(CK_ATTRIBUTE_TYPE type) {
         case CKA_REQUIRED_CMS_ATTRIBUTES:
         case CKA_SUBPRIME:
         case CKA_SUPPORTED_CMS_ATTRIBUTES:
+        case CKA_HSS_LMS_TYPES:
+        case CKA_HSS_LMOTS_TYPES:
+        case CKA_X2RATCHET_BAG:
+        case CKA_X2RATCHET_CKR:
+        case CKA_X2RATCHET_CKS:
+        case CKA_X2RATCHET_DHP:
+        case CKA_X2RATCHET_DHR:
+        case CKA_X2RATCHET_DHS:
+        case CKA_X2RATCHET_HKR:
+        case CKA_X2RATCHET_HKS:
+        case CKA_X2RATCHET_NHKR:
+        case CKA_X2RATCHET_NHKS:
+        case CKA_X2RATCHET_RK:
             return P11_ATTR_BYTES;
 
         /* String attributes (null-terminated) */
@@ -1104,6 +1127,7 @@ p11_attr_type_t get_attribute_type(CK_ATTRIBUTE_TYPE type) {
         case CKA_OTP_SERVICE_LOGO_TYPE:
         case CKA_OTP_USER_IDENTIFIER:
         case CKA_OTP_TIME:
+        case CKA_UNIQUE_ID:
             return P11_ATTR_STRING;
 
         default:
