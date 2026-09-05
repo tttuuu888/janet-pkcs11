@@ -132,31 +132,34 @@ JANET_FN(p11_verify_recover,
     CK_BYTE_PTR recover_data = NULL_PTR;
     CK_ULONG recover_data_len = 0;
 
-    bool ret;
+    Janet *tup;
+    bool ret = true;
     CK_RV rv;
+
     rv = obj->func_list->C_VerifyRecover(obj->session,
                                          (CK_BYTE_PTR)sig.bytes, (CK_ULONG)sig.len,
                                          recover_data, &recover_data_len);
+    if (rv == CKR_SIGNATURE_INVALID) {
+        goto sig_invalid;
+    }
+
     PKCS11_ASSERT(rv);
-
-    /*
-     * NOTE: Even if the signature is invalid, C_VerifyRecover must return
-     * CKR_OK when recover_data_len is 0.
-     */
-
     recover_data = janet_smalloc(recover_data_len);
     rv = obj->func_list->C_VerifyRecover(obj->session,
                                          (CK_BYTE_PTR)sig.bytes, (CK_ULONG)sig.len,
                                          recover_data, &recover_data_len);
-    if (rv == CKR_OK) {
-        ret = true;
-    } else if (rv == CKR_SIGNATURE_INVALID) {
-        ret = false;
-    } else {
-        PKCS11_ASSERT(rv);
+    if (rv == CKR_SIGNATURE_INVALID) {
+        goto sig_invalid;
     }
 
-    Janet *tup = janet_tuple_begin(2);
+    PKCS11_ASSERT(rv);
+    goto out;
+
+sig_invalid:
+    ret = false;
+    recover_data_len = 0;
+out:
+    tup = janet_tuple_begin(2);
     tup[0] = janet_wrap_boolean(ret);
     tup[1] = janet_wrap_string(janet_string(recover_data, recover_data_len));
 
