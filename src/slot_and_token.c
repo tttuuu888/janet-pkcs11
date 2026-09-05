@@ -241,7 +241,7 @@ JANET_FN(p11_get_mechanism_info,
          "(get-mechanism-info p11-obj slot-id &opt mechanism-list)",
          "Returns a list of mechanisms information of `mechanism-list` list."
          "`slot-id` is the ID of the token’s slot. If `mechanism-list` is not "
-         "provided, return list of all avaiable mechanism information.")
+         "provided, return list of all available mechanism information.")
 {
     janet_arity(argc, 2, 3);
 

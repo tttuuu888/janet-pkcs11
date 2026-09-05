@@ -50,7 +50,7 @@ JANET_FN(p11_copy_object,
 }
 
 JANET_FN(p11_destroy_object,
-         "(destory-object session-obj obj-handle)",
+         "(destroy-object session-obj obj-handle)",
          "Destroys an object.")
 {
     janet_fixarity(argc, 2);

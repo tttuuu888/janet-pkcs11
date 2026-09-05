@@ -10,7 +10,7 @@
 
 JANET_FN(p11_digest_init,
          "(digest-init session-obj mechanism)",
-         "Initializes  a message-digesting operation. "
+         "Initializes a message-digesting operation. "
          "Returns a `session-obj`, if successful.")
 {
     janet_fixarity(argc, 2);

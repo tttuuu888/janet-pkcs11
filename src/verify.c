@@ -121,7 +121,7 @@ JANET_FN(p11_verify_recover_init,
 JANET_FN(p11_verify_recover,
          "(verify-recover session-obj signature)",
          "Verifies a signature in a single-part operation, where the data is "
-         "recovered from the signature. If successful, resturns tuple of "
+         "recovered from the signature. If successful, returns tuple of "
          "[boolean string], where string is a recovered data.")
 {
     janet_fixarity(argc, 2);
