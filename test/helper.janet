@@ -13,7 +13,7 @@
 (defn find-uninitialized-slot
   "Return the first slot whose token is not initialized. Errors if none."
   [p11]
-  (or (find (fn [s] (zero? (bit-and ((:get-token-info p11 s) :flags)
+  (or (find (fn [s] (zero? (band ((:get-token-info p11 s) :flags)
                                     CKF_TOKEN_INITIALIZED)))
             (:get-slot-list p11))
       (error "no uninitialized slot")))
