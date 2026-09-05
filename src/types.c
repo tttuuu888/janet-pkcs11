@@ -10,8 +10,6 @@
 #include "main.h"
 #include "types.h"
 
-#define HASH_SIZE 1500
-
 typedef struct {
     const char *name;
     unsigned long value;
@@ -935,6 +933,8 @@ const TypeEntry type_table[] = {
     {"CK_UNAVAILABLE_INFORMATION", CK_UNAVAILABLE_INFORMATION},
     {NULL, 0}
 };
+
+#define HASH_SIZE ((sizeof(type_table) / sizeof(type_table[0])) * 2)
 
 typedef struct {
     const char *key;
