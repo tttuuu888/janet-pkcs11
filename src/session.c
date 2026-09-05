@@ -87,19 +87,22 @@ static JanetMethod session_methods[] = {
     {NULL, NULL},
 };
 
-static void session_close(session_obj_t *obj) {
+/* Explicit close session can panic to raise an error. But closing session by GC
+ * shouldn't panic because it is uncatchable and kills the process. */
+static void session_close(session_obj_t *obj, bool can_panic) {
     if (obj->is_session_open) {
-        CK_RV rv;
-        rv = obj->func_list->C_CloseSession(obj->session);
-        PKCS11_ASSERT(rv);
+        CK_RV rv = obj->func_list->C_CloseSession(obj->session);
         obj->is_session_open = false;
+        if (can_panic) {
+            PKCS11_ASSERT(rv);
+        }
     }
 }
 
 /* Abstract Object functions */
 static int session_gc_fn(void *data, size_t len) {
     session_obj_t *obj = (session_obj_t *)data;
-    session_close(obj);
+    session_close(obj, false);
 
     return 0;
 }
@@ -164,7 +167,7 @@ JANET_FN(p11_close_session,
     janet_fixarity(argc, 1);
 
     session_obj_t *obj = janet_getabstract(argv, 0, get_session_obj_type());
-    session_close(obj);
+    session_close(obj, true);
 
     return janet_wrap_nil();
 }
