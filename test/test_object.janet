@@ -42,6 +42,22 @@
           (assert (= "My Application" (attr :CKA_APPLICATION)))
           (assert (= "" (attr :CKA_VALUE))))
 
+        ## A sensitive attribute mixed with readable ones must not fail the
+        ## whole read: the readable ones come back, the sensitive one is omitted.
+        (let [key (assert (:generate-key session-rw {:mechanism :CKM_AES_KEY_GEN}
+                                         {:CKA_CLASS :CKO_SECRET_KEY
+                                          :CKA_KEY_TYPE :CKK_AES
+                                          :CKA_VALUE_LEN 32
+                                          :CKA_TOKEN true
+                                          :CKA_SENSITIVE true
+                                          :CKA_EXTRACTABLE false}))
+              attr (assert (:get-attribute-value session-rw key
+                                                 [:CKA_KEY_TYPE :CKA_VALUE]))]
+          ## :CKA_KEY_TYPE comes back (CKK_AES = 0x1f), :CKA_VALUE is omitted.
+          (assert (= 0x1f (attr :CKA_KEY_TYPE)))
+          (assert (nil? (attr :CKA_VALUE)))
+          (:destroy-object session-rw key))
+
         (assert (:set-attribute-value session-rw
                                       obj-handle1
                                       {:CKA_LABEL "Label 1"}))

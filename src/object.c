@@ -82,6 +82,16 @@ JANET_FN(p11_get_object_size,
     return janet_wrap_number((double)size);
 }
 
+/* From PKCS#11 doc: Note that the error codes CKR_ATTRIBUTE_SENSITIVE,
+ * CKR_ATTRIBUTE_TYPE_INVALID, and CKR_BUFFER_TOO_SMALL do not denote true
+ * errors for C_GetAttributeValue. */
+static bool is_get_attribute_ok(CK_RV rv) {
+    return rv == CKR_OK
+        || rv == CKR_ATTRIBUTE_SENSITIVE
+        || rv == CKR_ATTRIBUTE_TYPE_INVALID
+        || rv == CKR_BUFFER_TOO_SMALL;
+}
+
 JANET_FN(p11_get_attribute_value,
          "(get-attribute-value session-obj obj-handle attr-list)",
          "Obtains the value of one or more attributes of an object. "
@@ -97,14 +107,21 @@ JANET_FN(p11_get_attribute_value,
 
     CK_RV rv;
     rv = obj->func_list->C_GetAttributeValue(obj->session, obj_handle, p_template, count);
-    PKCS11_ASSERT(rv);
+    if (!is_get_attribute_ok(rv)) {
+        PKCS11_ASSERT(rv);
+    }
 
     for (int i=0; i<count; i++) {
+        if (p_template[i].ulValueLen == CK_UNAVAILABLE_INFORMATION) {
+            continue;
+        }
         p_template[i].pValue = janet_smalloc(p_template[i].ulValueLen);
     }
 
     rv = obj->func_list->C_GetAttributeValue(obj->session, obj_handle, p_template, count);
-    PKCS11_ASSERT(rv);
+    if (!is_get_attribute_ok(rv)) {
+        PKCS11_ASSERT(rv);
+    }
 
     JanetStruct st = p11_template_to_janet_struct(p_template, count);
 

@@ -61,6 +61,11 @@ JanetStruct p11_template_to_janet_struct(CK_ATTRIBUTE_PTR p_template, int count)
 {
     JanetTable *ret = janet_table(count);
     for (int i=0; i<count; i++) {
+        /* Janet struct cannot hold a nil value, so omit the key entirely. The
+         * caller will see the keyword is absent. */
+        if (p_template[i].ulValueLen == CK_UNAVAILABLE_INFORMATION) {
+            continue;
+        }
         p11_attr_type_t attr_type = get_attribute_type(p_template[i].type);
         switch (attr_type) {
             case P11_ATTR_BOOL: {
