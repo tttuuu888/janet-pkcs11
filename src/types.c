@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024, Janet-botan Seungki Kim
+ * Copyright (c) 2024, Janet-pkcs11 Seungki Kim
  *
  * Janet-pkcs11 is released under the MIT License, see the LICENSE file.
  */
