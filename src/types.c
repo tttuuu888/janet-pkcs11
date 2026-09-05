@@ -1052,6 +1052,8 @@ p11_attr_type_t get_attribute_type(CK_ATTRIBUTE_TYPE type) {
         case CKA_X2RATCHET_NR:
         case CKA_X2RATCHET_NS:
         case CKA_X2RATCHET_PNS:
+        case CKA_JAVA_MIDP_SECURITY_DOMAIN:
+        case CKA_NAME_HASH_ALGORITHM:
             return P11_ATTR_ULONG;
 
         /* Date attributes */
@@ -1120,8 +1122,6 @@ p11_attr_type_t get_attribute_type(CK_ATTRIBUTE_TYPE type) {
         case CKA_CHAR_SETS:
         case CKA_ENCODING_METHODS:
         case CKA_MIME_TYPES:
-        case CKA_JAVA_MIDP_SECURITY_DOMAIN:
-        case CKA_NAME_HASH_ALGORITHM:
         case CKA_OTP_FORMAT:
         case CKA_OTP_SERVICE_IDENTIFIER:
         case CKA_OTP_SERVICE_LOGO_TYPE:
