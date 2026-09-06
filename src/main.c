@@ -7,6 +7,7 @@
 #include <dlfcn.h>
 #include "main.h"
 #include "error.h"
+#include "utils.h"
 
 /* Abstract Object functions */
 static Janet cfun_pkcs11_close(int32_t argc, Janet *argv);
@@ -134,9 +135,9 @@ JANET_FN(p11_get_info,
     janet_table_put(lib_ver, janet_ckeywordv("minor"), janet_wrap_number(info.libraryVersion.minor));
 
     janet_table_put(ret, janet_ckeywordv("cryptoki-version"), janet_wrap_struct(janet_table_to_struct(ck_ver)));
-    janet_table_put(ret, janet_ckeywordv("manufacturer-id"), janet_stringv(info.manufacturerID, 32));
+    janet_table_put(ret, janet_ckeywordv("manufacturer-id"), pkcs11_trim_stringv(info.manufacturerID, 32));
     janet_table_put(ret, janet_ckeywordv("flags"), janet_wrap_number(info.flags));
-    janet_table_put(ret, janet_ckeywordv("library-description"), janet_stringv(info.libraryDescription, 32));
+    janet_table_put(ret, janet_ckeywordv("library-description"), pkcs11_trim_stringv(info.libraryDescription, 32));
     janet_table_put(ret, janet_ckeywordv("library-version"), janet_wrap_struct(janet_table_to_struct(lib_ver)));
 
     return janet_wrap_struct(janet_table_to_struct(ret));

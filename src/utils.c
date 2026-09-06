@@ -7,6 +7,15 @@
 #include "main.h"
 #include "utils.h"
 
+/* Strip blank character padding on the right. */
+Janet pkcs11_trim_stringv(const uint8_t *buf, int32_t len)
+{
+    while (len > 0 && buf[len - 1] == ' ') {
+        len--;
+    }
+    return janet_stringv(buf, len);
+}
+
 JANET_FN(cfun_hex_encode,
          "(hex-encode bin)",
          "Performs hex encoding of binary data in `bin`. Returns the string.")
