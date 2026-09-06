@@ -7,6 +7,7 @@
 #include "main.h"
 #include "error.h"
 #include "attribute.h"
+#include "types.h"
 
 JANET_FN(p11_create_object,
          "(create-object session-obj template)",
@@ -106,21 +107,60 @@ JANET_FN(p11_get_attribute_value,
     CK_ATTRIBUTE_PTR p_template = create_new_p11_template_from_janet_tuple(tup);
 
     CK_RV rv;
+    /* Find the required buffer size of each attribute. */
     rv = obj->func_list->C_GetAttributeValue(obj->session, obj_handle, p_template, count);
     if (!is_get_attribute_ok(rv)) {
         PKCS11_ASSERT(rv);
     }
 
+    /* Allocate a buffer for each available attribute. */
+    bool has_template = false;
     for (int i=0; i<count; i++) {
         if (p_template[i].ulValueLen == CK_UNAVAILABLE_INFORMATION) {
             continue;
         }
         p_template[i].pValue = janet_smalloc(p_template[i].ulValueLen);
+        if (get_attribute_type(p_template[i].type) == P11_ATTR_TEMPLATE) {
+            /* A nested template attribute (e.g. CKA_WRAP_TEMPLATE) is an array
+             * of CK_ATTRIBUTE. Zeroing the buffer makes the inner pValue
+             * pointers NULL_PTR, which prompts the token to report the inner
+             * value sizes on the next call. */
+            memset(p_template[i].pValue, 0, p_template[i].ulValueLen);
+            has_template = true;
+        }
     }
 
+    /* Read the values. For a nested template attribute this fills in only the
+     * inner attributes' type and required length. */
     rv = obj->func_list->C_GetAttributeValue(obj->session, obj_handle, p_template, count);
     if (!is_get_attribute_ok(rv)) {
         PKCS11_ASSERT(rv);
+    }
+
+    if (has_template) {
+        /* Allocate a buffer for each inner attribute value. */
+        for (int i=0; i<count; i++) {
+            if (p_template[i].ulValueLen == CK_UNAVAILABLE_INFORMATION ||
+                get_attribute_type(p_template[i].type) != P11_ATTR_TEMPLATE) {
+                continue;
+            }
+
+            CK_ATTRIBUTE_PTR nested = (CK_ATTRIBUTE_PTR)p_template[i].pValue;
+            int nested_count = p_template[i].ulValueLen / sizeof(CK_ATTRIBUTE);
+            for (int j=0; j<nested_count; j++) {
+                if (nested[j].ulValueLen == CK_UNAVAILABLE_INFORMATION) {
+                    continue;
+                }
+
+                nested[j].pValue = janet_smalloc(nested[j].ulValueLen);
+            }
+        }
+
+        /* Read the inner attribute values. */
+        rv = obj->func_list->C_GetAttributeValue(obj->session, obj_handle, p_template, count);
+        if (!is_get_attribute_ok(rv)) {
+            PKCS11_ASSERT(rv);
+        }
     }
 
     JanetStruct st = p11_template_to_janet_struct(p_template, count);

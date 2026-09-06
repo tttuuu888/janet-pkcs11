@@ -6,6 +6,7 @@
 
 #include "main.h"
 #include "types.h"
+#include "attribute.h"
 
 static void set_attribute(CK_ATTRIBUTE *attribute, const JanetKV *kv)
 {
@@ -49,6 +50,17 @@ static void set_attribute(CK_ATTRIBUTE *attribute, const JanetKV *kv)
 
             attribute->pValue = (void*)value;
             attribute->ulValueLen = param.len;
+            break;
+        }
+        case JANET_STRUCT: {
+            /* A nested template attribute (e.g. CKA_WRAP_TEMPLATE) is an array
+             * of CK_ATTRIBUTE built recursively from the nested struct. */
+            JanetStruct nested = janet_unwrap_struct(val);
+            CK_ULONG nested_count = (CK_ULONG)janet_struct_length(nested);
+            CK_ATTRIBUTE_PTR nested_template = janet_struct_to_p11_template(nested);
+
+            attribute->pValue = (void*)nested_template;
+            attribute->ulValueLen = nested_count * sizeof(CK_ATTRIBUTE);
             break;
         }
         default:
@@ -99,6 +111,16 @@ JanetStruct p11_template_to_janet_struct(CK_ATTRIBUTE_PTR p_template, int count)
                 janet_table_put(ret,
                                 janet_ckeywordv(p11_attr_type_to_string(p_template[i].type)),
                                 janet_stringv((const uint8_t *)p_template[i].pValue, p_template[i].ulValueLen));
+                break;
+            }
+            case P11_ATTR_TEMPLATE: {
+                /* The value is an array of CK_ATTRIBUTE. Convert it recursively
+                 * into a nested struct. */
+                CK_ATTRIBUTE_PTR nested = (CK_ATTRIBUTE_PTR)p_template[i].pValue;
+                int nested_count = p_template[i].ulValueLen / sizeof(CK_ATTRIBUTE);
+                janet_table_put(ret,
+                                janet_ckeywordv(p11_attr_type_to_string(p_template[i].type)),
+                                janet_wrap_struct(p11_template_to_janet_struct(nested, nested_count)));
                 break;
             }
             default: {

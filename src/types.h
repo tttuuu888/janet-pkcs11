@@ -12,7 +12,8 @@ typedef enum p11_attr_type {
     P11_ATTR_ULONG,
     P11_ATTR_DATE,
     P11_ATTR_BYTES,
-    P11_ATTR_STRING
+    P11_ATTR_STRING,
+    P11_ATTR_TEMPLATE
 } p11_attr_type_t;
 
 unsigned long get_type_value(const unsigned char *type_name);

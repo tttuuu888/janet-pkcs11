@@ -58,6 +58,24 @@
           (assert (nil? (attr :CKA_VALUE)))
           (:destroy-object session-rw key))
 
+        ## A nested template attribute (an array of CK_ATTRIBUTE) is written
+        ## from a nested struct and read back into a nested struct.
+        (let [key (assert (:generate-key session-rw {:mechanism :CKM_AES_KEY_GEN}
+                                         {:CKA_CLASS :CKO_SECRET_KEY
+                                          :CKA_KEY_TYPE :CKK_AES
+                                          :CKA_VALUE_LEN 32
+                                          :CKA_WRAP true
+                                          :CKA_WRAP_TEMPLATE {:CKA_ENCRYPT true
+                                                              :CKA_TOKEN false
+                                                              :CKA_VALUE_LEN 16}}))
+              attr (assert (:get-attribute-value session-rw key [:CKA_WRAP_TEMPLATE]))
+              wrap-template (attr :CKA_WRAP_TEMPLATE)]
+          (assert (struct? wrap-template))
+          (assert (= true (wrap-template :CKA_ENCRYPT)))
+          (assert (= false (wrap-template :CKA_TOKEN)))
+          (assert (= 16 (wrap-template :CKA_VALUE_LEN)))
+          (:destroy-object session-rw key))
+
         (assert (:set-attribute-value session-rw
                                       obj-handle1
                                       {:CKA_LABEL "Label 1"}))

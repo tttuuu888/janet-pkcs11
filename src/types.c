@@ -1088,9 +1088,6 @@ p11_attr_type_t get_attribute_type(CK_ATTRIBUTE_TYPE type) {
         case CKA_GOST28147_PARAMS:
         case CKA_GOSTR3410_PARAMS:
         case CKA_GOSTR3411_PARAMS:
-        case CKA_WRAP_TEMPLATE:
-        case CKA_UNWRAP_TEMPLATE:
-        case CKA_DERIVE_TEMPLATE:
         case CKA_OTP_COUNTER:
         case CKA_OTP_SERVICE_LOGO:
         case CKA_PUBLIC_KEY_INFO:
@@ -1114,6 +1111,12 @@ p11_attr_type_t get_attribute_type(CK_ATTRIBUTE_TYPE type) {
         case CKA_X2RATCHET_NHKS:
         case CKA_X2RATCHET_RK:
             return P11_ATTR_BYTES;
+
+        /* Attribute-array attributes (nested templates) */
+        case CKA_WRAP_TEMPLATE:
+        case CKA_UNWRAP_TEMPLATE:
+        case CKA_DERIVE_TEMPLATE:
+            return P11_ATTR_TEMPLATE;
 
         /* String attributes (null-terminated) */
         case CKA_LABEL:
