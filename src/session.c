@@ -90,12 +90,21 @@ static JanetMethod session_methods[] = {
 /* Explicit close session can panic to raise an error. But closing session by GC
  * shouldn't panic because it is uncatchable and kills the process. */
 static void session_close(session_obj_t *obj, bool can_panic) {
-    if (obj->is_session_open) {
-        CK_RV rv = obj->func_list->C_CloseSession(obj->session);
-        obj->is_session_open = false;
-        if (can_panic) {
-            PKCS11_ASSERT(rv);
-        }
+    if (!obj->is_session_open) {
+        return;
+    }
+    obj->is_session_open = false;
+
+    /* Skip C_CloseSession if p11 object was already closed. Its func_list would
+     * point into an unloaded library and calling through it would crash. */
+    p11_obj_t *p11 = janet_unwrap_abstract(obj->p11);
+    if (!p11->is_p11_open) {
+        return;
+    }
+
+    CK_RV rv = obj->func_list->C_CloseSession(obj->session);
+    if (can_panic) {
+        PKCS11_ASSERT(rv);
     }
 }
 
