@@ -52,6 +52,24 @@
     (with [session-ro (assert (:open-session p11 test-slot :read-only))]
       (assert (= ((:get-session-info session-ro) :flags) [:CKF_SERIAL_SESSION]))
       (assert (= ((:get-session-info session-ro) :state) :CKS_RO_PUBLIC_SESSION))
-      (assert (:login session-ro :user test-user-pin2)))))
+      (assert (:login session-ro :user test-user-pin2)))
+
+    ## After close-all-sessions, every open session become invalid.
+    (let [session-1 (assert (:open-session p11 test-slot))
+          session-2 (assert (:open-session p11 test-slot :read-only))]
+      (assert (:get-session-info session-1))
+      (assert (= nil (:close-all-sessions p11 test-slot)))
+      (assert (= :CKR_SESSION_HANDLE_INVALID
+                 (try (:get-session-info session-1) ([e] e))))
+      (assert (= :CKR_SESSION_HANDLE_INVALID
+                 (try (:get-session-info session-2) ([e] e)))))
+
+    ## close-all-sessions invalidates every open session, so when `with` closes
+    ## the session on scope exit it raises a :CKR_SESSION_HANDLE_INVALID.
+    (assert (= :CKR_SESSION_HANDLE_INVALID
+               (try
+                 (with [session (assert (:open-session p11 test-slot))]
+                   (assert (= nil (:close-all-sessions p11 test-slot))))
+                 ([e] e))))))
 
 (end-suite)

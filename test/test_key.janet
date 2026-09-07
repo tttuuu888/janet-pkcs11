@@ -78,7 +78,10 @@
                                                {:mechanism :CKM_AES_KEY_WRAP_PAD}
                                                wrap-key
                                                wrapped-key
-                                               unwrap-key-template))])
+                                               unwrap-key-template))]
+        ## The unwrapped key must have the same value as the original key.
+        (assert (= ((:get-attribute-value session-rw key [:CKA_VALUE]) :CKA_VALUE)
+                   ((:get-attribute-value session-rw unwrapped-key [:CKA_VALUE]) :CKA_VALUE))))
 
       ## derive key
       (let [base (hex-decode "02")
