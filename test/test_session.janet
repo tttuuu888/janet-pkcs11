@@ -29,8 +29,9 @@
     (set test-slot (find-slot-with-serial-number p11 test-serial-nubmer))
 
     (with [session-rw (assert (:open-session p11 test-slot))]
-      (assert (= ((:get-session-info session-rw) :flags) 6))
-      (assert (= ((:get-session-info session-rw) :state) 2))
+      (assert (= ((:get-session-info session-rw) :flags)
+                 [:CKF_SERIAL_SESSION :CKF_RW_SESSION]))
+      (assert (= ((:get-session-info session-rw) :state) :CKS_RW_PUBLIC_SESSION))
       ## SoftHSM2 does not implement get-operation-state.
       (assert (= :CKR_FUNCTION_NOT_SUPPORTED
                  (try (:get-operation-state session-rw) ([e] e))))
@@ -49,8 +50,8 @@
       (assert (:logout session-rw)))
 
     (with [session-ro (assert (:open-session p11 test-slot :read-only))]
-      (assert (= ((:get-session-info session-ro) :flags) 4))
-      (assert (= ((:get-session-info session-ro) :state) 0))
+      (assert (= ((:get-session-info session-ro) :flags) [:CKF_SERIAL_SESSION]))
+      (assert (= ((:get-session-info session-ro) :state) :CKS_RO_PUBLIC_SESSION))
       (assert (:login session-ro :user test-user-pin2)))))
 
 (end-suite)

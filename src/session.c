@@ -188,9 +188,36 @@ JANET_FN(p11_close_all_sessions,
     return janet_wrap_nil();
 }
 
+/* CK_STATE value -> spec keyword name, or NULL if unknown. */
+static const char *session_state_name(CK_STATE state) {
+    switch (state) {
+        case CKS_RO_PUBLIC_SESSION: return "CKS_RO_PUBLIC_SESSION";
+        case CKS_RO_USER_FUNCTIONS: return "CKS_RO_USER_FUNCTIONS";
+        case CKS_RW_PUBLIC_SESSION: return "CKS_RW_PUBLIC_SESSION";
+        case CKS_RW_USER_FUNCTIONS: return "CKS_RW_USER_FUNCTIONS";
+        case CKS_RW_SO_FUNCTIONS:   return "CKS_RW_SO_FUNCTIONS";
+        default:                    return NULL;
+    }
+}
+
+/* CK_SESSION_INFO flags -> tuple of the enabled flag keywords. */
+static Janet session_flags_to_tuple(CK_FLAGS flags) {
+    int count = 0;
+    if (flags & CKF_SERIAL_SESSION) count++;
+    if (flags & CKF_RW_SESSION)     count++;
+
+    Janet *tup = janet_tuple_begin(count);
+    int i = 0;
+    if (flags & CKF_SERIAL_SESSION) tup[i++] = janet_ckeywordv("CKF_SERIAL_SESSION");
+    if (flags & CKF_RW_SESSION)     tup[i++] = janet_ckeywordv("CKF_RW_SESSION");
+
+    return janet_wrap_tuple(janet_tuple_end(tup));
+}
+
 JANET_FN(p11_get_session_info,
          "(get-session-info session-obj)",
-         "Returns an information about a session.")
+         "Returns an information about a session. `:state` is a CKS_* keyword "
+         "and `:flags` is a list of the CKF_* keywords.")
 {
     janet_fixarity(argc, 1);
 
@@ -201,10 +228,13 @@ JANET_FN(p11_get_session_info,
     rv = obj->func_list->C_GetSessionInfo(obj->session, &info);
     PKCS11_ASSERT(rv);
 
+    const char *state_name = session_state_name(info.state);
+
     JanetTable *ret = janet_table(4);
     janet_table_put(ret, janet_ckeywordv("slot-id"), janet_wrap_number(info.slotID));
-    janet_table_put(ret, janet_ckeywordv("state"), janet_wrap_number(info.state));
-    janet_table_put(ret, janet_ckeywordv("flags"), janet_wrap_number(info.flags));
+    janet_table_put(ret, janet_ckeywordv("state"),
+                    state_name ? janet_ckeywordv(state_name) : janet_wrap_number(info.state));
+    janet_table_put(ret, janet_ckeywordv("flags"), session_flags_to_tuple(info.flags));
     janet_table_put(ret, janet_ckeywordv("device-error"), janet_wrap_number(info.ulDeviceError));
 
     return janet_wrap_struct(janet_table_to_struct(ret));
