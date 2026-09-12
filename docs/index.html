@@ -42,34 +42,43 @@
 </h2>
 <p>The following is an example of the process using Janet-pkcs11, including session opening, login, AES key generation, encryption, and decryption.  
 </p>
-<p>In this example, libsofthsm2.so is used for module initialization, and it is assumed that slot 0 has already been initialized and the user PIN is set to 123456.
+<p>In this example, libsofthsm2.so is used for module initialization, and it is assumed that a token labeled "test" has already been initialized and the user PIN is set to 123456.
 </p>
-<pre class="mendoza-codeblock"><code data-language="janet">(<span class="mdzsyn-coresym">use</span> <span class="mdzsyn-symbol">pkcs11</span>)
+<p>The token can be initialized with softhsm2-util as follows:
+</p>
+<pre class="mendoza-codeblock"><code>softhsm2-util --init-token --free --label test --so-pin 012345 --pin 123456</code></pre><pre class="mendoza-codeblock"><code data-language="janet">(<span class="mdzsyn-coresym">use</span> <span class="mdzsyn-symbol">pkcs11</span>)
 
 (<span class="mdzsyn-coresym">def</span> <span class="mdzsyn-symbol">p11</span> (<span class="mdzsyn-symbol">new</span> <span class="mdzsyn-string">"/usr/lib/softhsm/libsofthsm2.so"</span>))
 
-(<span class="mdzsyn-coresym">with</span> [<span class="mdzsyn-symbol">session</span> (<span class="mdzsyn-keyword">:open-session</span> <span class="mdzsyn-symbol">p11</span> <span class="mdzsyn-number">0</span>)]
-  (<span class="mdzsyn-keyword">:login</span> <span class="mdzsyn-symbol">session</span> <span class="mdzsyn-keyword">:user</span> <span class="mdzsyn-string">"123456"</span>)
+<span class="mdzsyn-comment">## find the slot holding the token labeled "test"</span>
+(<span class="mdzsyn-coresym">def</span> <span class="mdzsyn-symbol">slot</span> (<span class="mdzsyn-coresym">find</span> (<span class="mdzsyn-coresym">fn</span> [<span class="mdzsyn-symbol">s</span>] (<span class="mdzsyn-coresym">=</span> ((<span class="mdzsyn-keyword">:get-token-info</span> <span class="mdzsyn-symbol">p11</span> <span class="mdzsyn-symbol">s</span>) <span class="mdzsyn-keyword">:label</span>) <span class="mdzsyn-string">"test"</span>))
+                (<span class="mdzsyn-keyword">:get-slot-list</span> <span class="mdzsyn-symbol">p11</span>)))
 
-  (<span class="mdzsyn-coresym">let</span> [<span class="mdzsyn-symbol">key</span> (<span class="mdzsyn-keyword">:generate-key</span> <span class="mdzsyn-symbol">session</span>
-                           {<span class="mdzsyn-keyword">:mechanism</span>     <span class="mdzsyn-keyword">:CKM_AES_KEY_GEN</span>}
-                           {<span class="mdzsyn-keyword">:CKA_KEY_TYPE</span>  <span class="mdzsyn-keyword">:CKK_AES</span>
-                            <span class="mdzsyn-keyword">:CKA_VALUE_LEN</span> <span class="mdzsyn-number">32</span>
-                            <span class="mdzsyn-keyword">:CKA_ENCRYPT</span>   <span class="mdzsyn-constant">true</span>
-                            <span class="mdzsyn-keyword">:CKA_DECRYPT</span>   <span class="mdzsyn-constant">true</span>})
-        <span class="mdzsyn-symbol">plain</span> (<span class="mdzsyn-symbol">hex-decode</span> <span class="mdzsyn-string">"000102030405060708090a0b0c0d0e0f"</span>)]
+(<span class="mdzsyn-coresym">def</span> <span class="mdzsyn-symbol">session</span> (<span class="mdzsyn-keyword">:open-session</span> <span class="mdzsyn-symbol">p11</span> <span class="mdzsyn-symbol">slot</span>))
 
-    <span class="mdzsyn-comment">## encrypt</span>
-    (<span class="mdzsyn-keyword">:encrypt-init</span> <span class="mdzsyn-symbol">session</span> {<span class="mdzsyn-keyword">:mechanism</span> <span class="mdzsyn-keyword">:CKM_AES_ECB</span>} <span class="mdzsyn-symbol">key</span>)
-    (<span class="mdzsyn-coresym">def</span> <span class="mdzsyn-symbol">encrypted</span> (<span class="mdzsyn-keyword">:encrypt</span> <span class="mdzsyn-symbol">session</span> <span class="mdzsyn-symbol">plain</span>))
+(<span class="mdzsyn-keyword">:login</span> <span class="mdzsyn-symbol">session</span> <span class="mdzsyn-keyword">:user</span> <span class="mdzsyn-string">"123456"</span>)
 
-    <span class="mdzsyn-comment">## decrypt</span>
-    (<span class="mdzsyn-keyword">:decrypt-init</span> <span class="mdzsyn-symbol">session</span> {<span class="mdzsyn-keyword">:mechanism</span> <span class="mdzsyn-keyword">:CKM_AES_ECB</span>} <span class="mdzsyn-symbol">key</span>)
-    (<span class="mdzsyn-coresym">def</span> <span class="mdzsyn-symbol">decrypted</span> (<span class="mdzsyn-keyword">:decrypt</span> <span class="mdzsyn-symbol">session</span> <span class="mdzsyn-symbol">encrypted</span>))
+(<span class="mdzsyn-coresym">let</span> [<span class="mdzsyn-symbol">key</span> (<span class="mdzsyn-keyword">:generate-key</span> <span class="mdzsyn-symbol">session</span>
+                         {<span class="mdzsyn-keyword">:mechanism</span>     <span class="mdzsyn-keyword">:CKM_AES_KEY_GEN</span>}
+                         {<span class="mdzsyn-keyword">:CKA_KEY_TYPE</span>  <span class="mdzsyn-keyword">:CKK_AES</span>
+                          <span class="mdzsyn-keyword">:CKA_VALUE_LEN</span> <span class="mdzsyn-number">32</span>
+                          <span class="mdzsyn-keyword">:CKA_ENCRYPT</span>   <span class="mdzsyn-constant">true</span>
+                          <span class="mdzsyn-keyword">:CKA_DECRYPT</span>   <span class="mdzsyn-constant">true</span>})
+      <span class="mdzsyn-symbol">plain</span> (<span class="mdzsyn-symbol">hex-decode</span> <span class="mdzsyn-string">"000102030405060708090a0b0c0d0e0f"</span>)]
 
-    <span class="mdzsyn-comment">## check result</span>
-    (<span class="mdzsyn-coresym">assert</span> (<span class="mdzsyn-coresym">=</span> <span class="mdzsyn-symbol">plain</span> <span class="mdzsyn-symbol">decrypted</span>))))
+  <span class="mdzsyn-comment">## encrypt</span>
+  (<span class="mdzsyn-keyword">:encrypt-init</span> <span class="mdzsyn-symbol">session</span> {<span class="mdzsyn-keyword">:mechanism</span> <span class="mdzsyn-keyword">:CKM_AES_ECB</span>} <span class="mdzsyn-symbol">key</span>)
+  (<span class="mdzsyn-coresym">def</span> <span class="mdzsyn-symbol">encrypted</span> (<span class="mdzsyn-keyword">:encrypt</span> <span class="mdzsyn-symbol">session</span> <span class="mdzsyn-symbol">plain</span>))
 
+  <span class="mdzsyn-comment">## decrypt</span>
+  (<span class="mdzsyn-keyword">:decrypt-init</span> <span class="mdzsyn-symbol">session</span> {<span class="mdzsyn-keyword">:mechanism</span> <span class="mdzsyn-keyword">:CKM_AES_ECB</span>} <span class="mdzsyn-symbol">key</span>)
+  (<span class="mdzsyn-coresym">def</span> <span class="mdzsyn-symbol">decrypted</span> (<span class="mdzsyn-keyword">:decrypt</span> <span class="mdzsyn-symbol">session</span> <span class="mdzsyn-symbol">encrypted</span>))
+
+  <span class="mdzsyn-comment">## check result</span>
+  (<span class="mdzsyn-coresym">print</span> <span class="mdzsyn-string">"Plain:     "</span> (<span class="mdzsyn-symbol">hex-encode</span> <span class="mdzsyn-symbol">plain</span>))
+  (<span class="mdzsyn-coresym">print</span> <span class="mdzsyn-string">"Decrypted: "</span> (<span class="mdzsyn-symbol">hex-encode</span> <span class="mdzsyn-symbol">decrypted</span>)))
+
+(<span class="mdzsyn-keyword">:close</span> <span class="mdzsyn-symbol">session</span>)
 (<span class="mdzsyn-keyword">:close</span> <span class="mdzsyn-symbol">p11</span>)</code></pre><p>More examples can be found in the test.
 </p>
         <div class="prevnext-bar">
