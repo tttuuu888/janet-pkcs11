@@ -21,35 +21,48 @@ Janet-pkcs11 is a @link[https://janet-lang.org]{Janet} wrapper for PKCS #11 API.
 
 The following is an example of the process using Janet-pkcs11, including session opening, login, AES key generation, encryption, and decryption.  
 
-In this example, libsofthsm2.so is used for module initialization, and it is assumed that slot 0 has already been initialized and the user PIN is set to 123456.
+In this example, libsofthsm2.so is used for module initialization, and it is assumed that a token labeled "test" has already been initialized and the user PIN is set to 123456.
+
+The token can be initialized with softhsm2-util as follows:
+
+@codeblock```
+softhsm2-util --init-token --free --label test --so-pin 012345 --pin 123456
+```
 
 @codeblock[janet]```
 (use pkcs11)
 
 (def p11 (new "/usr/lib/softhsm/libsofthsm2.so"))
 
-(with [session (:open-session p11 0)]
-  (:login session :user "123456")
+## find the slot holding the token labeled "test"
+(def slot (find (fn [s] (= ((:get-token-info p11 s) :label) "test"))
+                (:get-slot-list p11)))
 
-  (let [key (:generate-key session
-                           {:mechanism     :CKM_AES_KEY_GEN}
-                           {:CKA_KEY_TYPE  :CKK_AES
-                            :CKA_VALUE_LEN 32
-                            :CKA_ENCRYPT   true
-                            :CKA_DECRYPT   true})
-        plain (hex-decode "000102030405060708090a0b0c0d0e0f")]
+(def session (:open-session p11 slot))
 
-    ## encrypt
-    (:encrypt-init session {:mechanism :CKM_AES_ECB} key)
-    (def encrypted (:encrypt session plain))
+(:login session :user "123456")
 
-    ## decrypt
-    (:decrypt-init session {:mechanism :CKM_AES_ECB} key)
-    (def decrypted (:decrypt session encrypted))
+(let [key (:generate-key session
+                         {:mechanism     :CKM_AES_KEY_GEN}
+                         {:CKA_KEY_TYPE  :CKK_AES
+                          :CKA_VALUE_LEN 32
+                          :CKA_ENCRYPT   true
+                          :CKA_DECRYPT   true})
+      plain (hex-decode "000102030405060708090a0b0c0d0e0f")]
 
-    ## check result
-    (assert (= plain decrypted))))
+  ## encrypt
+  (:encrypt-init session {:mechanism :CKM_AES_ECB} key)
+  (def encrypted (:encrypt session plain))
 
+  ## decrypt
+  (:decrypt-init session {:mechanism :CKM_AES_ECB} key)
+  (def decrypted (:decrypt session encrypted))
+
+  ## check result
+  (print "Plain:     " (hex-encode plain))
+  (print "Decrypted: " (hex-encode decrypted)))
+
+(:close session)
 (:close p11)
 ```
 
